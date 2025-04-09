@@ -37,7 +37,7 @@ const Index = () => {
           <LoginForm />
         </div>
       ) : (
-        <div className="w-full">
+        <div className="w-full max-w-4xl mx-auto">
           <div className="mb-5 text-center md:text-left">
             <h1 className="text-2xl font-bold sm:text-3xl">Meus Pedidos</h1>
             <p className="text-gray-600 text-sm sm:text-base">
