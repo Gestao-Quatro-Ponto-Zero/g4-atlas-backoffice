@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
 import { 
   CreditCard, 
   Plus, 
@@ -35,6 +36,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -212,6 +214,21 @@ const AddressSelection = ({ setSelectedAddress, selectedAddress }) => {
 
 const AddNewPaymentMethodDialog = () => {
   const [selectedAddress, setSelectedAddress] = useState(mockAddresses[0].id);
+  const form = useForm({
+    defaultValues: {
+      cardNumber: "",
+      expiry: "",
+      cvc: "",
+      cardName: "",
+      cardType: "credit",
+      isDefault: "no"
+    }
+  });
+
+  const onSubmit = (data) => {
+    console.log("Payment method data:", data);
+    // Here you would handle the submission logic
+  };
 
   return (
     <Dialog>
@@ -246,62 +263,131 @@ const AddNewPaymentMethodDialog = () => {
           </TabsList>
           
           <TabsContent value="card" className="mt-4">
-            <div className="grid gap-4">
-              <div className="grid grid-cols-1 gap-2">
-                <FormLabel htmlFor="cardNumber">Número do cartão</FormLabel>
-                <Input id="cardNumber" placeholder="1234 5678 9012 3456" />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <FormLabel htmlFor="expiry">Validade</FormLabel>
-                  <Input id="expiry" placeholder="MM/AA" />
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                <FormField
+                  control={form.control}
+                  name="cardNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Número do cartão</FormLabel>
+                      <FormControl>
+                        <Input placeholder="1234 5678 9012 3456" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="expiry"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Validade</FormLabel>
+                        <FormControl>
+                          <Input placeholder="MM/AA" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="cvc"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CVC</FormLabel>
+                        <FormControl>
+                          <Input placeholder="123" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-                <div className="grid gap-2">
-                  <FormLabel htmlFor="cvc">CVC</FormLabel>
-                  <Input id="cvc" placeholder="123" />
+                
+                <FormField
+                  control={form.control}
+                  name="cardName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome no cartão</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Nome como aparece no cartão" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="cardType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tipo</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="credit">Crédito</SelectItem>
+                            <SelectItem value="debit">Débito</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="isDefault"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Padrão</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Sim/Não" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="yes">Sim</SelectItem>
+                            <SelectItem value="no">Não</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-              </div>
-              
-              <div className="grid gap-2">
-                <FormLabel htmlFor="cardName">Nome no cartão</FormLabel>
-                <Input id="cardName" placeholder="Nome como aparece no cartão" />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <FormLabel htmlFor="cardType">Tipo</FormLabel>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="credit">Crédito</SelectItem>
-                      <SelectItem value="debit">Débito</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-2">
-                  <FormLabel htmlFor="default">Padrão</FormLabel>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sim/Não" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="yes">Sim</SelectItem>
-                      <SelectItem value="no">Não</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
 
-              <Separator />
-              
-              <AddressSelection 
-                selectedAddress={selectedAddress}
-                setSelectedAddress={setSelectedAddress}
-              />
-            </div>
+                <Separator />
+                
+                <AddressSelection 
+                  selectedAddress={selectedAddress}
+                  setSelectedAddress={setSelectedAddress}
+                />
+                
+                <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4">
+                  <DialogTrigger asChild>
+                    <Button variant="outline" type="button">Cancelar</Button>
+                  </DialogTrigger>
+                  <Button type="submit">Salvar</Button>
+                </DialogFooter>
+              </form>
+            </Form>
           </TabsContent>
           
           <TabsContent value="bankslip" className="mt-4">
@@ -318,6 +404,13 @@ const AddNewPaymentMethodDialog = () => {
                 selectedAddress={selectedAddress}
                 setSelectedAddress={setSelectedAddress}
               />
+              
+              <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-6">
+                <DialogTrigger asChild>
+                  <Button variant="outline">Cancelar</Button>
+                </DialogTrigger>
+                <Button>Salvar</Button>
+              </DialogFooter>
             </div>
           </TabsContent>
           
@@ -328,16 +421,16 @@ const AddNewPaymentMethodDialog = () => {
               <p className="text-gray-500 mt-2">
                 O QR code Pix será gerado no momento da compra.
               </p>
+              
+              <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-6">
+                <DialogTrigger asChild>
+                  <Button variant="outline">Cancelar</Button>
+                </DialogTrigger>
+                <Button>Salvar</Button>
+              </DialogFooter>
             </div>
           </TabsContent>
         </Tabs>
-        
-        <DialogFooter className="flex flex-col sm:flex-row gap-2">
-          <DialogTrigger asChild>
-            <Button variant="outline">Cancelar</Button>
-          </DialogTrigger>
-          <Button type="submit">Salvar</Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
