@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
@@ -22,6 +21,18 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Separator } from "@/components/ui/separator";
 
 const mockCharges = [
   {
@@ -240,81 +251,102 @@ const Cobrancas = () => {
     return (
       <>
         <DialogDescription className="sr-only">Detalhes da cobrança selecionada</DialogDescription>
-        <div className="bg-gray-50 p-4 rounded-lg mb-4">
-          <h3 className="text-lg font-medium mb-2">{selectedCharge.description}</h3>
-          <div className="grid grid-cols-2 gap-4 mb-3">
-            <div>
-              <p className="text-sm text-gray-500">Número do pedido</p>
-              <p className="font-medium">{selectedCharge.orderDetails.orderNumber}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Valor</p>
-              <p className="font-medium">{formatCurrency(selectedCharge.amount)}</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-500">Data</p>
-              <p className="font-medium">{formatDate(selectedCharge.date.toISOString())}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Status do Pedido</p>
-              <div className="mt-1">{getOrderStatusBadge(selectedCharge.orderDetails.status)}</div>
-            </div>
-          </div>
-        </div>
         
-        <div className="mb-4">
-          <h4 className="font-medium mb-2">Forma de pagamento</h4>
-          <div className="p-3 border rounded-lg">
-            {getPaymentMethodDisplay(selectedCharge.method)}
+        <div className="border rounded-lg overflow-hidden mb-6">
+          <div className="bg-gray-50 p-4">
+            <h3 className="text-lg font-medium mb-2">Detalhes da Cobrança</h3>
             
-            <div className="mt-2 flex items-center">
-              <p className="text-sm text-gray-500 mr-2">Status da Cobrança:</p>
-              {getStatusBadge(selectedCharge.status)}
+            <div className="grid grid-cols-2 gap-4 mb-3">
+              <div>
+                <p className="text-sm text-gray-500">Valor</p>
+                <p className="font-medium">{formatCurrency(selectedCharge.amount)}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Data da Cobrança</p>
+                <p className="font-medium">{formatDate(selectedCharge.date.toISOString())}</p>
+              </div>
             </div>
-
+            
+            <div className="grid grid-cols-2 gap-4 mb-3">
+              <div>
+                <p className="text-sm text-gray-500">Status da Cobrança</p>
+                <div className="mt-1">{getStatusBadge(selectedCharge.status)}</div>
+              </div>
+              <div>
+                {selectedCharge.paymentDate && (
+                  <>
+                    <p className="text-sm text-gray-500">Data do Pagamento</p>
+                    <p className="font-medium">{formatDate(selectedCharge.paymentDate.toISOString())}</p>
+                  </>
+                )}
+                {selectedCharge.method === 'boleto' && selectedCharge.dueDate && (
+                  <>
+                    <p className="text-sm text-gray-500">Data de Vencimento</p>
+                    <p className="font-medium">{formatDate(selectedCharge.dueDate.toISOString())}</p>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          <div className="border-t p-4">
+            <h4 className="font-medium mb-2">Forma de pagamento</h4>
+            <div className="flex items-center">
+              {getPaymentMethodDisplay(selectedCharge.method)}
+            </div>
+            
             {selectedCharge.method === 'credit_card' && selectedCharge.status === 'denied' && (
-              <div className="mt-2 p-2 bg-red-50 text-red-700 text-sm rounded">
+              <div className="mt-3 p-2 bg-red-50 text-red-700 text-sm rounded">
                 <AlertCircle className="inline h-4 w-4 mr-1" />
                 <span>Falha no pagamento: {selectedCharge.failureReason}</span>
               </div>
             )}
 
-            {selectedCharge.paymentDate && (
-              <div className="mt-2 text-sm text-gray-600">
-                Pago em {formatDate(selectedCharge.paymentDate.toISOString())}
-              </div>
-            )}
-            
-            {selectedCharge.method === 'boleto' && selectedCharge.dueDate && (
-              <div className="mt-2 text-sm text-gray-600">
-                Vencimento: {formatDate(selectedCharge.dueDate.toISOString())}
-                <div className="mt-2">
-                  <Button size="sm" variant="outline" asChild className="mr-2">
-                    <a href={selectedCharge.boletoUrl} target="_blank" rel="noopener noreferrer">
-                      <Download className="h-4 w-4 mr-1" /> Baixar boleto
-                    </a>
-                  </Button>
-                </div>
-              </div>
-            )}
-            
-            {selectedCharge.receiptUrl && (
-              <div className="mt-2">
+            <div className="mt-3 flex flex-wrap gap-2">
+              {selectedCharge.receiptUrl && (
                 <Button size="sm" variant="outline" asChild>
                   <a href={selectedCharge.receiptUrl} target="_blank" rel="noopener noreferrer">
                     <FileText className="h-4 w-4 mr-1" /> Ver comprovante
                   </a>
                 </Button>
-              </div>
-            )}
+              )}
+              
+              {selectedCharge.method === 'boleto' && selectedCharge.boletoUrl && (
+                <Button size="sm" variant="outline" asChild>
+                  <a href={selectedCharge.boletoUrl} target="_blank" rel="noopener noreferrer">
+                    <Download className="h-4 w-4 mr-1" /> Baixar boleto
+                  </a>
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
-        <div>
-          <h4 className="font-medium mb-2">Itens</h4>
-          <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-lg overflow-hidden">
+          <div className="bg-gray-50 p-4">
+            <h3 className="text-lg font-medium mb-2">Informações do Pedido</h3>
+            
+            <div className="grid grid-cols-2 gap-4 mb-3">
+              <div>
+                <p className="text-sm text-gray-500">Produto</p>
+                <p className="font-medium">{selectedCharge.description}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Número do pedido</p>
+                <p className="font-medium">{selectedCharge.orderDetails.orderNumber}</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-500">Status do Pedido</p>
+                <div className="mt-1">{getOrderStatusBadge(selectedCharge.orderDetails.status)}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="border-t">
+            <h4 className="p-3 font-medium border-b bg-gray-50">Itens do Pedido</h4>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -357,77 +389,79 @@ const Cobrancas = () => {
         
         <Card className="max-w-full overflow-hidden">
           <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="whitespace-nowrap">Data</TableHead>
-                  <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Descrição</TableHead>
-                  <TableHead className="whitespace-nowrap">Valor</TableHead>
-                  <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Forma de Pagamento</TableHead>
-                  <TableHead className="whitespace-nowrap">Status</TableHead>
-                  <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap text-right" : "whitespace-nowrap text-right"}>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {mockCharges.map((charge) => (
-                  <TableRow 
-                    key={charge.id}
-                    className="cursor-pointer hover:bg-gray-50"
-                    onClick={() => isMobile ? handleOpenModal(charge) : null}
-                  >
-                    <TableCell className="font-medium whitespace-nowrap">{formatDate(charge.date.toISOString())}</TableCell>
-                    <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{charge.description}</TableCell>
-                    <TableCell className="whitespace-nowrap">{formatCurrency(charge.amount)}</TableCell>
-                    <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{getPaymentMethodDisplay(charge.method)}</TableCell>
-                    <TableCell className="whitespace-nowrap">{getStatusBadge(charge.status)}</TableCell>
-                    <TableCell className={isMobile ? "hidden md:table-cell text-right" : "text-right"}>
-                      <div className="flex justify-end gap-2">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          title="Ver detalhes"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenModal(charge);
-                          }}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        {charge.status === 'approved' && charge.receiptUrl && (
-                          <Button variant="ghost" size="sm" asChild title="Ver comprovante">
-                            <a 
-                              href={charge.receiptUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <FileText className="h-4 w-4" />
-                            </a>
-                          </Button>
-                        )}
-                        {charge.method === 'boleto' && charge.boletoUrl && (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="whitespace-nowrap">Data</TableHead>
+                    <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Descrição</TableHead>
+                    <TableHead className="whitespace-nowrap">Valor</TableHead>
+                    <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Forma de Pagamento</TableHead>
+                    <TableHead className="whitespace-nowrap">Status</TableHead>
+                    <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap text-right" : "whitespace-nowrap text-right"}>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockCharges.map((charge) => (
+                    <TableRow 
+                      key={charge.id}
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => isMobile ? handleOpenModal(charge) : null}
+                    >
+                      <TableCell className="font-medium whitespace-nowrap">{formatDate(charge.date.toISOString())}</TableCell>
+                      <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{charge.description}</TableCell>
+                      <TableCell className="whitespace-nowrap">{formatCurrency(charge.amount)}</TableCell>
+                      <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{getPaymentMethodDisplay(charge.method)}</TableCell>
+                      <TableCell className="whitespace-nowrap">{getStatusBadge(charge.status)}</TableCell>
+                      <TableCell className={isMobile ? "hidden md:table-cell text-right" : "text-right"}>
+                        <div className="flex justify-end gap-2">
                           <Button 
                             variant="ghost" 
                             size="sm" 
-                            asChild 
-                            title="Baixar boleto"
+                            title="Ver detalhes"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenModal(charge);
+                            }}
                           >
-                            <a 
-                              href={charge.boletoUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Download className="h-4 w-4" />
-                            </a>
+                            <Eye className="h-4 w-4" />
                           </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                          {charge.status === 'approved' && charge.receiptUrl && (
+                            <Button variant="ghost" size="sm" asChild title="Ver comprovante">
+                              <a 
+                                href={charge.receiptUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <FileText className="h-4 w-4" />
+                              </a>
+                            </Button>
+                          )}
+                          {charge.method === 'boleto' && charge.boletoUrl && (
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              asChild 
+                              title="Baixar boleto"
+                            >
+                              <a 
+                                href={charge.boletoUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Download className="h-4 w-4" />
+                              </a>
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>
