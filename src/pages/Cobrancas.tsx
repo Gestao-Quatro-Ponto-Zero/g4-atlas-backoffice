@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
@@ -317,7 +318,7 @@ const Cobrancas = () => {
 
   return (
     <Layout>
-      <div className="w-full mx-auto px-2 sm:px-0" style={{ maxWidth: "900px" }}>
+      <div className="w-full max-w-full px-2 sm:px-0 mx-auto overflow-hidden" style={{ maxWidth: "900px" }}>
         <div className="mb-5 text-left">
           <h1 className="text-2xl font-bold sm:text-3xl">Minhas Cobranças</h1>
           <p className="text-gray-600 text-sm sm:text-base">
@@ -325,17 +326,17 @@ const Cobrancas = () => {
           </p>
         </div>
         
-        <Card className="overflow-hidden">
+        <Card className="max-w-full overflow-hidden">
           <CardContent className="p-0">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Data</TableHead>
-                  <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Descrição</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Forma de Pagamento</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className={isMobile ? "hidden md:table-cell text-right" : "text-right"}>Ações</TableHead>
+                  <TableHead className="whitespace-nowrap">Data</TableHead>
+                  <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Descrição</TableHead>
+                  <TableHead className="whitespace-nowrap">Valor</TableHead>
+                  <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Forma de Pagamento</TableHead>
+                  <TableHead className="whitespace-nowrap">Status</TableHead>
+                  <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap text-right" : "whitespace-nowrap text-right"}>Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -345,11 +346,11 @@ const Cobrancas = () => {
                     className="cursor-pointer hover:bg-gray-50"
                     onClick={() => isMobile ? handleOpenModal(charge) : null}
                   >
-                    <TableCell className="font-medium">{formatDate(charge.date.toISOString())}</TableCell>
+                    <TableCell className="font-medium whitespace-nowrap">{formatDate(charge.date.toISOString())}</TableCell>
                     <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{charge.description}</TableCell>
-                    <TableCell>{formatCurrency(charge.amount)}</TableCell>
+                    <TableCell className="whitespace-nowrap">{formatCurrency(charge.amount)}</TableCell>
                     <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{getPaymentMethodDisplay(charge.method)}</TableCell>
-                    <TableCell>{getStatusBadge(charge.status)}</TableCell>
+                    <TableCell className="whitespace-nowrap">{getStatusBadge(charge.status)}</TableCell>
                     <TableCell className={isMobile ? "hidden md:table-cell text-right" : "text-right"}>
                       <div className="flex justify-end gap-2">
                         <Button 
