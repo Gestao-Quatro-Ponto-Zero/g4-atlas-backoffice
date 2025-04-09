@@ -236,21 +236,21 @@ const DesktopMenu = () => {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <Sidebar variant="floating" className="hidden md:flex">
-        <SidebarHeader className="flex flex-col items-center py-6 px-2">
-          <div className="flex items-center pb-6">
+      <Sidebar variant="floating" className="hidden md:flex" style={{width: '220px'}}>
+        <SidebarHeader className="flex flex-col items-center py-4 px-2">
+          <div className="flex items-center pb-4">
             <div className="text-xl font-bold text-blue-600">G4</div>
             <div className="ml-1 text-lg">Educação</div>
           </div>
           
-          <Avatar className="h-20 w-20 bg-emerald-500 text-white text-xl">
+          <Avatar className="h-16 w-16 bg-emerald-500 text-white text-xl">
             <AvatarFallback>{firstLetter}</AvatarFallback>
           </Avatar>
-          <h3 className="mt-4 font-medium text-base">{user?.name}</h3>
-          <p className="text-sm text-gray-500">{user?.email}</p>
+          <h3 className="mt-3 font-medium text-sm">{user?.name}</h3>
+          <p className="text-xs text-gray-500">{user?.email}</p>
         </SidebarHeader>
         
-        <SidebarContent className="px-3 py-4">
+        <SidebarContent className="px-2 py-2">
           <SidebarMenu>
             {menuItems.map((item, index) => (
               <SidebarMenuItem key={index}>
@@ -260,10 +260,10 @@ const DesktopMenu = () => {
                       <SidebarMenuButton isActive={item.active}>
                         <div className="flex items-center justify-between w-full group/menu-button">
                           <div className="flex items-center">
-                            <item.icon className="h-5 w-5" />
-                            <span className="ml-3">{item.label}</span>
+                            <item.icon className="h-4 w-4" />
+                            <span className="ml-2 text-sm">{item.label}</span>
                           </div>
-                          <ChevronRight className="h-4 w-4 opacity-70" />
+                          <ChevronRight className="h-3 w-3 opacity-70" />
                         </div>
                       </SidebarMenuButton>
                     </PopoverTrigger>
@@ -278,10 +278,10 @@ const DesktopMenu = () => {
                       className="flex items-center justify-between group/menu-button"
                     >
                       <div className="flex items-center">
-                        <item.icon className="h-5 w-5" />
-                        <span className="ml-3">{item.label}</span>
+                        <item.icon className="h-4 w-4" />
+                        <span className="ml-2 text-sm">{item.label}</span>
                       </div>
-                      <ChevronRight className="h-4 w-4 opacity-70" />
+                      <ChevronRight className="h-3 w-3 opacity-70" />
                     </a>
                   </SidebarMenuButton>
                 )}
@@ -290,11 +290,11 @@ const DesktopMenu = () => {
           </SidebarMenu>
         </SidebarContent>
         
-        <SidebarFooter className="mt-auto py-6 px-4">
+        <SidebarFooter className="mt-auto py-4 px-3">
           <div className="flex justify-center">
             <Button variant="outline" className="rounded-full w-full text-sm">Ajuda</Button>
           </div>
-          <div className="flex justify-center space-x-4 mt-6 text-xs text-gray-500">
+          <div className="flex justify-center space-x-3 mt-4 text-xs text-gray-500">
             <a href="/termos" className="hover:underline">Termos</a>
             <a href="/privacidade" className="hover:underline">Privacidade</a>
             <a href="/cookies" className="hover:underline">Cookies</a>

@@ -37,7 +37,7 @@ const Index = () => {
           <LoginForm />
         </div>
       ) : (
-        <div className="w-full mx-auto" style={{ maxWidth: "900px" }}>
+        <div className="w-full mx-auto px-2 sm:px-0" style={{ maxWidth: "900px" }}>
           <div className="mb-5 text-center md:text-left">
             <h1 className="text-2xl font-bold sm:text-3xl">Meus Pedidos</h1>
             <p className="text-gray-600 text-sm sm:text-base">
