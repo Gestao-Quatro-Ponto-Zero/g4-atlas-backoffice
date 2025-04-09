@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { User } from '@/data/mockData';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -76,18 +75,18 @@ const ProfileSection: React.FC = () => {
     toast.success(`Novo código enviado para o seu ${verifyingField === 'email' ? 'e-mail' : 'telefone'}`);
   };
 
+  const switchVerificationMethod = () => {
+    const newMethod = verifyingField === 'email' ? 'phone' : 'email';
+    setVerifyingField(newMethod);
+    toast.success(`Código de verificação enviado para o seu ${newMethod === 'email' ? 'e-mail' : 'telefone'}`);
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-xl">Dados Pessoais</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center gap-6 mb-6">
-          <Avatar className="h-24 w-24 bg-[#FEC6A1] text-white text-xl">
-            <AvatarFallback>{getInitials(userData?.name || '')}</AvatarFallback>
-          </Avatar>
-        </div>
-        
         <div className="space-y-0 divide-y">
           {/* Name field */}
           <div 
@@ -218,6 +217,14 @@ const ProfileSection: React.FC = () => {
               className="w-full"
             >
               Reenviar código
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={switchVerificationMethod}
+              className="text-sm text-blue-600 hover:text-blue-800"
+            >
+              Não tem mais acesso a este {verifyingField === 'email' ? 'e-mail' : 'telefone'}?{' '}
+              Validar pelo {verifyingField === 'email' ? 'telefone' : 'e-mail'}.
             </Button>
           </div>
         </DialogContent>
