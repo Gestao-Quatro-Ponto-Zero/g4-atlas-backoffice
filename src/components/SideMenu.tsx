@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -98,15 +97,15 @@ const WalletContent = () => {
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        <Button variant="outline" size="sm" className="w-full">
+          <Plus className="mr-1 h-4 w-4" /> Adicionar cartão de crédito/débito
+        </Button>
+        <p className="text-xs text-gray-500 mt-2 text-center">
+          Boletos e PIX são gerados no momento do pagamento.
+        </p>
       </div>
-      <Button variant="outline" size="sm" className="w-full">
-        <Plus className="mr-1 h-4 w-4" /> Adicionar cartão de crédito/débito
-      </Button>
-      <p className="text-xs text-gray-500 mt-2 text-center">
-        Boletos e PIX são gerados no momento do pagamento.
-      </p>
     </div>
   );
 };
@@ -138,9 +137,9 @@ const MobileMenu = () => {
 
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
-    { icon: Wallet, label: 'Minha Carteira', href: '/carteira', active: pathname === '/carteira' },
     { icon: Receipt, label: 'Cobranças', href: '/cobrancas', active: pathname === '/cobrancas' },
     { icon: FileText, label: 'Contratos', href: '/contratos', active: pathname === '/contratos' },
+    { icon: Wallet, label: 'Minha Carteira', href: '/carteira', active: pathname === '/carteira' },
     { icon: MapPin, label: 'Endereços', href: '/enderecos', active: pathname === '/enderecos' },
     { 
       icon: Settings, 
@@ -266,9 +265,9 @@ const DesktopMenu = () => {
   
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
-    { icon: Wallet, label: 'Minha Carteira', href: '/carteira', active: pathname === '/carteira' },
     { icon: Receipt, label: 'Cobranças', href: '/cobrancas', active: pathname === '/cobrancas' },
     { icon: FileText, label: 'Contratos', href: '/contratos', active: pathname === '/contratos' },
+    { icon: Wallet, label: 'Minha Carteira', href: '/carteira', active: pathname === '/carteira' },
     { icon: MapPin, label: 'Endereços', href: '/enderecos', active: pathname === '/enderecos' },
     { 
       icon: Settings, 
