@@ -1,6 +1,5 @@
 
 import React from 'react';
-import Header from './Header';
 import SideMenu from './SideMenu';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -20,7 +19,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         )}
         <div className="flex flex-col flex-grow w-full">
-          {isAuthenticated && <Header />}
           <main className="flex-grow py-6 px-4 sm:px-6 lg:px-8">
             {children}
           </main>

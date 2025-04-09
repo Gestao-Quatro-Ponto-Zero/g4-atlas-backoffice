@@ -1,17 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
   CreditCard, 
   Plus, 
-  Trash2, 
-  Edit, 
-  Check, 
+  Trash2,
   Landmark,
-  QrCode
+  QrCode,
+  Check,
+  MapPin
 } from 'lucide-react';
 import { mockCards } from '@/data/mockData';
 import {
@@ -23,6 +23,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -40,6 +51,30 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
+// Mock addresses for billing
+const mockAddresses = [
+  {
+    id: "addr1",
+    street: "Rua das Flores, 123",
+    neighborhood: "Centro",
+    city: "São Paulo",
+    state: "SP",
+    zipCode: "01001-000",
+    isDefault: true
+  },
+  {
+    id: "addr2",
+    street: "Av. Paulista, 1000",
+    neighborhood: "Bela Vista",
+    city: "São Paulo",
+    state: "SP",
+    zipCode: "01310-100",
+    isDefault: false
+  }
+];
 
 const PaymentMethodCard = ({ 
   brand, 
@@ -48,6 +83,8 @@ const PaymentMethodCard = ({
   type = 'credit',
   isDefault = false
 }) => {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   return (
     <Card className="relative overflow-hidden">
       <CardContent className="p-5">
@@ -84,21 +121,98 @@ const PaymentMethodCard = ({
             </div>
           </div>
           
-          <div className="flex space-x-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Edit className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500">
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
+          <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Excluir método de pagamento</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tem certeza que deseja excluir este cartão? Esta ação não pode ser desfeita.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction className="bg-red-600 hover:bg-red-700">Excluir</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </CardContent>
     </Card>
   );
 };
 
+const AddressSelection = ({ setSelectedAddress, selectedAddress }) => {
+  const [useNewAddress, setUseNewAddress] = useState(false);
+  
+  return (
+    <div className="space-y-4 mt-4">
+      <h4 className="text-sm font-medium">Endereço de cobrança</h4>
+      
+      <RadioGroup 
+        value={useNewAddress ? 'new' : 'existing'} 
+        onValueChange={(value) => setUseNewAddress(value === 'new')}
+      >
+        <div className="flex items-start space-x-2 mb-3">
+          <RadioGroupItem value="existing" id="existing" />
+          <div className="grid gap-1.5">
+            <label htmlFor="existing" className="text-sm font-medium">
+              Usar um endereço existente
+            </label>
+            {!useNewAddress && (
+              <Select 
+                value={selectedAddress} 
+                onValueChange={setSelectedAddress}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Selecione um endereço" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mockAddresses.map((address) => (
+                    <SelectItem key={address.id} value={address.id}>
+                      {address.street}, {address.city}/{address.state}
+                      {address.isDefault && " (Padrão)"}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-start space-x-2">
+          <RadioGroupItem value="new" id="new" />
+          <div className="grid gap-1.5 w-full">
+            <label htmlFor="new" className="text-sm font-medium">
+              Adicionar novo endereço
+            </label>
+            {useNewAddress && (
+              <div className="grid grid-cols-1 gap-4 mt-2">
+                <Input placeholder="Endereço (rua, número)" />
+                <div className="grid grid-cols-2 gap-3">
+                  <Input placeholder="Bairro" />
+                  <Input placeholder="Cidade" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Input placeholder="Estado" />
+                  <Input placeholder="CEP" />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </RadioGroup>
+    </div>
+  );
+};
+
 const AddNewPaymentMethodDialog = () => {
+  const [selectedAddress, setSelectedAddress] = useState(mockAddresses[0].id);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -180,6 +294,13 @@ const AddNewPaymentMethodDialog = () => {
                   </Select>
                 </div>
               </div>
+
+              <Separator />
+              
+              <AddressSelection 
+                selectedAddress={selectedAddress}
+                setSelectedAddress={setSelectedAddress}
+              />
             </div>
           </TabsContent>
           
@@ -190,6 +311,13 @@ const AddNewPaymentMethodDialog = () => {
               <p className="text-gray-500 mt-2">
                 O boleto será gerado no momento da compra e enviado para seu e-mail.
               </p>
+
+              <Separator className="my-6" />
+              
+              <AddressSelection 
+                selectedAddress={selectedAddress}
+                setSelectedAddress={setSelectedAddress}
+              />
             </div>
           </TabsContent>
           
@@ -257,7 +385,7 @@ const Carteira = () => {
           <div className="mb-6">
             <h2 className="text-lg font-medium mb-4">Métodos de pagamento</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {mockCards.map((card) => (
                 <PaymentMethodCard
                   key={card.lastFourDigits}
