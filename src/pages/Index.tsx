@@ -38,8 +38,8 @@ const Index = () => {
         </div>
       ) : (
         <div className="w-full">
-          <div className="mb-5">
-            <h1 className="text-xl font-bold sm:text-2xl">Meus Pedidos</h1>
+          <div className="mb-5 text-center md:text-left">
+            <h1 className="text-2xl font-bold sm:text-3xl">Meus Pedidos</h1>
             <p className="text-gray-600 text-sm sm:text-base">
               Visualize e gerencie seus pedidos recentes
             </p>
