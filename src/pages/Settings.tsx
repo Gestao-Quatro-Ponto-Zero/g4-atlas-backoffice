@@ -56,15 +56,6 @@ const Settings = () => {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto space-y-6 pb-6">
-        <div className="flex flex-col items-center justify-center py-6">
-          <img 
-            src="/lovable-uploads/787f0964-43af-44f4-ba61-2576d0e15f5f.png" 
-            alt="G4 Educação Logo" 
-            className="h-16 md:h-20 mb-4"
-          />
-          <h1 className="text-2xl font-bold">Configurações</h1>
-        </div>
-        
         {/* User Profile Section */}
         <ProfileSection />
         

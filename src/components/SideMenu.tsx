@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -156,8 +157,11 @@ const MobileMenu = () => {
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="text-xl font-bold text-blue-600">G4</div>
-                  <div className="ml-1 text-lg">Educação</div>
+                  <img 
+                    src="/lovable-uploads/c078ae70-9089-43ad-8657-a628953d196f.png" 
+                    alt="G4 Educação Logo" 
+                    className="h-8"
+                  />
                 </div>
                 <DrawerClose asChild>
                   <Button variant="ghost" size="icon">
@@ -168,7 +172,7 @@ const MobileMenu = () => {
             </div>
           </div>
           <div className="flex flex-col items-center py-4">
-            <Avatar className="h-20 w-20 bg-emerald-500 text-white text-xl">
+            <Avatar className="h-20 w-20 bg-[#ea384c] text-white text-xl">
               <AvatarFallback>{firstLetter}</AvatarFallback>
             </Avatar>
             <h3 className="mt-4 font-medium text-base">{user?.name}</h3>
@@ -224,7 +228,10 @@ const MobileMenu = () => {
                   )}
                 >
                   <div className="flex items-center">
-                    <item.icon className="h-5 w-5 text-gray-700" />
+                    <item.icon className={cn(
+                      "h-5 w-5", 
+                      item.label === 'Configurações' ? "text-[#ea384c]" : "text-gray-700"
+                    )} />
                     <span className="ml-3 text-sm font-medium">{item.label}</span>
                   </div>
                   <ChevronRight className="h-4 w-4 text-gray-400" />
@@ -274,11 +281,14 @@ const DesktopMenu = () => {
       <Sidebar variant="floating" className="hidden md:flex" style={{width: '220px'}}>
         <SidebarHeader className="flex flex-col items-center py-4 px-2">
           <div className="flex items-center pb-4">
-            <div className="text-xl font-bold text-blue-600">G4</div>
-            <div className="ml-1 text-lg">Educação</div>
+            <img 
+              src="/lovable-uploads/c078ae70-9089-43ad-8657-a628953d196f.png" 
+              alt="G4 Educação Logo" 
+              className="h-8"
+            />
           </div>
           
-          <Avatar className="h-16 w-16 bg-emerald-500 text-white text-xl">
+          <Avatar className="h-16 w-16 bg-[#ea384c] text-white text-xl">
             <AvatarFallback>{firstLetter}</AvatarFallback>
           </Avatar>
           <h3 className="mt-3 font-medium text-sm">{user?.name}</h3>
@@ -295,7 +305,10 @@ const DesktopMenu = () => {
                       <SidebarMenuButton isActive={item.active}>
                         <div className="flex items-center justify-between w-full group/menu-button">
                           <div className="flex items-center">
-                            <item.icon className="h-4 w-4" />
+                            <item.icon className={cn(
+                              "h-4 w-4",
+                              item.label === 'Configurações' ? "text-[#ea384c]" : ""
+                            )} />
                             <span className="ml-2 text-sm">{item.label}</span>
                           </div>
                           <ChevronRight className="h-3 w-3 opacity-70" />
@@ -312,7 +325,10 @@ const DesktopMenu = () => {
                       <SidebarMenuButton isActive={item.active}>
                         <div className="flex items-center justify-between w-full group/menu-button">
                           <div className="flex items-center">
-                            <item.icon className="h-4 w-4" />
+                            <item.icon className={cn(
+                              "h-4 w-4",
+                              item.label === 'Configurações' ? "text-[#ea384c]" : ""
+                            )} />
                             <span className="ml-2 text-sm">{item.label}</span>
                           </div>
                           <ChevronRight className="h-3 w-3 opacity-70" />
@@ -330,7 +346,10 @@ const DesktopMenu = () => {
                       className="flex items-center justify-between group/menu-button"
                     >
                       <div className="flex items-center">
-                        <item.icon className="h-4 w-4" />
+                        <item.icon className={cn(
+                          "h-4 w-4",
+                          item.label === 'Configurações' ? "text-[#ea384c]" : ""
+                        )} />
                         <span className="ml-2 text-sm">{item.label}</span>
                       </div>
                       <ChevronRight className="h-3 w-3 opacity-70" />
