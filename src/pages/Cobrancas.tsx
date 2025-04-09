@@ -20,6 +20,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 
 const mockCharges = [
@@ -28,12 +29,13 @@ const mockCharges = [
     date: new Date(2025, 2, 15),
     description: 'Curso de Desenvolvimento Web',
     amount: 1299.00,
-    status: 'paid',
+    status: 'approved',
     method: 'credit_card',
     paymentDate: new Date(2025, 2, 15),
     receiptUrl: '#',
     orderDetails: {
       orderNumber: 'ORD123456',
+      status: 'approved',
       items: [
         { name: 'Curso de Desenvolvimento Web', price: 1299.00 }
       ]
@@ -44,12 +46,13 @@ const mockCharges = [
     date: new Date(2025, 2, 10),
     description: 'Curso de Inglês Básico',
     amount: 899.00,
-    status: 'paid',
+    status: 'approved',
     method: 'pix',
     paymentDate: new Date(2025, 2, 10),
     receiptUrl: '#',
     orderDetails: {
       orderNumber: 'ORD123457',
+      status: 'approved',
       items: [
         { name: 'Curso de Inglês Básico', price: 899.00 }
       ]
@@ -66,6 +69,7 @@ const mockCharges = [
     boletoUrl: '#',
     orderDetails: {
       orderNumber: 'ORD123458',
+      status: 'pending',
       items: [
         { name: 'Curso de Marketing Digital', price: 1499.00 }
       ]
@@ -76,11 +80,12 @@ const mockCharges = [
     date: new Date(2025, 1, 25),
     description: 'Curso de Excel Avançado',
     amount: 799.00,
-    status: 'failed',
+    status: 'denied',
     method: 'credit_card',
     failureReason: 'Cartão expirado',
     orderDetails: {
       orderNumber: 'ORD123459',
+      status: 'denied',
       items: [
         { name: 'Curso de Excel Avançado', price: 799.00 }
       ]
@@ -97,6 +102,7 @@ const mockCharges = [
     boletoUrl: '#',
     orderDetails: {
       orderNumber: 'ORD123460',
+      status: 'canceled',
       items: [
         { name: 'Curso de Fotografia', price: 599.00 }
       ]
@@ -165,14 +171,16 @@ const Cobrancas = () => {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'paid':
-        return <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Pago</span>;
+      case 'approved':
+        return <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Aprovado</span>;
       case 'pending':
         return <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">Pendente</span>;
-      case 'failed':
-        return <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Falhou</span>;
+      case 'denied':
+        return <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Recusado</span>;
       case 'expired':
         return <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Vencido</span>;
+      case 'canceled':
+        return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">Cancelado</span>;
       default:
         return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">{status}</span>;
     }
@@ -211,11 +219,27 @@ const Cobrancas = () => {
     setIsModalOpen(true);
   };
 
+  const getOrderStatusBadge = (status: string) => {
+    switch (status) {
+      case 'approved':
+        return <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Aprovado</span>;
+      case 'pending':
+        return <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">Pendente</span>;
+      case 'denied':
+        return <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Recusado</span>;
+      case 'canceled':
+        return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">Cancelado</span>;
+      default:
+        return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">{status}</span>;
+    }
+  };
+
   const renderModalContent = () => {
     if (!selectedCharge) return null;
     
     return (
       <>
+        <DialogDescription className="sr-only">Detalhes da cobrança selecionada</DialogDescription>
         <div className="bg-gray-50 p-4 rounded-lg mb-4">
           <h3 className="text-lg font-medium mb-2">{selectedCharge.description}</h3>
           <div className="grid grid-cols-2 gap-4 mb-3">
@@ -234,8 +258,8 @@ const Cobrancas = () => {
               <p className="font-medium">{formatDate(selectedCharge.date.toISOString())}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Status</p>
-              <div className="mt-1">{getStatusBadge(selectedCharge.status)}</div>
+              <p className="text-sm text-gray-500">Status do Pedido</p>
+              <div className="mt-1">{getOrderStatusBadge(selectedCharge.orderDetails.status)}</div>
             </div>
           </div>
         </div>
@@ -245,7 +269,12 @@ const Cobrancas = () => {
           <div className="p-3 border rounded-lg">
             {getPaymentMethodDisplay(selectedCharge.method)}
             
-            {selectedCharge.method === 'credit_card' && selectedCharge.status === 'failed' && (
+            <div className="mt-2 flex items-center">
+              <p className="text-sm text-gray-500 mr-2">Status da Cobrança:</p>
+              {getStatusBadge(selectedCharge.status)}
+            </div>
+
+            {selectedCharge.method === 'credit_card' && selectedCharge.status === 'denied' && (
               <div className="mt-2 p-2 bg-red-50 text-red-700 text-sm rounded">
                 <AlertCircle className="inline h-4 w-4 mr-1" />
                 <span>Falha no pagamento: {selectedCharge.failureReason}</span>
@@ -364,7 +393,7 @@ const Cobrancas = () => {
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
-                        {charge.status === 'paid' && charge.receiptUrl && (
+                        {charge.status === 'approved' && charge.receiptUrl && (
                           <Button variant="ghost" size="sm" asChild title="Ver comprovante">
                             <a 
                               href={charge.receiptUrl} 

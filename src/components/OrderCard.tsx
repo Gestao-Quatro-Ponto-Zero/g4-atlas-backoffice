@@ -66,7 +66,7 @@ const mockBoletoTransactions = [
 
 const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const [isPaymentsOpen, setIsPaymentsOpen] = useState(false);
-  const [isTransactionsOpen, setIsTransactionsOpen] = useState(false);
+  const [isCobrancasOpen, setIsCobrancasOpen] = useState(false);
 
   const getStatusIcon = () => {
     switch (order.status) {
@@ -305,7 +305,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                   </CollapsibleTrigger>
                 )}
               </div>
-
+              
               <div className="mt-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
@@ -360,16 +360,16 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           
           {hasBoletoPayment && (
             <Collapsible
-              open={isTransactionsOpen}
-              onOpenChange={setIsTransactionsOpen}
+              open={isCobrancasOpen}
+              onOpenChange={setIsCobrancasOpen}
               className="mt-3"
             >
               <div className="rounded-md bg-gray-50/70 p-3">
                 <CollapsibleTrigger asChild>
                   <div className="flex justify-between items-center cursor-pointer hover:bg-gray-100/50 p-1 rounded">
                     <p className="text-xs font-medium uppercase text-gray-500 flex items-center">
-                      <span>Transações</span>
-                      {isTransactionsOpen ? (
+                      <span>Cobranças</span>
+                      {isCobrancasOpen ? (
                         <ChevronsUp className="h-4 w-4 ml-1" />
                       ) : (
                         <ChevronsDown className="h-4 w-4 ml-1" />
