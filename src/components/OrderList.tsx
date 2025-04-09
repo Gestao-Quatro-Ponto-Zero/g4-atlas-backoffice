@@ -11,16 +11,16 @@ interface OrderListProps {
 const OrderList: React.FC<OrderListProps> = ({ orders }) => {
   if (!orders.length) {
     return (
-      <div className="text-center py-12">
-        <ShoppingCart className="mx-auto h-12 w-12 text-gray-400" />
-        <h3 className="mt-2 text-lg font-medium text-gray-900">Nenhum pedido encontrado</h3>
-        <p className="mt-1 text-gray-500">Você ainda não fez nenhum pedido.</p>
+      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50/50 py-12">
+        <ShoppingCart className="h-12 w-12 text-gray-400" strokeWidth={1.5} />
+        <h3 className="mt-4 text-base font-medium text-gray-900">Nenhum pedido encontrado</h3>
+        <p className="mt-1 text-sm text-gray-500">Você ainda não fez nenhum pedido.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
       {orders.map((order) => (
         <OrderCard key={order.id} order={order} />
       ))}
