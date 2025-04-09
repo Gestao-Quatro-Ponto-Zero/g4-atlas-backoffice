@@ -102,8 +102,11 @@ const WalletContent = () => {
         ))}
       </div>
       <Button variant="outline" size="sm" className="w-full">
-        <Plus className="mr-1 h-4 w-4" /> Adicionar cartão
+        <Plus className="mr-1 h-4 w-4" /> Adicionar cartão de crédito/débito
       </Button>
+      <p className="text-xs text-gray-500 mt-2 text-center">
+        Boletos e PIX são gerados no momento do pagamento.
+      </p>
     </div>
   );
 };
