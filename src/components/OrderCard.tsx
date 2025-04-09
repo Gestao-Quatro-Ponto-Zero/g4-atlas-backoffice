@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Order, PaymentDetails } from '@/data/mockData';
@@ -43,7 +44,7 @@ const mockBoletoTransactions = [
   {
     id: "boleto_1",
     dueDate: new Date(2025, 2, 15),
-    status: "paid",
+    status: "pago",
     amount: 199.9,
     paidDate: new Date(2025, 2, 14),
     barcode: "34191790010104351004791020150008190990000019990"
@@ -51,14 +52,14 @@ const mockBoletoTransactions = [
   {
     id: "boleto_2",
     dueDate: new Date(2025, 3, 15),
-    status: "pending",
+    status: "pendente",
     amount: 199.9,
     barcode: "34191790010104351004791020150008190990000019990"
   },
   {
     id: "boleto_3",
     dueDate: new Date(2025, 1, 15),
-    status: "overdue",
+    status: "vencido",
     amount: 199.9,
     barcode: "34191790010104351004791020150008190990000019990"
   }
@@ -243,11 +244,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
   const getBoletoStatusBadge = (status: string) => {
     switch (status) {
-      case 'paid':
+      case 'pago':
         return <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">Pago</span>;
-      case 'pending':
+      case 'pendente':
         return <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-xs">Pendente</span>;
-      case 'overdue':
+      case 'vencido':
         return <span className="px-2 py-0.5 bg-red-100 text-red-700 rounded text-xs">Vencido</span>;
       default:
         return <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs">{status}</span>;
@@ -391,7 +392,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                             <span className="text-xs text-gray-600">
                               Vencimento: {formatDate(transaction.dueDate)}
                             </span>
-                            {transaction.status === 'paid' && transaction.paidDate && (
+                            {transaction.status === 'pago' && transaction.paidDate && (
                               <span className="text-xs text-green-600">
                                 Pago em: {formatDate(transaction.paidDate.toISOString())}
                               </span>
@@ -404,7 +405,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                                 <Receipt className="h-3 w-3 mr-1" />
                                 Comprovante
                               </Button>
-                              {transaction.status === 'pending' && (
+                              {transaction.status === 'pendente' && (
                                 <Button size="sm" variant="outline" className="h-7 px-2 py-1 text-xs">
                                   <Download className="h-3 w-3 mr-1" />
                                   Boleto

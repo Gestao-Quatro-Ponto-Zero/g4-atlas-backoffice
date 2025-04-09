@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { 
   Table,
   TableHeader,
@@ -40,13 +41,13 @@ const mockCharges = [
     date: new Date(2025, 2, 15),
     description: 'Curso de Desenvolvimento Web',
     amount: 1299.00,
-    status: 'approved',
+    status: 'pago',
     method: 'credit_card',
     paymentDate: new Date(2025, 2, 15),
     receiptUrl: '#',
     orderDetails: {
       orderNumber: 'ORD123456',
-      status: 'approved',
+      status: 'aprovado',
       items: [
         { name: 'Curso de Desenvolvimento Web', price: 1299.00 }
       ]
@@ -57,13 +58,13 @@ const mockCharges = [
     date: new Date(2025, 2, 10),
     description: 'Curso de Inglês Básico',
     amount: 899.00,
-    status: 'approved',
+    status: 'pago',
     method: 'pix',
     paymentDate: new Date(2025, 2, 10),
     receiptUrl: '#',
     orderDetails: {
       orderNumber: 'ORD123457',
-      status: 'approved',
+      status: 'aprovado',
       items: [
         { name: 'Curso de Inglês Básico', price: 899.00 }
       ]
@@ -74,13 +75,13 @@ const mockCharges = [
     date: new Date(2025, 3, 5),
     description: 'Curso de Marketing Digital',
     amount: 1499.00,
-    status: 'pending',
+    status: 'pendente',
     method: 'boleto',
     dueDate: new Date(2025, 3, 15),
     boletoUrl: '#',
     orderDetails: {
       orderNumber: 'ORD123458',
-      status: 'pending',
+      status: 'pendente',
       items: [
         { name: 'Curso de Marketing Digital', price: 1499.00 }
       ]
@@ -91,12 +92,12 @@ const mockCharges = [
     date: new Date(2025, 1, 25),
     description: 'Curso de Excel Avançado',
     amount: 799.00,
-    status: 'denied',
+    status: 'pendente',
     method: 'credit_card',
     failureReason: 'Cartão expirado',
     orderDetails: {
       orderNumber: 'ORD123459',
-      status: 'denied',
+      status: 'recusado',
       items: [
         { name: 'Curso de Excel Avançado', price: 799.00 }
       ]
@@ -107,13 +108,13 @@ const mockCharges = [
     date: new Date(2025, 1, 20),
     description: 'Curso de Fotografia',
     amount: 599.00,
-    status: 'expired',
+    status: 'vencido',
     method: 'boleto',
     dueDate: new Date(2025, 2, 5),
     boletoUrl: '#',
     orderDetails: {
       orderNumber: 'ORD123460',
-      status: 'canceled',
+      status: 'cancelado',
       items: [
         { name: 'Curso de Fotografia', price: 599.00 }
       ]
@@ -182,15 +183,26 @@ const Cobrancas = () => {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'approved':
-        return <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Aprovado</span>;
-      case 'pending':
+      case 'pago':
+        return <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Pago</span>;
+      case 'pendente':
         return <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">Pendente</span>;
-      case 'denied':
-        return <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Recusado</span>;
-      case 'expired':
+      case 'vencido':
         return <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Vencido</span>;
-      case 'canceled':
+      default:
+        return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">{status}</span>;
+    }
+  };
+
+  const getOrderStatusBadge = (status: string) => {
+    switch (status) {
+      case 'aprovado':
+        return <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Aprovado</span>;
+      case 'pendente':
+        return <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">Pendente</span>;
+      case 'recusado':
+        return <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Recusado</span>;
+      case 'cancelado':
         return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">Cancelado</span>;
       default:
         return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">{status}</span>;
@@ -228,21 +240,6 @@ const Cobrancas = () => {
   const handleOpenModal = (charge) => {
     setSelectedCharge(charge);
     setIsModalOpen(true);
-  };
-
-  const getOrderStatusBadge = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Aprovado</span>;
-      case 'pending':
-        return <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">Pendente</span>;
-      case 'denied':
-        return <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Recusado</span>;
-      case 'canceled':
-        return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">Cancelado</span>;
-      default:
-        return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">{status}</span>;
-    }
   };
 
   const renderModalContent = () => {
@@ -295,7 +292,7 @@ const Cobrancas = () => {
               {getPaymentMethodDisplay(selectedCharge.method)}
             </div>
             
-            {selectedCharge.method === 'credit_card' && selectedCharge.status === 'denied' && (
+            {selectedCharge.method === 'credit_card' && selectedCharge.status === 'pendente' && selectedCharge.failureReason && (
               <div className="mt-3 p-2 bg-red-50 text-red-700 text-sm rounded">
                 <AlertCircle className="inline h-4 w-4 mr-1" />
                 <span>Falha no pagamento: {selectedCharge.failureReason}</span>
@@ -426,7 +423,7 @@ const Cobrancas = () => {
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
-                          {charge.status === 'approved' && charge.receiptUrl && (
+                          {charge.status === 'pago' && charge.receiptUrl && (
                             <Button variant="ghost" size="sm" asChild title="Ver comprovante">
                               <a 
                                 href={charge.receiptUrl} 
