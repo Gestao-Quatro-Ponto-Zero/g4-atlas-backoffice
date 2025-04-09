@@ -10,13 +10,26 @@ export interface User {
   phone: string;
 }
 
+export interface PaymentCard {
+  brand: string;
+  lastFourDigits: string;
+  holderName?: string;
+}
+
+export interface PaymentDetails {
+  method: "credit_card" | "boleto" | "pix";
+  cardDetails?: PaymentCard;
+  failureReason?: string;
+  receiptUrl?: string;
+}
+
 export interface Order {
   id: string;
   productName: string;
   price: number;
   date: string;
   status: "pending" | "approved" | "denied";
-  paymentMethod: string;
+  paymentDetails: PaymentDetails;
 }
 
 export const mockUser: User = {
@@ -34,7 +47,15 @@ export const mockOrders: Order[] = [
     price: 4997.00,
     date: "2025-03-25",
     status: "approved",
-    paymentMethod: "Cartão de Crédito",
+    paymentDetails: {
+      method: "credit_card",
+      cardDetails: {
+        brand: "mastercard",
+        lastFourDigits: "5367",
+        holderName: "CARLOS SILVA"
+      },
+      receiptUrl: "https://receipt.example.com/123456"
+    }
   },
   {
     id: "order2",
@@ -42,7 +63,10 @@ export const mockOrders: Order[] = [
     price: 997.00,
     date: "2025-04-01",
     status: "pending",
-    paymentMethod: "Boleto Bancário",
+    paymentDetails: {
+      method: "boleto",
+      receiptUrl: "https://boleto.example.com/789012"
+    }
   },
   {
     id: "order3",
@@ -50,6 +74,14 @@ export const mockOrders: Order[] = [
     price: 497.00,
     date: "2025-02-15",
     status: "denied",
-    paymentMethod: "Cartão de Crédito",
+    paymentDetails: {
+      method: "credit_card",
+      cardDetails: {
+        brand: "visa",
+        lastFourDigits: "4123",
+        holderName: "CARLOS SILVA"
+      },
+      failureReason: "Cartão expirado"
+    }
   },
 ];

@@ -3,11 +3,8 @@ import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
 import LoginForm from '../components/LoginForm';
-import ProfileSection from '../components/ProfileSection';
 import OrderList from '../components/OrderList';
 import { mockOrders } from '../data/mockData';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CircleUser, ShoppingCart, CreditCard } from 'lucide-react';
 
 const Index = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -42,48 +39,15 @@ const Index = () => {
       ) : (
         <div className="max-w-6xl mx-auto">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold">Bem-vindo de volta!</h1>
+            <h1 className="text-2xl font-bold">Meus Pedidos</h1>
             <p className="text-gray-600">
-              Acesse seus pedidos e gerencie suas informações
+              Visualize e gerencie seus pedidos recentes
             </p>
           </div>
           
-          <Tabs defaultValue="orders" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="orders" className="flex items-center">
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                <span>Meus Pedidos</span>
-              </TabsTrigger>
-              <TabsTrigger value="profile" className="flex items-center">
-                <CircleUser className="h-4 w-4 mr-2" />
-                <span>Perfil</span>
-              </TabsTrigger>
-              <TabsTrigger value="payments" className="flex items-center">
-                <CreditCard className="h-4 w-4 mr-2" />
-                <span>Pagamentos</span>
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="orders">
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold mb-4">Seus Pedidos</h2>
-                <OrderList orders={mockOrders} />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="profile">
-              <ProfileSection />
-            </TabsContent>
-            
-            <TabsContent value="payments">
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold mb-4">Métodos de Pagamento</h2>
-                <p className="text-gray-500">
-                  Esta funcionalidade estará disponível em breve. Você poderá gerenciar seus cartões e outros métodos de pagamento.
-                </p>
-              </div>
-            </TabsContent>
-          </Tabs>
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <OrderList orders={mockOrders} />
+          </div>
         </div>
       )}
     </Layout>
