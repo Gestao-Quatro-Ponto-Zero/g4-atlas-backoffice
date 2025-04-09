@@ -136,6 +136,7 @@ const MobileMenu = () => {
   const location = useLocation();
   const pathname = location.pathname;
 
+  // Reordenar os itens de menu conforme solicitado
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
     { icon: Receipt, label: 'Cobranças', href: '/cobrancas', active: pathname === '/cobrancas' },
@@ -264,6 +265,7 @@ const DesktopMenu = () => {
   const location = useLocation();
   const pathname = location.pathname;
   
+  // Reordenar os itens de menu conforme solicitado
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
     { icon: Receipt, label: 'Cobranças', href: '/cobrancas', active: pathname === '/cobrancas' },

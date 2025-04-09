@@ -9,8 +9,6 @@ import {
   CreditCard, 
   Plus, 
   Trash2,
-  Landmark,
-  QrCode,
   Check,
   MapPin
 } from 'lucide-react';
@@ -52,7 +50,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
@@ -235,202 +232,142 @@ const AddNewPaymentMethodDialog = () => {
       <DialogTrigger asChild>
         <Button className="w-full">
           <Plus className="mr-2 h-4 w-4" />
-          Adicionar método de pagamento
+          Adicionar cartão de crédito/débito
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Adicionar método de pagamento</DialogTitle>
+          <DialogTitle>Adicionar cartão de crédito/débito</DialogTitle>
           <DialogDescription>
-            Adicione um novo método de pagamento à sua conta.
+            Adicione um novo cartão à sua conta.
           </DialogDescription>
         </DialogHeader>
         
-        <Tabs defaultValue="card" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="card">
-              <CreditCard className="h-4 w-4 mr-2" />
-              Cartão
-            </TabsTrigger>
-            <TabsTrigger value="bankslip">
-              <Landmark className="h-4 w-4 mr-2" />
-              Boleto
-            </TabsTrigger>
-            <TabsTrigger value="pix">
-              <QrCode className="h-4 w-4 mr-2" />
-              Pix
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="card" className="mt-4">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                <FormField
-                  control={form.control}
-                  name="cardNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Número do cartão</FormLabel>
-                      <FormControl>
-                        <Input placeholder="1234 5678 9012 3456" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="expiry"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Validade</FormLabel>
-                        <FormControl>
-                          <Input placeholder="MM/AA" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="cvc"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>CVC</FormLabel>
-                        <FormControl>
-                          <Input placeholder="123" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
-                <FormField
-                  control={form.control}
-                  name="cardName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome no cartão</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nome como aparece no cartão" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="cardType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Tipo</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="credit">Crédito</SelectItem>
-                            <SelectItem value="debit">Débito</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="isDefault"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Padrão</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Sim/Não" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="yes">Sim</SelectItem>
-                            <SelectItem value="no">Não</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <Separator />
-                
-                <AddressSelection 
-                  selectedAddress={selectedAddress}
-                  setSelectedAddress={setSelectedAddress}
-                />
-                
-                <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4">
-                  <DialogTrigger asChild>
-                    <Button variant="outline" type="button">Cancelar</Button>
-                  </DialogTrigger>
-                  <Button type="submit">Salvar</Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </TabsContent>
-          
-          <TabsContent value="bankslip" className="mt-4">
-            <div className="text-center py-6">
-              <Landmark className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium">Boleto Bancário</h3>
-              <p className="text-gray-500 mt-2">
-                O boleto será gerado no momento da compra e enviado para seu e-mail.
-              </p>
-
-              <Separator className="my-6" />
-              
-              <AddressSelection 
-                selectedAddress={selectedAddress}
-                setSelectedAddress={setSelectedAddress}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+            <FormField
+              control={form.control}
+              name="cardNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Número do cartão</FormLabel>
+                  <FormControl>
+                    <Input placeholder="1234 5678 9012 3456" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="expiry"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Validade</FormLabel>
+                    <FormControl>
+                      <Input placeholder="MM/AA" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              
-              <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-6">
-                <DialogTrigger asChild>
-                  <Button variant="outline">Cancelar</Button>
-                </DialogTrigger>
-                <Button>Salvar</Button>
-              </DialogFooter>
+              <FormField
+                control={form.control}
+                name="cvc"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>CVC</FormLabel>
+                    <FormControl>
+                      <Input placeholder="123" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-          </TabsContent>
-          
-          <TabsContent value="pix" className="mt-4">
-            <div className="text-center py-6">
-              <QrCode className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium">Pagamento via Pix</h3>
-              <p className="text-gray-500 mt-2">
-                O QR code Pix será gerado no momento da compra.
-              </p>
-              
-              <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-6">
-                <DialogTrigger asChild>
-                  <Button variant="outline">Cancelar</Button>
-                </DialogTrigger>
-                <Button>Salvar</Button>
-              </DialogFooter>
+            
+            <FormField
+              control={form.control}
+              name="cardName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome no cartão</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Nome como aparece no cartão" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="cardType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tipo</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="credit">Crédito</SelectItem>
+                        <SelectItem value="debit">Débito</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="isDefault"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Padrão</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sim/Não" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="yes">Sim</SelectItem>
+                        <SelectItem value="no">Não</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-          </TabsContent>
-        </Tabs>
+
+            <Separator />
+            
+            <AddressSelection 
+              selectedAddress={selectedAddress}
+              setSelectedAddress={setSelectedAddress}
+            />
+            
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4">
+              <DialogTrigger asChild>
+                <Button variant="outline" type="button">Cancelar</Button>
+              </DialogTrigger>
+              <Button type="submit">Salvar</Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
@@ -499,8 +436,9 @@ const Carteira = () => {
           <div className="pt-4 border-t border-gray-100">
             <h3 className="text-sm font-medium text-gray-700 mb-2">Informações adicionais</h3>
             <p className="text-sm text-gray-500">
-              Os métodos de pagamento adicionados aqui estarão disponíveis para uso em suas próximas compras.
+              Os cartões adicionados aqui estarão disponíveis para uso em suas próximas compras.
               Suas informações de pagamento são armazenadas com segurança e criptografadas.
+              Boletos e PIX são gerados no momento do pagamento.
             </p>
           </div>
         </div>
