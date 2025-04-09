@@ -14,10 +14,14 @@ export interface PaymentCard {
   brand: string;
   lastFourDigits: string;
   holderName?: string;
+  type?: "credit" | "debit";
 }
 
 export interface PaymentDetails {
+  id: string;
   method: "credit_card" | "boleto" | "pix";
+  amount: number; // Valor parcial do pagamento
+  installments?: number;
   cardDetails?: PaymentCard;
   failureReason?: string;
   receiptUrl?: string;
@@ -29,7 +33,7 @@ export interface Order {
   price: number;
   date: string;
   status: "pending" | "approved" | "denied";
-  paymentDetails: PaymentDetails;
+  payments: PaymentDetails[]; // Agora um array de pagamentos
 }
 
 export const mockUser: User = {
@@ -40,6 +44,21 @@ export const mockUser: User = {
   phone: "+55 11 98765-4321",
 };
 
+export const mockCards: PaymentCard[] = [
+  {
+    brand: "mastercard",
+    lastFourDigits: "5367",
+    holderName: "CARLOS SILVA",
+    type: "credit"
+  },
+  {
+    brand: "visa",
+    lastFourDigits: "4123",
+    holderName: "CARLOS SILVA",
+    type: "debit"
+  }
+];
+
 export const mockOrders: Order[] = [
   {
     id: "order1",
@@ -47,15 +66,21 @@ export const mockOrders: Order[] = [
     price: 4997.00,
     date: "2025-03-25",
     status: "approved",
-    paymentDetails: {
-      method: "credit_card",
-      cardDetails: {
-        brand: "mastercard",
-        lastFourDigits: "5367",
-        holderName: "CARLOS SILVA"
-      },
-      receiptUrl: "https://receipt.example.com/123456"
-    }
+    payments: [
+      {
+        id: "payment1",
+        method: "credit_card",
+        amount: 4997.00,
+        installments: 12,
+        cardDetails: {
+          brand: "mastercard",
+          lastFourDigits: "5367",
+          holderName: "CARLOS SILVA",
+          type: "credit"
+        },
+        receiptUrl: "https://receipt.example.com/123456"
+      }
+    ]
   },
   {
     id: "order2",
@@ -63,10 +88,15 @@ export const mockOrders: Order[] = [
     price: 997.00,
     date: "2025-04-01",
     status: "pending",
-    paymentDetails: {
-      method: "boleto",
-      receiptUrl: "https://boleto.example.com/789012"
-    }
+    payments: [
+      {
+        id: "payment2",
+        method: "boleto",
+        amount: 997.00,
+        installments: 2,
+        receiptUrl: "https://boleto.example.com/789012"
+      }
+    ]
   },
   {
     id: "order3",
@@ -74,14 +104,47 @@ export const mockOrders: Order[] = [
     price: 497.00,
     date: "2025-02-15",
     status: "denied",
-    paymentDetails: {
-      method: "credit_card",
-      cardDetails: {
-        brand: "visa",
-        lastFourDigits: "4123",
-        holderName: "CARLOS SILVA"
-      },
-      failureReason: "Cartão expirado"
-    }
+    payments: [
+      {
+        id: "payment3",
+        method: "credit_card",
+        amount: 497.00,
+        cardDetails: {
+          brand: "visa",
+          lastFourDigits: "4123",
+          holderName: "CARLOS SILVA",
+          type: "credit"
+        },
+        failureReason: "Cartão expirado"
+      }
+    ]
   },
+  {
+    id: "order4",
+    productName: "Curso de Data Science",
+    price: 2500.00,
+    date: "2025-03-10",
+    status: "approved",
+    payments: [
+      {
+        id: "payment4a",
+        method: "pix",
+        amount: 1250.00,
+        receiptUrl: "https://pix.example.com/123abc"
+      },
+      {
+        id: "payment4b",
+        method: "credit_card",
+        amount: 1250.00,
+        installments: 10,
+        cardDetails: {
+          brand: "mastercard",
+          lastFourDigits: "5367",
+          holderName: "CARLOS SILVA",
+          type: "credit"
+        },
+        receiptUrl: "https://receipt.example.com/456def"
+      }
+    ]
+  }
 ];

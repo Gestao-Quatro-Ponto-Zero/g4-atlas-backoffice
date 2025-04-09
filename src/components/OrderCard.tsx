@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Order } from '@/data/mockData';
+import { Order, PaymentDetails } from '@/data/mockData';
 import { 
   CheckCircle, 
   Clock, 
@@ -9,7 +9,11 @@ import {
   CreditCard, 
   Receipt, 
   ArrowRight,
-  RefreshCw
+  RefreshCw,
+  ChevronDown,
+  ChevronUp,
+  Smartphone,
+  Landmark
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Card, CardContent } from '@/components/ui/card';
@@ -23,12 +27,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface OrderCardProps {
   order: Order;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
+  const [isPaymentsOpen, setIsPaymentsOpen] = useState(false);
+
   const getStatusIcon = () => {
     switch (order.status) {
       case 'approved':
@@ -68,48 +79,65 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     }
   };
 
-  // Função para renderizar os detalhes do cartão
-  const renderPaymentDetails = () => {
-    const { paymentDetails } = order;
-    
-    if (paymentDetails.method === "credit_card" && paymentDetails.cardDetails) {
+  // Função para renderizar os detalhes do método de pagamento
+  const renderPaymentMethod = (payment: PaymentDetails) => {
+    if (payment.method === "credit_card" && payment.cardDetails) {
       return (
         <div className="flex items-center space-x-2">
-          {paymentDetails.cardDetails.brand === "mastercard" && (
+          {payment.cardDetails.brand === "mastercard" && (
             <div className="w-8 h-6 bg-[#FF5F00] rounded flex items-center justify-center">
               <div className="w-3 h-3 rounded-full bg-[#EB001B] opacity-85 -mr-1"></div>
               <div className="w-3 h-3 rounded-full bg-[#F79E1B] opacity-85 -ml-1"></div>
             </div>
           )}
-          {paymentDetails.cardDetails.brand === "visa" && (
+          {payment.cardDetails.brand === "visa" && (
             <div className="w-8 h-6 bg-blue-100 border border-blue-200 rounded text-blue-700 flex items-center justify-center">
               <span className="text-[10px] font-bold">VISA</span>
             </div>
           )}
-          <div className="text-sm font-medium">•••• {paymentDetails.cardDetails.lastFourDigits}</div>
+          <div>
+            <div className="flex items-center">
+              <span className="text-sm font-medium">•••• {payment.cardDetails.lastFourDigits}</span>
+              <span className="text-xs ml-2 bg-gray-100 px-2 py-0.5 rounded">
+                {payment.cardDetails.type === 'credit' ? 'Crédito' : 'Débito'}
+              </span>
+            </div>
+            {payment.installments && payment.installments > 1 && (
+              <span className="text-xs text-gray-600">
+                {payment.installments}x de {formatCurrency(payment.amount / payment.installments)}
+              </span>
+            )}
+          </div>
         </div>
       );
-    } else if (paymentDetails.method === "boleto") {
+    } else if (payment.method === "boleto") {
       return (
         <div className="flex items-center space-x-2">
           <div className="w-8 h-6 bg-gray-100 border border-gray-200 rounded flex items-center justify-center">
-            <div className="w-6 h-3 border-t-2 border-l-2 border-r-2 border-gray-400"></div>
+            <Landmark className="w-4 h-4 text-gray-500" />
           </div>
-          <div className="text-sm">Boleto Bancário</div>
+          <div>
+            <span className="text-sm">Boleto Bancário</span>
+            {payment.installments && payment.installments > 1 && (
+              <div className="text-xs text-gray-600">
+                {payment.installments}x de {formatCurrency(payment.amount / payment.installments)}
+              </div>
+            )}
+          </div>
         </div>
       );
-    } else if (paymentDetails.method === "pix") {
+    } else if (payment.method === "pix") {
       return (
         <div className="flex items-center space-x-2">
           <div className="w-8 h-6 bg-green-100 border border-green-200 rounded flex items-center justify-center text-green-700">
-            <span className="text-[10px] font-bold">PIX</span>
+            <Smartphone className="w-4 h-4" />
           </div>
-          <div className="text-sm">Pagamento Instantâneo</div>
+          <div className="text-sm">Pix</div>
         </div>
       );
     }
     
-    return <div className="text-sm">{order.paymentDetails.method}</div>;
+    return <div className="text-sm">{payment.method}</div>;
   };
 
   const handleRetryPayment = () => {
@@ -117,10 +145,10 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     // Em um sistema real, aqui chamaríamos a API do Stripe ou gateway de pagamento
   };
 
-  const renderActions = () => {
+  const renderPaymentActions = (payment: PaymentDetails) => {
     if (order.status === 'denied') {
       return (
-        <div className="mt-4">
+        <div className="mt-2">
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline" size="sm" className="w-full">
@@ -164,11 +192,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       );
     }
     
-    if (order.paymentDetails.receiptUrl && (order.status === 'approved' || order.status === 'pending')) {
+    if (payment.receiptUrl && (order.status === 'approved' || order.status === 'pending')) {
       return (
-        <div className="mt-4">
+        <div className="mt-2">
           <a 
-            href={order.paymentDetails.receiptUrl} 
+            href={payment.receiptUrl} 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-sm text-blue-600 hover:underline flex items-center"
@@ -182,6 +210,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     
     return null;
   };
+
+  const hasMultiplePayments = order.payments.length > 1;
 
   return (
     <Card className="overflow-hidden transition-all duration-200 hover:shadow-md">
@@ -211,22 +241,83 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               <p className="mt-1 font-medium text-sm">{formatCurrency(order.price)}</p>
             </div>
           </div>
-          
-          <div className="mt-3 rounded-md bg-gray-50/70 p-3">
-            <p className="text-xs font-medium uppercase text-gray-500">Forma de Pagamento</p>
-            <div className="mt-1 flex items-center justify-between">
-              {renderPaymentDetails()}
-            </div>
-            
-            {order.status === 'denied' && order.paymentDetails.failureReason && (
-              <div className="mt-2 text-xs text-red-600">
-                <p className="font-medium">Motivo da recusa:</p>
-                <p>{order.paymentDetails.failureReason}</p>
+
+          <Collapsible
+            open={isPaymentsOpen}
+            onOpenChange={setIsPaymentsOpen}
+            className="mt-3"
+          >
+            <div className="rounded-md bg-gray-50/70 p-3">
+              <div className="flex justify-between items-center">
+                <p className="text-xs font-medium uppercase text-gray-500">
+                  Forma{hasMultiplePayments ? 's' : ''} de Pagamento
+                </p>
+                {hasMultiplePayments && (
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="sm" className="p-0 h-6 w-6">
+                      {isPaymentsOpen ? (
+                        <ChevronUp className="h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </CollapsibleTrigger>
+                )}
               </div>
-            )}
-            
-            {renderActions()}
-          </div>
+
+              {/* Sempre mostrar o primeiro pagamento */}
+              <div className="mt-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    {renderPaymentMethod(order.payments[0])}
+                  </div>
+                  {hasMultiplePayments && (
+                    <span className="text-xs text-gray-500 px-2 py-0.5 bg-gray-100 rounded-full">
+                      {((order.payments[0].amount / order.price) * 100).toFixed(0)}%
+                    </span>
+                  )}
+                </div>
+                
+                {order.status === 'denied' && order.payments[0].failureReason && (
+                  <div className="mt-2 text-xs text-red-600">
+                    <p className="font-medium">Motivo da recusa:</p>
+                    <p>{order.payments[0].failureReason}</p>
+                  </div>
+                )}
+                
+                {renderPaymentActions(order.payments[0])}
+              </div>
+
+              {/* Mostrar pagamentos adicionais quando expandido */}
+              {hasMultiplePayments && (
+                <CollapsibleContent>
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    {order.payments.slice(1).map((payment, index) => (
+                      <div key={payment.id} className="mt-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            {renderPaymentMethod(payment)}
+                          </div>
+                          <span className="text-xs text-gray-500 px-2 py-0.5 bg-gray-100 rounded-full">
+                            {((payment.amount / order.price) * 100).toFixed(0)}%
+                          </span>
+                        </div>
+                        
+                        {order.status === 'denied' && payment.failureReason && (
+                          <div className="mt-2 text-xs text-red-600">
+                            <p className="font-medium">Motivo da recusa:</p>
+                            <p>{payment.failureReason}</p>
+                          </div>
+                        )}
+                        
+                        {renderPaymentActions(payment)}
+                      </div>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              )}
+            </div>
+          </Collapsible>
         </div>
       </CardContent>
     </Card>

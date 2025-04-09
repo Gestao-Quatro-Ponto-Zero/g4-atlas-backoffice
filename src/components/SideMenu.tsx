@@ -10,7 +10,8 @@ import {
   Menu, 
   X,
   Wallet,
-  Plus
+  Plus,
+  LogOut
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -24,6 +25,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { 
@@ -36,6 +44,7 @@ import {
   SidebarMenuButton,
   SidebarProvider
 } from '@/components/ui/sidebar';
+import { mockCards } from '@/data/mockData';
 
 interface SideMenuProps {
   isOpen?: boolean;
@@ -49,35 +58,11 @@ interface MenuItem {
   active?: boolean;
   popover?: boolean;
   popoverContent?: React.ReactNode;
+  dropdown?: boolean;
+  dropdownContent?: React.ReactNode;
 }
 
-interface SavedCard {
-  id: string;
-  brand: string;
-  lastFour: string;
-  expiryMonth: string;
-  expiryYear: string;
-  isDefault?: boolean;
-}
-
-const savedCards: SavedCard[] = [
-  { 
-    id: 'card1', 
-    brand: 'mastercard', 
-    lastFour: '5367', 
-    expiryMonth: '12', 
-    expiryYear: '2027',
-    isDefault: true
-  },
-  { 
-    id: 'card2', 
-    brand: 'visa', 
-    lastFour: '4123', 
-    expiryMonth: '09', 
-    expiryYear: '2025' 
-  }
-];
-
+// Componente que exibe cartões na carteira
 const WalletContent = () => {
   return (
     <div className="flex flex-col w-full">
@@ -85,13 +70,10 @@ const WalletContent = () => {
         <h3 className="text-sm font-medium">Cartões salvos</h3>
       </div>
       <div className="space-y-3 mb-4">
-        {savedCards.map((card) => (
+        {mockCards.map((card) => (
           <div 
-            key={card.id} 
-            className={cn(
-              "px-3 py-2 border rounded-md flex items-center justify-between", 
-              card.isDefault ? "border-blue-300 bg-blue-50" : "border-gray-200"
-            )}
+            key={card.lastFourDigits} 
+            className="px-3 py-2 border rounded-md flex items-center justify-between border-gray-200"
           >
             <div className="flex items-center gap-2">
               <div className="w-8 h-6 rounded flex items-center justify-center bg-white border">
@@ -106,13 +88,14 @@ const WalletContent = () => {
                 )}
               </div>
               <div>
-                <p className="text-sm">•••• {card.lastFour}</p>
-                <p className="text-xs text-gray-500">{card.expiryMonth}/{card.expiryYear}</p>
+                <div className="flex items-center">
+                  <p className="text-sm">•••• {card.lastFourDigits}</p>
+                  <span className="ml-2 text-xs bg-gray-100 px-1.5 py-0.5 rounded">
+                    {card.type === 'credit' ? 'Crédito' : 'Débito'}
+                  </span>
+                </div>
               </div>
             </div>
-            {card.isDefault && (
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Padrão</span>
-            )}
           </div>
         ))}
       </div>
@@ -123,15 +106,40 @@ const WalletContent = () => {
   );
 };
 
+const SettingsDropdownContent = ({ logout }: { logout: () => void }) => (
+  <div className="w-full">
+    <Button variant="ghost" className="w-full flex justify-start text-sm" onClick={() => console.log('Perfil')}>
+      Meu perfil
+    </Button>
+    <Button variant="ghost" className="w-full flex justify-start text-sm" onClick={() => console.log('Segurança')}>
+      Segurança
+    </Button>
+    <Button variant="ghost" className="w-full flex justify-start text-sm" onClick={() => console.log('Preferências')}>
+      Preferências
+    </Button>
+    <DropdownMenuSeparator />
+    <Button variant="ghost" className="w-full flex justify-start text-red-600 text-sm" onClick={logout}>
+      <LogOut className="mr-2 h-4 w-4" />
+      Sair
+    </Button>
+  </div>
+);
+
 const MobileMenu = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const firstLetter = user?.name?.charAt(0) || 'U';
 
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: true },
-    { icon: Wallet, label: 'Minha Carteira', href: '#', popover: true, popoverContent: <WalletContent /> },
+    { icon: Wallet, label: 'Minha Carteira', href: '/carteira' },
     { icon: MapPin, label: 'Endereços', href: '/enderecos' },
-    { icon: Settings, label: 'Configurações', href: '/configuracoes' },
+    { 
+      icon: Settings, 
+      label: 'Configurações', 
+      href: '#',
+      dropdown: true,
+      dropdownContent: <SettingsDropdownContent logout={logout} />
+    },
   ];
 
   return (
@@ -171,7 +179,25 @@ const MobileMenu = () => {
         <div className="flex flex-col py-2">
           {menuItems.map((item, index) => (
             <div key={index} className="relative">
-              {item.popover ? (
+              {item.dropdown ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className={cn(
+                      "flex items-center justify-between w-full px-6 py-4 hover:bg-gray-50 text-left",
+                      item.active && "bg-gray-50"
+                    )}>
+                      <div className="flex items-center">
+                        <item.icon className="h-5 w-5 text-gray-700" />
+                        <span className="ml-3 text-sm font-medium">{item.label}</span>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-gray-400" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-60 p-2">
+                    {item.dropdownContent}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : item.popover ? (
                 <Popover>
                   <PopoverTrigger asChild>
                     <button className={cn(
@@ -224,14 +250,20 @@ const MobileMenu = () => {
 };
 
 const DesktopMenu = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const firstLetter = user?.name?.charAt(0) || 'U';
   
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: true },
-    { icon: Wallet, label: 'Minha Carteira', href: '#', popover: true, popoverContent: <WalletContent /> },
+    { icon: Wallet, label: 'Minha Carteira', href: '/carteira' },
     { icon: MapPin, label: 'Endereços', href: '/enderecos' },
-    { icon: Settings, label: 'Configurações', href: '/configuracoes' },
+    { 
+      icon: Settings, 
+      label: 'Configurações', 
+      href: '#',
+      dropdown: true,
+      dropdownContent: <SettingsDropdownContent logout={logout} />
+    },
   ];
 
   return (
@@ -254,7 +286,24 @@ const DesktopMenu = () => {
           <SidebarMenu>
             {menuItems.map((item, index) => (
               <SidebarMenuItem key={index}>
-                {item.popover ? (
+                {item.dropdown ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <SidebarMenuButton isActive={item.active}>
+                        <div className="flex items-center justify-between w-full group/menu-button">
+                          <div className="flex items-center">
+                            <item.icon className="h-4 w-4" />
+                            <span className="ml-2 text-sm">{item.label}</span>
+                          </div>
+                          <ChevronRight className="h-3 w-3 opacity-70" />
+                        </div>
+                      </SidebarMenuButton>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56 p-2" side="right">
+                      {item.dropdownContent}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : item.popover ? (
                   <Popover>
                     <PopoverTrigger asChild>
                       <SidebarMenuButton isActive={item.active}>
