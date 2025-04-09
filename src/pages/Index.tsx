@@ -20,8 +20,8 @@ const Index = () => {
   return (
     <Layout>
       {!isAuthenticated ? (
-        <div className="flex flex-col items-center justify-center py-12">
-          <div className="text-center mb-8">
+        <div className="flex flex-col items-center justify-center py-8 px-4">
+          <div className="text-center mb-6">
             <div className="flex justify-center">
               <div className="text-4xl font-bold text-blue-600">G4</div>
               <div className="text-3xl ml-1">Educação</div>
@@ -37,15 +37,15 @@ const Index = () => {
           <LoginForm />
         </div>
       ) : (
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold">Meus Pedidos</h1>
-            <p className="text-gray-600">
+        <div className="w-full px-4">
+          <div className="mb-5">
+            <h1 className="text-xl font-bold sm:text-2xl">Meus Pedidos</h1>
+            <p className="text-gray-600 text-sm sm:text-base">
               Visualize e gerencie seus pedidos recentes
             </p>
           </div>
           
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
             <OrderList orders={mockOrders} />
           </div>
         </div>
