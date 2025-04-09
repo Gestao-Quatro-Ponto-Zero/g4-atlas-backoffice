@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -113,16 +112,9 @@ const WalletContent = () => {
 
 const SettingsDropdownContent = ({ logout }: { logout: () => void }) => (
   <div className="w-full">
-    <Button variant="ghost" className="w-full flex justify-start text-sm" onClick={() => console.log('Perfil')}>
-      Meu perfil
+    <Button variant="ghost" className="w-full flex justify-start text-sm" asChild>
+      <Link to="/configuracoes">Meu perfil</Link>
     </Button>
-    <Button variant="ghost" className="w-full flex justify-start text-sm" onClick={() => console.log('Segurança')}>
-      Segurança
-    </Button>
-    <Button variant="ghost" className="w-full flex justify-start text-sm" onClick={() => console.log('Preferências')}>
-      Preferências
-    </Button>
-    <DropdownMenuSeparator />
     <Button variant="ghost" className="w-full flex justify-start text-red-600 text-sm" onClick={logout}>
       <LogOut className="mr-2 h-4 w-4" />
       Sair
@@ -136,7 +128,6 @@ const MobileMenu = () => {
   const location = useLocation();
   const pathname = location.pathname;
 
-  // Reordenar os itens de menu conforme solicitado
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
     { icon: Receipt, label: 'Cobranças', href: '/cobrancas', active: pathname === '/cobrancas' },
@@ -146,9 +137,8 @@ const MobileMenu = () => {
     { 
       icon: Settings, 
       label: 'Configurações', 
-      href: '#',
-      dropdown: true,
-      dropdownContent: <SettingsDropdownContent logout={logout} />
+      href: '/configuracoes',
+      active: pathname === '/configuracoes'
     },
   ];
 
@@ -265,7 +255,6 @@ const DesktopMenu = () => {
   const location = useLocation();
   const pathname = location.pathname;
   
-  // Reordenar os itens de menu conforme solicitado
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
     { icon: Receipt, label: 'Cobranças', href: '/cobrancas', active: pathname === '/cobrancas' },
@@ -275,9 +264,8 @@ const DesktopMenu = () => {
     { 
       icon: Settings, 
       label: 'Configurações', 
-      href: '#',
-      dropdown: true,
-      dropdownContent: <SettingsDropdownContent logout={logout} />
+      href: '/configuracoes',
+      active: pathname === '/configuracoes'
     },
   ];
 

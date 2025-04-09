@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Carteira from "./pages/Carteira";
 import Cobrancas from "./pages/Cobrancas";
 import Contratos from "./pages/Contratos";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -40,6 +41,7 @@ const PageTransition = () => {
           <Route path="/carteira" element={<Carteira />} />
           <Route path="/cobrancas" element={<Cobrancas />} />
           <Route path="/contratos" element={<Contratos />} />
+          <Route path="/configuracoes" element={<Settings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
