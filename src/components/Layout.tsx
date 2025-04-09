@@ -13,8 +13,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-gray-50/40">
-      <div className="flex">
-        {isAuthenticated && <SideMenu />}
+      <div className="flex w-full">
+        {isAuthenticated && (
+          <div className="shrink-0">
+            <SideMenu />
+          </div>
+        )}
         <div className="flex flex-col flex-grow w-full">
           {isAuthenticated && <Header />}
           <main className="flex-grow py-6 px-4 sm:px-6 lg:px-8">
