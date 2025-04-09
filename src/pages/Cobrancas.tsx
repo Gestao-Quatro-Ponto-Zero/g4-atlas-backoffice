@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,6 +15,13 @@ import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Eye, FileText, Download, Receipt, CreditCard, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // Mock data for charges
 const mockCharges = [
@@ -26,7 +33,13 @@ const mockCharges = [
     status: 'paid',
     method: 'credit_card',
     paymentDate: new Date(2025, 2, 15),
-    receiptUrl: '#'
+    receiptUrl: '#',
+    orderDetails: {
+      orderNumber: 'ORD123456',
+      items: [
+        { name: 'Curso de Desenvolvimento Web', price: 1299.00 }
+      ]
+    }
   },
   {
     id: 'ch_2',
@@ -36,7 +49,13 @@ const mockCharges = [
     status: 'paid',
     method: 'pix',
     paymentDate: new Date(2025, 2, 10),
-    receiptUrl: '#'
+    receiptUrl: '#',
+    orderDetails: {
+      orderNumber: 'ORD123457',
+      items: [
+        { name: 'Curso de Inglês Básico', price: 899.00 }
+      ]
+    }
   },
   {
     id: 'ch_3',
@@ -46,7 +65,13 @@ const mockCharges = [
     status: 'pending',
     method: 'boleto',
     dueDate: new Date(2025, 3, 15),
-    boletoUrl: '#'
+    boletoUrl: '#',
+    orderDetails: {
+      orderNumber: 'ORD123458',
+      items: [
+        { name: 'Curso de Marketing Digital', price: 1499.00 }
+      ]
+    }
   },
   {
     id: 'ch_4',
@@ -55,7 +80,13 @@ const mockCharges = [
     amount: 799.00,
     status: 'failed',
     method: 'credit_card',
-    failureReason: 'Cartão expirado'
+    failureReason: 'Cartão expirado',
+    orderDetails: {
+      orderNumber: 'ORD123459',
+      items: [
+        { name: 'Curso de Excel Avançado', price: 799.00 }
+      ]
+    }
   },
   {
     id: 'ch_5',
@@ -65,7 +96,13 @@ const mockCharges = [
     status: 'expired',
     method: 'boleto',
     dueDate: new Date(2025, 2, 5),
-    boletoUrl: '#'
+    boletoUrl: '#',
+    orderDetails: {
+      orderNumber: 'ORD123460',
+      items: [
+        { name: 'Curso de Fotografia', price: 599.00 }
+      ]
+    }
   }
 ];
 
@@ -127,6 +164,9 @@ const mockPixPayments = [
 
 const Cobrancas = () => {
   const { isAuthenticated, isLoading } = useAuth();
+  const isMobile = useIsMobile();
+  const [selectedCharge, setSelectedCharge] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -148,27 +188,129 @@ const Cobrancas = () => {
       case 'credit_card':
         return (
           <div className="flex items-center">
-            <CreditCard className="h-4 w-4 mr-1 text-blue-600" />
+            <CreditCard className={`h-4 w-4 mr-1 text-blue-600 ${isMobile ? 'hidden' : 'inline'}`} />
             <span>Cartão de Crédito</span>
           </div>
         );
       case 'pix':
         return (
           <div className="flex items-center">
-            <Receipt className="h-4 w-4 mr-1 text-green-600" />
+            <Receipt className={`h-4 w-4 mr-1 text-green-600 ${isMobile ? 'hidden' : 'inline'}`} />
             <span>PIX</span>
           </div>
         );
       case 'boleto':
         return (
           <div className="flex items-center">
-            <FileText className="h-4 w-4 mr-1 text-gray-600" />
+            <FileText className={`h-4 w-4 mr-1 text-gray-600 ${isMobile ? 'hidden' : 'inline'}`} />
             <span>Boleto</span>
           </div>
         );
       default:
         return method;
     }
+  };
+
+  const handleOpenModal = (charge) => {
+    setSelectedCharge(charge);
+    setIsModalOpen(true);
+  };
+
+  const renderModalContent = () => {
+    if (!selectedCharge) return null;
+    
+    return (
+      <>
+        <div className="bg-gray-50 p-4 rounded-lg mb-4">
+          <h3 className="text-lg font-medium mb-2">{selectedCharge.description}</h3>
+          <div className="grid grid-cols-2 gap-4 mb-3">
+            <div>
+              <p className="text-sm text-gray-500">Número do pedido</p>
+              <p className="font-medium">{selectedCharge.orderDetails.orderNumber}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Valor</p>
+              <p className="font-medium">{formatCurrency(selectedCharge.amount)}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-gray-500">Data</p>
+              <p className="font-medium">{formatDate(selectedCharge.date.toISOString())}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Status</p>
+              <div className="mt-1">{getStatusBadge(selectedCharge.status)}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="mb-4">
+          <h4 className="font-medium mb-2">Forma de pagamento</h4>
+          <div className="p-3 border rounded-lg">
+            {getPaymentMethodDisplay(selectedCharge.method)}
+            
+            {selectedCharge.method === 'credit_card' && selectedCharge.status === 'failed' && (
+              <div className="mt-2 p-2 bg-red-50 text-red-700 text-sm rounded">
+                <AlertCircle className="inline h-4 w-4 mr-1" />
+                <span>Falha no pagamento: {selectedCharge.failureReason}</span>
+              </div>
+            )}
+
+            {selectedCharge.paymentDate && (
+              <div className="mt-2 text-sm text-gray-600">
+                Pago em {formatDate(selectedCharge.paymentDate.toISOString())}
+              </div>
+            )}
+            
+            {selectedCharge.method === 'boleto' && selectedCharge.dueDate && (
+              <div className="mt-2 text-sm text-gray-600">
+                Vencimento: {formatDate(selectedCharge.dueDate.toISOString())}
+                <div className="mt-2">
+                  <Button size="sm" variant="outline" asChild className="mr-2">
+                    <a href={selectedCharge.boletoUrl} target="_blank" rel="noopener noreferrer">
+                      <Download className="h-4 w-4 mr-1" /> Baixar boleto
+                    </a>
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            {selectedCharge.receiptUrl && (
+              <div className="mt-2">
+                <Button size="sm" variant="outline" asChild>
+                  <a href={selectedCharge.receiptUrl} target="_blank" rel="noopener noreferrer">
+                    <FileText className="h-4 w-4 mr-1" /> Ver comprovante
+                  </a>
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-medium mb-2">Itens</h4>
+          <div className="border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Item</TableHead>
+                  <TableHead className="text-right">Valor</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {selectedCharge.orderDetails.items.map((item, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell className="text-right">{formatCurrency(item.price)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </>
+    );
   };
 
   if (isLoading) {
@@ -190,7 +332,7 @@ const Cobrancas = () => {
         </div>
         
         <Tabs defaultValue="all" className="mb-6">
-          <TabsList className="grid grid-cols-4 mb-4">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-4">
             <TabsTrigger value="all">Todas</TabsTrigger>
             <TabsTrigger value="boleto">Boletos</TabsTrigger>
             <TabsTrigger value="credit_card">Cartão de Crédito</TabsTrigger>
@@ -200,50 +342,79 @@ const Cobrancas = () => {
           <TabsContent value="all">
             <Card>
               <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Data</TableHead>
-                      <TableHead>Descrição</TableHead>
-                      <TableHead>Valor</TableHead>
-                      <TableHead>Forma de Pagamento</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockCharges.map((charge) => (
-                      <TableRow key={charge.id}>
-                        <TableCell className="font-medium">{formatDate(charge.date.toISOString())}</TableCell>
-                        <TableCell>{charge.description}</TableCell>
-                        <TableCell>{formatCurrency(charge.amount)}</TableCell>
-                        <TableCell>{getPaymentMethodDisplay(charge.method)}</TableCell>
-                        <TableCell>{getStatusBadge(charge.status)}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="sm" title="Ver detalhes">
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            {charge.status === 'paid' && charge.receiptUrl && (
-                              <Button variant="ghost" size="sm" asChild title="Ver comprovante">
-                                <a href={charge.receiptUrl} target="_blank" rel="noopener noreferrer">
-                                  <FileText className="h-4 w-4" />
-                                </a>
-                              </Button>
-                            )}
-                            {charge.method === 'boleto' && charge.boletoUrl && (
-                              <Button variant="ghost" size="sm" asChild title="Baixar boleto">
-                                <a href={charge.boletoUrl} target="_blank" rel="noopener noreferrer">
-                                  <Download className="h-4 w-4" />
-                                </a>
-                              </Button>
-                            )}
-                          </div>
-                        </TableCell>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Data</TableHead>
+                        <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Descrição</TableHead>
+                        <TableHead>Valor</TableHead>
+                        <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Forma de Pagamento</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className={isMobile ? "hidden md:table-cell text-right" : "text-right"}>Ações</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {mockCharges.map((charge) => (
+                        <TableRow 
+                          key={charge.id}
+                          className="cursor-pointer hover:bg-gray-50"
+                          onClick={() => isMobile ? handleOpenModal(charge) : null}
+                        >
+                          <TableCell className="font-medium">{formatDate(charge.date.toISOString())}</TableCell>
+                          <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{charge.description}</TableCell>
+                          <TableCell>{formatCurrency(charge.amount)}</TableCell>
+                          <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{getPaymentMethodDisplay(charge.method)}</TableCell>
+                          <TableCell>{getStatusBadge(charge.status)}</TableCell>
+                          <TableCell className={isMobile ? "hidden md:table-cell text-right" : "text-right"}>
+                            <div className="flex justify-end gap-2">
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                title="Ver detalhes"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenModal(charge);
+                                }}
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              {charge.status === 'paid' && charge.receiptUrl && (
+                                <Button variant="ghost" size="sm" asChild title="Ver comprovante">
+                                  <a 
+                                    href={charge.receiptUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <FileText className="h-4 w-4" />
+                                  </a>
+                                </Button>
+                              )}
+                              {charge.method === 'boleto' && charge.boletoUrl && (
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  asChild 
+                                  title="Baixar boleto"
+                                >
+                                  <a 
+                                    href={charge.boletoUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <Download className="h-4 w-4" />
+                                  </a>
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -252,52 +423,60 @@ const Cobrancas = () => {
             <Card>
               <CardContent className="p-4">
                 <h3 className="text-lg font-semibold mb-4">Boletos</h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Vencimento</TableHead>
-                      <TableHead>Descrição</TableHead>
-                      <TableHead>Parcela</TableHead>
-                      <TableHead>Valor</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockCharges
-                      .filter(charge => charge.method === 'boleto')
-                      .map((charge) => (
-                        <React.Fragment key={charge.id}>
-                          <TableRow className="bg-gray-50">
-                            <TableCell colSpan={6} className="py-2">
-                              <div className="font-medium">{charge.description}</div>
-                              <div className="text-xs text-gray-500">Valor total: {formatCurrency(charge.amount)}</div>
-                            </TableCell>
-                          </TableRow>
-                          {mockBoletoInstallments
-                            .filter(installment => installment.parentChargeId === charge.id)
-                            .map((installment) => (
-                              <TableRow key={installment.id}>
-                                <TableCell>{formatDate(installment.dueDate.toISOString())}</TableCell>
-                                <TableCell>{charge.description}</TableCell>
-                                <TableCell>{installment.installmentNumber}/3</TableCell>
-                                <TableCell>{formatCurrency(installment.amount)}</TableCell>
-                                <TableCell>{getStatusBadge(installment.status)}</TableCell>
-                                <TableCell className="text-right">
-                                  <div className="flex justify-end gap-2">
-                                    <Button variant="ghost" size="sm" asChild title="Baixar boleto">
-                                      <a href={installment.boletoUrl} target="_blank" rel="noopener noreferrer">
-                                        <Download className="h-4 w-4" />
-                                      </a>
-                                    </Button>
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                        </React.Fragment>
-                      ))}
-                  </TableBody>
-                </Table>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Vencimento</TableHead>
+                        <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Descrição</TableHead>
+                        <TableHead>Parcela</TableHead>
+                        <TableHead>Valor</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {mockCharges
+                        .filter(charge => charge.method === 'boleto')
+                        .map((charge) => (
+                          <React.Fragment key={charge.id}>
+                            <TableRow className="bg-gray-50 cursor-pointer" onClick={() => handleOpenModal(charge)}>
+                              <TableCell colSpan={6} className="py-2">
+                                <div className="font-medium">{charge.description}</div>
+                                <div className="text-xs text-gray-500">Valor total: {formatCurrency(charge.amount)}</div>
+                              </TableCell>
+                            </TableRow>
+                            {mockBoletoInstallments
+                              .filter(installment => installment.parentChargeId === charge.id)
+                              .map((installment) => (
+                                <TableRow key={installment.id} className="cursor-pointer hover:bg-gray-50">
+                                  <TableCell>{formatDate(installment.dueDate.toISOString())}</TableCell>
+                                  <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{charge.description}</TableCell>
+                                  <TableCell>{installment.installmentNumber}/3</TableCell>
+                                  <TableCell>{formatCurrency(installment.amount)}</TableCell>
+                                  <TableCell>{getStatusBadge(installment.status)}</TableCell>
+                                  <TableCell className="text-right">
+                                    <div className="flex justify-end gap-2">
+                                      <Button 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        asChild 
+                                        title="Baixar boleto"
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        <a href={installment.boletoUrl} target="_blank" rel="noopener noreferrer">
+                                          <Download className="h-4 w-4" />
+                                        </a>
+                                      </Button>
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                          </React.Fragment>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -306,51 +485,71 @@ const Cobrancas = () => {
             <Card>
               <CardContent className="p-4">
                 <h3 className="text-lg font-semibold mb-4">Pagamentos com Cartão de Crédito</h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Data de Pagamento</TableHead>
-                      <TableHead>Descrição</TableHead>
-                      <TableHead>Cartão</TableHead>
-                      <TableHead>Valor</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockCreditCardPayments.map((payment) => {
-                      const parentCharge = mockCharges.find(charge => charge.id === payment.parentChargeId);
-                      return (
-                        <TableRow key={payment.id}>
-                          <TableCell>{formatDate(payment.paymentDate.toISOString())}</TableCell>
-                          <TableCell>{parentCharge?.description || 'N/A'}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center">
-                              <span className="font-medium mr-1">{payment.cardBrand}</span>
-                              <span className="text-gray-600">•••• {payment.cardLastFourDigits}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>{formatCurrency(payment.amount)}</TableCell>
-                          <TableCell>{getStatusBadge(payment.status)}</TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button variant="ghost" size="sm" title="Ver detalhes">
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              {parentCharge?.receiptUrl && (
-                                <Button variant="ghost" size="sm" asChild title="Ver comprovante">
-                                  <a href={parentCharge.receiptUrl} target="_blank" rel="noopener noreferrer">
-                                    <FileText className="h-4 w-4" />
-                                  </a>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Data de Pagamento</TableHead>
+                        <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Descrição</TableHead>
+                        <TableHead>Cartão</TableHead>
+                        <TableHead>Valor</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {mockCreditCardPayments.map((payment) => {
+                        const parentCharge = mockCharges.find(charge => charge.id === payment.parentChargeId);
+                        return (
+                          <TableRow 
+                            key={payment.id} 
+                            className="cursor-pointer hover:bg-gray-50"
+                            onClick={() => handleOpenModal(parentCharge)}
+                          >
+                            <TableCell>{formatDate(payment.paymentDate.toISOString())}</TableCell>
+                            <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{parentCharge?.description || 'N/A'}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center">
+                                <span className="font-medium mr-1">{payment.cardBrand}</span>
+                                <span className="text-gray-600">•••• {payment.cardLastFourDigits}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>{formatCurrency(payment.amount)}</TableCell>
+                            <TableCell>{getStatusBadge(payment.status)}</TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  title="Ver detalhes"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleOpenModal(parentCharge);
+                                  }}
+                                >
+                                  <Eye className="h-4 w-4" />
                                 </Button>
-                              )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
+                                {parentCharge?.receiptUrl && (
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    asChild 
+                                    title="Ver comprovante"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <a href={parentCharge.receiptUrl} target="_blank" rel="noopener noreferrer">
+                                      <FileText className="h-4 w-4" />
+                                    </a>
+                                  </Button>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -359,53 +558,82 @@ const Cobrancas = () => {
             <Card>
               <CardContent className="p-4">
                 <h3 className="text-lg font-semibold mb-4">Pagamentos com PIX</h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Data de Pagamento</TableHead>
-                      <TableHead>Descrição</TableHead>
-                      <TableHead>Identificador PIX</TableHead>
-                      <TableHead>Valor</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockPixPayments.map((payment) => {
-                      const parentCharge = mockCharges.find(charge => charge.id === payment.parentChargeId);
-                      return (
-                        <TableRow key={payment.id}>
-                          <TableCell>{formatDate(payment.paymentDate.toISOString())}</TableCell>
-                          <TableCell>{parentCharge?.description || 'N/A'}</TableCell>
-                          <TableCell>
-                            <span className="font-mono text-xs">{payment.pixId}</span>
-                          </TableCell>
-                          <TableCell>{formatCurrency(payment.amount)}</TableCell>
-                          <TableCell>{getStatusBadge(payment.status)}</TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button variant="ghost" size="sm" title="Ver detalhes">
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              {parentCharge?.receiptUrl && (
-                                <Button variant="ghost" size="sm" asChild title="Ver comprovante">
-                                  <a href={parentCharge.receiptUrl} target="_blank" rel="noopener noreferrer">
-                                    <FileText className="h-4 w-4" />
-                                  </a>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Data de Pagamento</TableHead>
+                        <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Descrição</TableHead>
+                        <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Identificador PIX</TableHead>
+                        <TableHead>Valor</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {mockPixPayments.map((payment) => {
+                        const parentCharge = mockCharges.find(charge => charge.id === payment.parentChargeId);
+                        return (
+                          <TableRow 
+                            key={payment.id}
+                            className="cursor-pointer hover:bg-gray-50"
+                            onClick={() => handleOpenModal(parentCharge)}
+                          >
+                            <TableCell>{formatDate(payment.paymentDate.toISOString())}</TableCell>
+                            <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{parentCharge?.description || 'N/A'}</TableCell>
+                            <TableCell className={isMobile ? "hidden md:table-cell" : ""}>
+                              <span className="font-mono text-xs">{payment.pixId}</span>
+                            </TableCell>
+                            <TableCell>{formatCurrency(payment.amount)}</TableCell>
+                            <TableCell>{getStatusBadge(payment.status)}</TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  title="Ver detalhes"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleOpenModal(parentCharge);
+                                  }}
+                                >
+                                  <Eye className="h-4 w-4" />
                                 </Button>
-                              )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
+                                {parentCharge?.receiptUrl && (
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    asChild 
+                                    title="Ver comprovante"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <a href={parentCharge.receiptUrl} target="_blank" rel="noopener noreferrer">
+                                      <FileText className="h-4 w-4" />
+                                    </a>
+                                  </Button>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </div>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Detalhes da Cobrança</DialogTitle>
+          </DialogHeader>
+          {renderModalContent()}
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };
