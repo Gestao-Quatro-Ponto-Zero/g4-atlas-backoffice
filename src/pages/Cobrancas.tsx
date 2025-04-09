@@ -1,8 +1,8 @@
+
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { 
   Table,
   TableHeader,
@@ -395,7 +395,9 @@ const Cobrancas = () => {
                     <TableHead className="whitespace-nowrap">Valor</TableHead>
                     <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Forma de Pagamento</TableHead>
                     <TableHead className="whitespace-nowrap">Status</TableHead>
-                    <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap text-right" : "whitespace-nowrap text-right"}>Ações</TableHead>
+                    {isMobile && (
+                      <TableHead className="whitespace-nowrap text-right">Ações</TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -403,57 +405,59 @@ const Cobrancas = () => {
                     <TableRow 
                       key={charge.id}
                       className="cursor-pointer hover:bg-gray-50"
-                      onClick={() => isMobile ? handleOpenModal(charge) : null}
+                      onClick={() => handleOpenModal(charge)}
                     >
                       <TableCell className="font-medium whitespace-nowrap">{formatDate(charge.date.toISOString())}</TableCell>
                       <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{charge.description}</TableCell>
                       <TableCell className="whitespace-nowrap">{formatCurrency(charge.amount)}</TableCell>
                       <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{getPaymentMethodDisplay(charge.method)}</TableCell>
                       <TableCell className="whitespace-nowrap">{getStatusBadge(charge.status)}</TableCell>
-                      <TableCell className={isMobile ? "hidden md:table-cell text-right" : "text-right"}>
-                        <div className="flex justify-end gap-2">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            title="Ver detalhes"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenModal(charge);
-                            }}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          {charge.status === 'pago' && charge.receiptUrl && (
-                            <Button variant="ghost" size="sm" asChild title="Ver comprovante">
-                              <a 
-                                href={charge.receiptUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <FileText className="h-4 w-4" />
-                              </a>
-                            </Button>
-                          )}
-                          {charge.method === 'boleto' && charge.boletoUrl && (
+                      {isMobile && (
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
                             <Button 
                               variant="ghost" 
                               size="sm" 
-                              asChild 
-                              title="Baixar boleto"
+                              title="Ver detalhes"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenModal(charge);
+                              }}
                             >
-                              <a 
-                                href={charge.boletoUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Download className="h-4 w-4" />
-                              </a>
+                              <Eye className="h-4 w-4" />
                             </Button>
-                          )}
-                        </div>
-                      </TableCell>
+                            {charge.status === 'pago' && charge.receiptUrl && (
+                              <Button variant="ghost" size="sm" asChild title="Ver comprovante">
+                                <a 
+                                  href={charge.receiptUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <FileText className="h-4 w-4" />
+                                </a>
+                              </Button>
+                            )}
+                            {charge.method === 'boleto' && charge.boletoUrl && (
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                asChild 
+                                title="Baixar boleto"
+                              >
+                                <a 
+                                  href={charge.boletoUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <Download className="h-4 w-4" />
+                                </a>
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
