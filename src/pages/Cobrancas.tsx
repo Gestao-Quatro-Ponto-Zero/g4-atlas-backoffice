@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
@@ -119,7 +118,7 @@ const Cobrancas = () => {
               <TableBody>
                 {mockCharges.map((charge) => (
                   <TableRow key={charge.id}>
-                    <TableCell className="font-medium">{formatDate(charge.date)}</TableCell>
+                    <TableCell className="font-medium">{formatDate(charge.date.toISOString())}</TableCell>
                     <TableCell>{charge.description}</TableCell>
                     <TableCell>{formatCurrency(charge.amount)}</TableCell>
                     <TableCell>{getPaymentMethodDisplay(charge.method)}</TableCell>

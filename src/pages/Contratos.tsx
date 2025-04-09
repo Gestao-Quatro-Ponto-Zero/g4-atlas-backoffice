@@ -124,14 +124,14 @@ const Contratos = () => {
                         <div className="text-right">
                           <div className="font-bold">{formatCurrency(contract.amount)}</div>
                           <div className="text-sm text-gray-600">
-                            Próxima cobrança: {formatDate(contract.nextBillingDate)}
+                            Próxima cobrança: {formatDate(contract.nextBillingDate.toISOString())}
                           </div>
                         </div>
                       </div>
                       
                       <div className="mt-4 flex justify-between items-center">
                         <div className="text-sm text-gray-600">
-                          Início: {formatDate(contract.startDate)}
+                          Início: {formatDate(contract.startDate.toISOString())}
                         </div>
                         <div className="flex gap-2">
                           <Button size="sm" variant="outline">
@@ -172,14 +172,14 @@ const Contratos = () => {
                         <div className="text-right">
                           <div className="font-bold">{formatCurrency(contract.amount)}</div>
                           <div className="text-sm text-gray-600">
-                            Encerrado em: {formatDate(contract.endDate)}
+                            Encerrado em: {formatDate(contract.endDate.toISOString())}
                           </div>
                         </div>
                       </div>
                       
                       <div className="mt-4 flex justify-between items-center">
                         <div className="text-sm text-gray-600">
-                          Início: {formatDate(contract.startDate)}
+                          Início: {formatDate(contract.startDate.toISOString())}
                         </div>
                         <div className="flex gap-2">
                           <Button size="sm" variant="outline">

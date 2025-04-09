@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Order, PaymentDetails } from '@/data/mockData';
@@ -15,7 +14,8 @@ import {
   Smartphone,
   Landmark,
   ChevronsDown,
-  ChevronsUp
+  ChevronsUp,
+  Download
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Card, CardContent } from '@/components/ui/card';
@@ -39,7 +39,6 @@ interface OrderCardProps {
   order: Order;
 }
 
-// Mock data for boleto transactions
 const mockBoletoTransactions = [
   {
     id: "boleto_1",
@@ -108,7 +107,6 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     }
   };
 
-  // Função para renderizar os detalhes do método de pagamento
   const renderPaymentMethod = (payment: PaymentDetails) => {
     if (payment.method === "credit_card" && payment.cardDetails) {
       return (
@@ -243,7 +241,6 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const hasMultiplePayments = order.payments.length > 1;
   const hasBoletoPayment = order.payments.some(payment => payment.method === "boleto");
 
-  // Function to render boleto transaction status
   const getBoletoStatusBadge = (status: string) => {
     switch (status) {
       case 'paid':
@@ -309,7 +306,6 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                 )}
               </div>
 
-              {/* Sempre mostrar o primeiro pagamento */}
               <div className="mt-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
@@ -332,7 +328,6 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                 {renderPaymentActions(order.payments[0])}
               </div>
 
-              {/* Mostrar pagamentos adicionais quando expandido */}
               {hasMultiplePayments && (
                 <CollapsibleContent>
                   <div className="mt-3 pt-3 border-t border-gray-200">
@@ -363,7 +358,6 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             </div>
           </Collapsible>
           
-          {/* New section for transactions details - only show for Boleto */}
           {hasBoletoPayment && (
             <Collapsible
               open={isTransactionsOpen}
@@ -399,7 +393,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                             </span>
                             {transaction.status === 'paid' && transaction.paidDate && (
                               <span className="text-xs text-green-600">
-                                Pago em: {formatDate(transaction.paidDate)}
+                                Pago em: {formatDate(transaction.paidDate.toISOString())}
                               </span>
                             )}
                           </div>
