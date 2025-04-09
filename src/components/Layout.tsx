@@ -17,12 +17,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className="flex flex-col flex-grow w-full">
         {isAuthenticated && <Header />}
         <main className="flex-grow py-6">
-          <div className="max-w-full sm:max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             {children}
           </div>
         </main>
         <footer className="border-t border-gray-100 bg-white py-4 sm:py-6">
-          <div className="container mx-auto px-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col items-center justify-between gap-2 sm:flex-row">
               <div className="flex items-center">
                 <span className="font-medium text-blue-600">G4</span>

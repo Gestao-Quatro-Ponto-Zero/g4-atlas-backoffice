@@ -20,7 +20,7 @@ const OrderList: React.FC<OrderListProps> = ({ orders }) => {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:gap-5">
+    <div className="flex flex-col w-full gap-4 sm:gap-5">
       {orders.map((order) => (
         <OrderCard key={order.id} order={order} />
       ))}
