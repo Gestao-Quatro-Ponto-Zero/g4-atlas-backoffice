@@ -55,8 +55,15 @@ const Settings = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-2xl font-bold mb-6">Configurações</h1>
+      <div className="max-w-4xl mx-auto space-y-6 pb-6">
+        <div className="flex flex-col items-center justify-center py-6">
+          <img 
+            src="/lovable-uploads/787f0964-43af-44f4-ba61-2576d0e15f5f.png" 
+            alt="G4 Educação Logo" 
+            className="h-16 md:h-20 mb-4"
+          />
+          <h1 className="text-2xl font-bold">Configurações</h1>
+        </div>
         
         {/* User Profile Section */}
         <ProfileSection />
@@ -66,8 +73,8 @@ const Settings = () => {
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-xl">Suporte</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <CardContent>
+            <div className="flex flex-col space-y-4">
               <Card className="border border-gray-200">
                 <CardContent className="p-4">
                   <div className="flex flex-col items-center text-center">
@@ -95,7 +102,8 @@ const Settings = () => {
                     <p className="text-sm text-gray-500 mb-4">Fale diretamente com nossa equipe de suporte</p>
                     <Button 
                       onClick={handleWhatsAppSupport}
-                      className="bg-green-500 hover:bg-green-600 text-white w-full"
+                      variant="whatsapp"
+                      className="w-full"
                     >
                       <MessageCircle className="mr-2 h-4 w-4" />
                       Contatar Suporte
