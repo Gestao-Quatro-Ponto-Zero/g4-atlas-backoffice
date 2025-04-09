@@ -13,7 +13,9 @@ import {
   ChevronDown,
   ChevronUp,
   Smartphone,
-  Landmark
+  Landmark,
+  ChevronsDown,
+  ChevronsUp
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Card, CardContent } from '@/components/ui/card';
@@ -37,8 +39,35 @@ interface OrderCardProps {
   order: Order;
 }
 
+// Mock data for boleto transactions
+const mockBoletoTransactions = [
+  {
+    id: "boleto_1",
+    dueDate: new Date(2025, 2, 15),
+    status: "paid",
+    amount: 199.9,
+    paidDate: new Date(2025, 2, 14),
+    barcode: "34191790010104351004791020150008190990000019990"
+  },
+  {
+    id: "boleto_2",
+    dueDate: new Date(2025, 3, 15),
+    status: "pending",
+    amount: 199.9,
+    barcode: "34191790010104351004791020150008190990000019990"
+  },
+  {
+    id: "boleto_3",
+    dueDate: new Date(2025, 1, 15),
+    status: "overdue",
+    amount: 199.9,
+    barcode: "34191790010104351004791020150008190990000019990"
+  }
+];
+
 const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const [isPaymentsOpen, setIsPaymentsOpen] = useState(false);
+  const [isTransactionsOpen, setIsTransactionsOpen] = useState(false);
 
   const getStatusIcon = () => {
     switch (order.status) {
@@ -212,6 +241,21 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   };
 
   const hasMultiplePayments = order.payments.length > 1;
+  const hasBoletoPayment = order.payments.some(payment => payment.method === "boleto");
+
+  // Function to render boleto transaction status
+  const getBoletoStatusBadge = (status: string) => {
+    switch (status) {
+      case 'paid':
+        return <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">Pago</span>;
+      case 'pending':
+        return <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-xs">Pendente</span>;
+      case 'overdue':
+        return <span className="px-2 py-0.5 bg-red-100 text-red-700 rounded text-xs">Vencido</span>;
+      default:
+        return <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs">{status}</span>;
+    }
+  };
 
   return (
     <Card className="overflow-hidden transition-all duration-200 hover:shadow-md">
@@ -318,6 +362,70 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               )}
             </div>
           </Collapsible>
+          
+          {/* New section for transactions details - only show for Boleto */}
+          {hasBoletoPayment && (
+            <Collapsible
+              open={isTransactionsOpen}
+              onOpenChange={setIsTransactionsOpen}
+              className="mt-3"
+            >
+              <div className="rounded-md bg-gray-50/70 p-3">
+                <CollapsibleTrigger asChild>
+                  <div className="flex justify-between items-center cursor-pointer hover:bg-gray-100/50 p-1 rounded">
+                    <p className="text-xs font-medium uppercase text-gray-500 flex items-center">
+                      <span>Transações</span>
+                      {isTransactionsOpen ? (
+                        <ChevronsUp className="h-4 w-4 ml-1" />
+                      ) : (
+                        <ChevronsDown className="h-4 w-4 ml-1" />
+                      )}
+                    </p>
+                  </div>
+                </CollapsibleTrigger>
+                
+                <CollapsibleContent>
+                  <div className="mt-3 border-t border-gray-200 pt-3">
+                    <div className="space-y-3">
+                      {mockBoletoTransactions.map((transaction, index) => (
+                        <div key={transaction.id} className="flex items-center justify-between bg-white p-2 rounded-md shadow-sm border border-gray-200">
+                          <div className="flex flex-col">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm font-medium">Parcela {index + 1}</span>
+                              {getBoletoStatusBadge(transaction.status)}
+                            </div>
+                            <span className="text-xs text-gray-600">
+                              Vencimento: {formatDate(transaction.dueDate)}
+                            </span>
+                            {transaction.status === 'paid' && transaction.paidDate && (
+                              <span className="text-xs text-green-600">
+                                Pago em: {formatDate(transaction.paidDate)}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <span className="font-medium">{formatCurrency(transaction.amount)}</span>
+                            <div className="flex space-x-1 mt-1">
+                              <Button size="sm" variant="outline" className="h-7 px-2 py-1 text-xs">
+                                <Receipt className="h-3 w-3 mr-1" />
+                                Comprovante
+                              </Button>
+                              {transaction.status === 'pending' && (
+                                <Button size="sm" variant="outline" className="h-7 px-2 py-1 text-xs">
+                                  <Download className="h-3 w-3 mr-1" />
+                                  Boleto
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
+          )}
         </div>
       </CardContent>
     </Card>
