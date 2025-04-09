@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
@@ -22,7 +21,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-// Mock data for charges
 const mockCharges = [
   {
     id: 'ch_1',
@@ -105,7 +103,6 @@ const mockCharges = [
   }
 ];
 
-// Mock data for boleto installments
 const mockBoletoInstallments = [
   {
     id: 'bol_1',
@@ -136,7 +133,6 @@ const mockBoletoInstallments = [
   }
 ];
 
-// Mock data for credit card payments
 const mockCreditCardPayments = [
   {
     id: 'cc_1',
@@ -149,7 +145,6 @@ const mockCreditCardPayments = [
   }
 ];
 
-// Mock data for PIX payments
 const mockPixPayments = [
   {
     id: 'pix_1',
@@ -330,81 +325,79 @@ const Cobrancas = () => {
           </p>
         </div>
         
-        <Card>
+        <Card className="overflow-hidden">
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Data</TableHead>
-                    <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Descrição</TableHead>
-                    <TableHead>Valor</TableHead>
-                    <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Forma de Pagamento</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className={isMobile ? "hidden md:table-cell text-right" : "text-right"}>Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockCharges.map((charge) => (
-                    <TableRow 
-                      key={charge.id}
-                      className="cursor-pointer hover:bg-gray-50"
-                      onClick={() => isMobile ? handleOpenModal(charge) : null}
-                    >
-                      <TableCell className="font-medium">{formatDate(charge.date.toISOString())}</TableCell>
-                      <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{charge.description}</TableCell>
-                      <TableCell>{formatCurrency(charge.amount)}</TableCell>
-                      <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{getPaymentMethodDisplay(charge.method)}</TableCell>
-                      <TableCell>{getStatusBadge(charge.status)}</TableCell>
-                      <TableCell className={isMobile ? "hidden md:table-cell text-right" : "text-right"}>
-                        <div className="flex justify-end gap-2">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Data</TableHead>
+                  <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Descrição</TableHead>
+                  <TableHead>Valor</TableHead>
+                  <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Forma de Pagamento</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className={isMobile ? "hidden md:table-cell text-right" : "text-right"}>Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mockCharges.map((charge) => (
+                  <TableRow 
+                    key={charge.id}
+                    className="cursor-pointer hover:bg-gray-50"
+                    onClick={() => isMobile ? handleOpenModal(charge) : null}
+                  >
+                    <TableCell className="font-medium">{formatDate(charge.date.toISOString())}</TableCell>
+                    <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{charge.description}</TableCell>
+                    <TableCell>{formatCurrency(charge.amount)}</TableCell>
+                    <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{getPaymentMethodDisplay(charge.method)}</TableCell>
+                    <TableCell>{getStatusBadge(charge.status)}</TableCell>
+                    <TableCell className={isMobile ? "hidden md:table-cell text-right" : "text-right"}>
+                      <div className="flex justify-end gap-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          title="Ver detalhes"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenModal(charge);
+                          }}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        {charge.status === 'paid' && charge.receiptUrl && (
+                          <Button variant="ghost" size="sm" asChild title="Ver comprovante">
+                            <a 
+                              href={charge.receiptUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <FileText className="h-4 w-4" />
+                            </a>
+                          </Button>
+                        )}
+                        {charge.method === 'boleto' && charge.boletoUrl && (
                           <Button 
                             variant="ghost" 
                             size="sm" 
-                            title="Ver detalhes"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenModal(charge);
-                            }}
+                            asChild 
+                            title="Baixar boleto"
                           >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          {charge.status === 'paid' && charge.receiptUrl && (
-                            <Button variant="ghost" size="sm" asChild title="Ver comprovante">
-                              <a 
-                                href={charge.receiptUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <FileText className="h-4 w-4" />
-                              </a>
-                            </Button>
-                          )}
-                          {charge.method === 'boleto' && charge.boletoUrl && (
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              asChild 
-                              title="Baixar boleto"
+                            <a 
+                              href={charge.boletoUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
                             >
-                              <a 
-                                href={charge.boletoUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Download className="h-4 w-4" />
-                              </a>
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                              <Download className="h-4 w-4" />
+                            </a>
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>
