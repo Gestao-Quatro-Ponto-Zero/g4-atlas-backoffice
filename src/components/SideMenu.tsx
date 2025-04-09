@@ -1,4 +1,6 @@
+
 import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
   ShoppingBag, 
@@ -128,7 +130,8 @@ const SettingsDropdownContent = ({ logout }: { logout: () => void }) => (
 const MobileMenu = () => {
   const { user, logout } = useAuth();
   const firstLetter = user?.name?.charAt(0) || 'U';
-  const pathname = window.location.pathname;
+  const location = useLocation();
+  const pathname = location.pathname;
 
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
@@ -219,8 +222,8 @@ const MobileMenu = () => {
                   </PopoverContent>
                 </Popover>
               ) : (
-                <a 
-                  href={item.href}
+                <Link 
+                  to={item.href}
                   className={cn(
                     "flex items-center justify-between px-6 py-4 hover:bg-gray-50",
                     item.active && "bg-gray-50"
@@ -231,7 +234,7 @@ const MobileMenu = () => {
                     <span className="ml-3 text-sm font-medium">{item.label}</span>
                   </div>
                   <ChevronRight className="h-4 w-4 text-gray-400" />
-                </a>
+                </Link>
               )}
             </div>
           ))}
@@ -242,9 +245,9 @@ const MobileMenu = () => {
             <Button variant="outline" className="rounded-full text-sm">Ajuda</Button>
           </div>
           <div className="flex justify-center space-x-4 mt-6 text-xs text-gray-500">
-            <a href="/termos" className="hover:underline">Termos</a>
-            <a href="/privacidade" className="hover:underline">Privacidade</a>
-            <a href="/cookies" className="hover:underline">Cookies</a>
+            <Link to="/termos" className="hover:underline">Termos</Link>
+            <Link to="/privacidade" className="hover:underline">Privacidade</Link>
+            <Link to="/cookies" className="hover:underline">Cookies</Link>
           </div>
         </div>
       </DrawerContent>
@@ -255,7 +258,8 @@ const MobileMenu = () => {
 const DesktopMenu = () => {
   const { user, logout } = useAuth();
   const firstLetter = user?.name?.charAt(0) || 'U';
-  const pathname = window.location.pathname;
+  const location = useLocation();
+  const pathname = location.pathname;
   
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
@@ -328,8 +332,8 @@ const DesktopMenu = () => {
                   </Popover>
                 ) : (
                   <SidebarMenuButton asChild isActive={item.active}>
-                    <a 
-                      href={item.href}
+                    <Link 
+                      to={item.href}
                       className="flex items-center justify-between group/menu-button"
                     >
                       <div className="flex items-center">
@@ -337,7 +341,7 @@ const DesktopMenu = () => {
                         <span className="ml-2 text-sm">{item.label}</span>
                       </div>
                       <ChevronRight className="h-3 w-3 opacity-70" />
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 )}
               </SidebarMenuItem>
@@ -350,9 +354,9 @@ const DesktopMenu = () => {
             <Button variant="outline" className="rounded-full w-full text-sm">Ajuda</Button>
           </div>
           <div className="flex justify-center space-x-3 mt-4 text-xs text-gray-500">
-            <a href="/termos" className="hover:underline">Termos</a>
-            <a href="/privacidade" className="hover:underline">Privacidade</a>
-            <a href="/cookies" className="hover:underline">Cookies</a>
+            <Link to="/termos" className="hover:underline">Termos</Link>
+            <Link to="/privacidade" className="hover:underline">Privacidade</Link>
+            <Link to="/cookies" className="hover:underline">Cookies</Link>
           </div>
         </SidebarFooter>
       </Sidebar>
