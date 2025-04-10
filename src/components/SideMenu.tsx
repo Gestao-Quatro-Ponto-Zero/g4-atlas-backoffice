@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -131,7 +130,7 @@ const MobileMenu = () => {
 
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
-    { icon: Receipt, label: 'Cobranças', href: '/cobrancas', active: pathname === '/cobrancas' },
+    { icon: Receipt, label: 'Contas', href: '/contas', active: pathname === '/contas' },
     { icon: FileText, label: 'Contratos', href: '/contratos', active: pathname === '/contratos' },
     { icon: Wallet, label: 'Minha Carteira', href: '/carteira', active: pathname === '/carteira' },
     { icon: MapPin, label: 'Endereços', href: '/enderecos', active: pathname === '/enderecos' },
@@ -264,7 +263,7 @@ const DesktopMenu = () => {
   
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
-    { icon: Receipt, label: 'Cobranças', href: '/cobrancas', active: pathname === '/cobrancas' },
+    { icon: Receipt, label: 'Contas', href: '/contas', active: pathname === '/contas' },
     { icon: FileText, label: 'Contratos', href: '/contratos', active: pathname === '/contratos' },
     { icon: Wallet, label: 'Minha Carteira', href: '/carteira', active: pathname === '/carteira' },
     { icon: MapPin, label: 'Endereços', href: '/enderecos', active: pathname === '/enderecos' },

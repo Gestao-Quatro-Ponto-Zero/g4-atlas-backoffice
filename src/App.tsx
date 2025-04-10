@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AuthProvider } from "./contexts/AuthContext";
 import Index from "./pages/Index";
 import Carteira from "./pages/Carteira";
-import Cobrancas from "./pages/Cobrancas";
+import Contas from "./pages/Contas";
 import Contratos from "./pages/Contratos";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
@@ -39,7 +39,7 @@ const PageTransition = () => {
         <Routes location={location}>
           <Route path="/" element={<Index />} />
           <Route path="/carteira" element={<Carteira />} />
-          <Route path="/cobrancas" element={<Cobrancas />} />
+          <Route path="/contas" element={<Contas />} />
           <Route path="/contratos" element={<Contratos />} />
           <Route path="/configuracoes" element={<Settings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
