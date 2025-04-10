@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -159,7 +160,7 @@ const MobileMenu = () => {
                   <img 
                     src="/lovable-uploads/c078ae70-9089-43ad-8657-a628953d196f.png" 
                     alt="G4 Educação Logo" 
-                    className="h-8"
+                    className="h-6 w-auto"
                   />
                 </div>
                 <DrawerClose asChild>
@@ -190,7 +191,10 @@ const MobileMenu = () => {
                       item.active && "bg-gray-50"
                     )}>
                       <div className="flex items-center">
-                        <item.icon className="h-5 w-5 text-gray-700" />
+                        <item.icon className={cn(
+                          "h-5 w-5 text-gray-700",
+                          item.active && "text-[#ea384c]"
+                        )} />
                         <span className="ml-3 text-sm font-medium">{item.label}</span>
                       </div>
                       <ChevronRight className="h-4 w-4 text-gray-400" />
@@ -208,7 +212,10 @@ const MobileMenu = () => {
                       item.active && "bg-gray-50"
                     )}>
                       <div className="flex items-center">
-                        <item.icon className="h-5 w-5 text-gray-700" />
+                        <item.icon className={cn(
+                          "h-5 w-5 text-gray-700",
+                          item.active && "text-[#ea384c]"
+                        )} />
                         <span className="ml-3 text-sm font-medium">{item.label}</span>
                       </div>
                       <ChevronRight className="h-4 w-4 text-gray-400" />
@@ -228,8 +235,8 @@ const MobileMenu = () => {
                 >
                   <div className="flex items-center">
                     <item.icon className={cn(
-                      "h-5 w-5", 
-                      item.label === 'Configurações' ? "text-[#ea384c]" : "text-gray-700"
+                      "h-5 w-5 text-gray-700",
+                      item.active && "text-[#ea384c]"
                     )} />
                     <span className="ml-3 text-sm font-medium">{item.label}</span>
                   </div>
@@ -283,7 +290,7 @@ const DesktopMenu = () => {
             <img 
               src="/lovable-uploads/c078ae70-9089-43ad-8657-a628953d196f.png" 
               alt="G4 Educação Logo" 
-              className="h-8"
+              className="h-6 w-auto"
             />
           </div>
           
@@ -306,7 +313,7 @@ const DesktopMenu = () => {
                           <div className="flex items-center">
                             <item.icon className={cn(
                               "h-4 w-4",
-                              item.label === 'Configurações' ? "text-[#ea384c]" : ""
+                              item.active ? "text-[#ea384c]" : ""
                             )} />
                             <span className="ml-2 text-sm">{item.label}</span>
                           </div>
@@ -326,7 +333,7 @@ const DesktopMenu = () => {
                           <div className="flex items-center">
                             <item.icon className={cn(
                               "h-4 w-4",
-                              item.label === 'Configurações' ? "text-[#ea384c]" : ""
+                              item.active ? "text-[#ea384c]" : ""
                             )} />
                             <span className="ml-2 text-sm">{item.label}</span>
                           </div>
@@ -347,7 +354,7 @@ const DesktopMenu = () => {
                       <div className="flex items-center">
                         <item.icon className={cn(
                           "h-4 w-4",
-                          item.label === 'Configurações' ? "text-[#ea384c]" : ""
+                          item.active ? "text-[#ea384c]" : ""
                         )} />
                         <span className="ml-2 text-sm">{item.label}</span>
                       </div>
