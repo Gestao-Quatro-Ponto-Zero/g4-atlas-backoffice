@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
@@ -21,7 +20,10 @@ import {
   Drawer, 
   DrawerClose, 
   DrawerContent, 
-  DrawerTrigger 
+  DrawerTrigger,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerHeader
 } from '@/components/ui/drawer';
 import {
   Popover,
@@ -48,6 +50,7 @@ import {
   SidebarProvider
 } from '@/components/ui/sidebar';
 import { mockCards } from '@/data/mockData';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SideMenuProps {
   isOpen?: boolean;
@@ -152,6 +155,10 @@ const MobileMenu = () => {
         </Button>
       </DrawerTrigger>
       <DrawerContent className="h-[95%]">
+        <DrawerHeader>
+          <DrawerTitle className="sr-only">Menu de navegação</DrawerTitle>
+          <DrawerDescription className="sr-only">Menu principal da aplicação</DrawerDescription>
+        </DrawerHeader>
         <div className="p-4 border-b">
           <div className="flex items-center justify-between mb-4">
             <div className="flex-1">
@@ -160,7 +167,7 @@ const MobileMenu = () => {
                   <img 
                     src="/lovable-uploads/c078ae70-9089-43ad-8657-a628953d196f.png" 
                     alt="G4 Educação Logo" 
-                    className="h-6 w-auto"
+                    className="h-6 w-auto object-contain"
                   />
                 </div>
                 <DrawerClose asChild>
@@ -383,10 +390,12 @@ const DesktopMenu = () => {
 };
 
 const SideMenu: React.FC<SideMenuProps> = () => {
+  const isMobile = useIsMobile();
+
+  // Only render the appropriate menu based on screen size
   return (
     <>
-      <MobileMenu />
-      <DesktopMenu />
+      {isMobile ? <MobileMenu /> : <DesktopMenu />}
     </>
   );
 };
