@@ -110,7 +110,7 @@ export const mockOrders: Order[] = [
         amount: 4997.00,
         installments: 12,
         cardDetails: {
-          id: "card1",
+          id: "card1", // Adding the required id property
           brand: "mastercard",
           lastFourDigits: "5367",
           holderName: "CARLOS SILVA",
@@ -148,6 +148,7 @@ export const mockOrders: Order[] = [
         method: "credit_card",
         amount: 497.00,
         cardDetails: {
+          id: "card3", // Adding the required id property
           brand: "visa",
           lastFourDigits: "4123",
           holderName: "CARLOS SILVA",
@@ -176,6 +177,7 @@ export const mockOrders: Order[] = [
         amount: 1250.00,
         installments: 10,
         cardDetails: {
+          id: "card4", // Adding the required id property
           brand: "mastercard",
           lastFourDigits: "5367",
           holderName: "CARLOS SILVA",
