@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Carteira from "./pages/Carteira";
 import Contas from "./pages/Contas";
 import Contratos from "./pages/Contratos";
+import Enderecos from "./pages/Enderecos";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -41,6 +42,7 @@ const PageTransition = () => {
           <Route path="/carteira" element={<Carteira />} />
           <Route path="/contas" element={<Contas />} />
           <Route path="/contratos" element={<Contratos />} />
+          <Route path="/enderecos" element={<Enderecos />} />
           <Route path="/configuracoes" element={<Settings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

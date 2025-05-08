@@ -10,11 +10,23 @@ export interface User {
   phone: string;
 }
 
+export interface Address {
+  id: string;
+  street: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  isDefault: boolean;
+}
+
 export interface PaymentCard {
+  id: string;
   brand: string;
   lastFourDigits: string;
   holderName?: string;
   type?: "credit" | "debit";
+  addressId?: string;
 }
 
 export interface PaymentDetails {
@@ -44,18 +56,43 @@ export const mockUser: User = {
   phone: "+55 11 98765-4321",
 };
 
+export const mockAddresses: Address[] = [
+  {
+    id: "addr1",
+    street: "Rua das Flores, 123",
+    neighborhood: "Centro",
+    city: "São Paulo",
+    state: "SP",
+    zipCode: "01001-000",
+    isDefault: true
+  },
+  {
+    id: "addr2",
+    street: "Av. Paulista, 1000",
+    neighborhood: "Bela Vista",
+    city: "São Paulo",
+    state: "SP",
+    zipCode: "01310-100",
+    isDefault: false
+  }
+];
+
 export const mockCards: PaymentCard[] = [
   {
+    id: "card1",
     brand: "mastercard",
     lastFourDigits: "5367",
     holderName: "CARLOS SILVA",
-    type: "credit"
+    type: "credit",
+    addressId: "addr1"
   },
   {
+    id: "card2",
     brand: "visa",
     lastFourDigits: "4123",
     holderName: "CARLOS SILVA",
-    type: "debit"
+    type: "debit",
+    addressId: "addr2"
   }
 ];
 
@@ -73,6 +110,7 @@ export const mockOrders: Order[] = [
         amount: 4997.00,
         installments: 12,
         cardDetails: {
+          id: "card1",
           brand: "mastercard",
           lastFourDigits: "5367",
           holderName: "CARLOS SILVA",

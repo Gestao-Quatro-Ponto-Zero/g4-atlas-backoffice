@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,9 +10,10 @@ import {
   Plus, 
   Trash2,
   Check,
-  MapPin
+  MapPin,
+  Edit
 } from 'lucide-react';
-import { mockCards } from '@/data/mockData';
+import { mockCards, mockAddresses } from '@/data/mockData';
 import {
   Dialog,
   DialogContent,
@@ -52,37 +53,27 @@ import {
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
-// Mock addresses for billing
-const mockAddresses = [
-  {
-    id: "addr1",
-    street: "Rua das Flores, 123",
-    neighborhood: "Centro",
-    city: "São Paulo",
-    state: "SP",
-    zipCode: "01001-000",
-    isDefault: true
-  },
-  {
-    id: "addr2",
-    street: "Av. Paulista, 1000",
-    neighborhood: "Bela Vista",
-    city: "São Paulo",
-    state: "SP",
-    zipCode: "01310-100",
-    isDefault: false
-  }
-];
+import { Link } from 'react-router-dom';
 
 const PaymentMethodCard = ({ 
+  id,
   brand, 
   lastFourDigits, 
   holderName, 
   type = 'credit',
-  isDefault = false
+  isDefault = false,
+  addressId
 }) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [associatedAddress, setAssociatedAddress] = useState(null);
+
+  // Find associated address
+  useEffect(() => {
+    if (addressId) {
+      const address = mockAddresses.find(addr => addr.id === addressId);
+      setAssociatedAddress(address);
+    }
+  }, [addressId]);
 
   return (
     <Card className="relative overflow-hidden">
@@ -118,6 +109,71 @@ const PaymentMethodCard = ({
                 </span>
               )}
             </div>
+            
+            {associatedAddress && (
+              <div className="mt-2 border-t border-gray-100 pt-2">
+                <div className="flex items-start">
+                  <MapPin className="h-4 w-4 text-gray-500 mt-0.5 mr-1.5" />
+                  <div>
+                    <p className="text-xs text-gray-600">{associatedAddress.street}</p>
+                    <p className="text-xs text-gray-500">{associatedAddress.city}, {associatedAddress.state}</p>
+                    <div className="flex items-center mt-1">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-6 text-xs px-2 flex items-center">
+                            <Edit className="h-3 w-3 mr-1" />
+                            Editar endereço
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Editar endereço de cobrança</DialogTitle>
+                            <DialogDescription>
+                              Atualize o endereço associado a este cartão
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-1 gap-2">
+                              <Label htmlFor="edit-street">Endereço</Label>
+                              <Input id="edit-street" defaultValue={associatedAddress.street} />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <Label htmlFor="edit-neighborhood">Bairro</Label>
+                                <Input id="edit-neighborhood" defaultValue={associatedAddress.neighborhood} />
+                              </div>
+                              <div>
+                                <Label htmlFor="edit-city">Cidade</Label>
+                                <Input id="edit-city" defaultValue={associatedAddress.city} />
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <Label htmlFor="edit-state">Estado</Label>
+                                <Input id="edit-state" defaultValue={associatedAddress.state} />
+                              </div>
+                              <div>
+                                <Label htmlFor="edit-zipcode">CEP</Label>
+                                <Input id="edit-zipcode" defaultValue={associatedAddress.zipCode} />
+                              </div>
+                            </div>
+                          </div>
+                          <DialogFooter>
+                            <Button variant="outline">Cancelar</Button>
+                            <Button>Salvar alterações</Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                      
+                      <Button variant="ghost" size="sm" className="h-6 text-xs px-2 flex items-center">
+                        <MapPin className="h-3 w-3 mr-1" />
+                        Trocar endereço
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           
           <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
@@ -180,6 +236,11 @@ const AddressSelection = ({ setSelectedAddress, selectedAddress }) => {
                 </SelectContent>
               </Select>
             )}
+            <div className="flex justify-between mt-1">
+              <Link to="/enderecos" className="text-xs text-blue-600 hover:underline">
+                Gerenciar endereços
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -224,6 +285,7 @@ const AddNewPaymentMethodDialog = () => {
 
   const onSubmit = (data) => {
     console.log("Payment method data:", data);
+    console.log("Selected address:", selectedAddress);
     // Here you would handle the submission logic
   };
 
@@ -418,12 +480,14 @@ const Carteira = () => {
             <div className="grid grid-cols-1 gap-4">
               {mockCards.map((card) => (
                 <PaymentMethodCard
-                  key={card.lastFourDigits}
+                  key={card.id}
+                  id={card.id}
                   brand={card.brand}
                   lastFourDigits={card.lastFourDigits}
                   holderName={card.holderName}
                   type={card.type}
                   isDefault={card.lastFourDigits === '5367'}
+                  addressId={card.addressId}
                 />
               ))}
             </div>
