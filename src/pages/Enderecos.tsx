@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,6 +19,43 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const brazilianStates = [
+  { value: "AC", label: "Acre" },
+  { value: "AL", label: "Alagoas" },
+  { value: "AP", label: "Amapá" },
+  { value: "AM", label: "Amazonas" },
+  { value: "BA", label: "Bahia" },
+  { value: "CE", label: "Ceará" },
+  { value: "DF", label: "Distrito Federal" },
+  { value: "ES", label: "Espírito Santo" },
+  { value: "GO", label: "Goiás" },
+  { value: "MA", label: "Maranhão" },
+  { value: "MT", label: "Mato Grosso" },
+  { value: "MS", label: "Mato Grosso do Sul" },
+  { value: "MG", label: "Minas Gerais" },
+  { value: "PA", label: "Pará" },
+  { value: "PB", label: "Paraíba" },
+  { value: "PR", label: "Paraná" },
+  { value: "PE", label: "Pernambuco" },
+  { value: "PI", label: "Piauí" },
+  { value: "RJ", label: "Rio de Janeiro" },
+  { value: "RN", label: "Rio Grande do Norte" },
+  { value: "RS", label: "Rio Grande do Sul" },
+  { value: "RO", label: "Rondônia" },
+  { value: "RR", label: "Roraima" },
+  { value: "SC", label: "Santa Catarina" },
+  { value: "SP", label: "São Paulo" },
+  { value: "SE", label: "Sergipe" },
+  { value: "TO", label: "Tocantins" }
+];
 
 const AddressCard = ({ address }) => {
   const { street, neighborhood, city, state, zipCode, isDefault } = address;
@@ -60,6 +97,12 @@ const AddressCard = ({ address }) => {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
+                  {/* CEP field first */}
+                  <div className="grid gap-2">
+                    <Label htmlFor="zipCode">CEP</Label>
+                    <Input id="zipCode" defaultValue={zipCode} />
+                  </div>
+                  
                   <div className="grid gap-2">
                     <Label htmlFor="street">Endereço</Label>
                     <Input id="street" defaultValue={street} />
@@ -74,15 +117,20 @@ const AddressCard = ({ address }) => {
                       <Input id="city" defaultValue={city} />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="grid gap-2">
-                      <Label htmlFor="state">Estado</Label>
-                      <Input id="state" defaultValue={state} />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="zipCode">CEP</Label>
-                      <Input id="zipCode" defaultValue={zipCode} />
-                    </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="state">Estado</Label>
+                    <Select defaultValue={state}>
+                      <SelectTrigger id="state">
+                        <SelectValue placeholder="Selecione o estado" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {brazilianStates.map((state) => (
+                          <SelectItem key={state.value} value={state.value}>
+                            {state.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="flex items-center space-x-2 pt-2">
                     <Switch id="isDefault" defaultChecked={isDefault} />
@@ -123,6 +171,12 @@ const AddAddressDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          {/* CEP field first */}
+          <div className="grid gap-2">
+            <Label htmlFor="zipCode">CEP</Label>
+            <Input id="zipCode" placeholder="CEP" />
+          </div>
+          
           <div className="grid gap-2">
             <Label htmlFor="street">Endereço</Label>
             <Input id="street" placeholder="Rua, número" />
@@ -137,15 +191,20 @@ const AddAddressDialog = () => {
               <Input id="city" placeholder="Cidade" />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="grid gap-2">
-              <Label htmlFor="state">Estado</Label>
-              <Input id="state" placeholder="Estado" />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="zipCode">CEP</Label>
-              <Input id="zipCode" placeholder="CEP" />
-            </div>
+          <div className="grid gap-2">
+            <Label htmlFor="state">Estado</Label>
+            <Select>
+              <SelectTrigger id="state">
+                <SelectValue placeholder="Selecione o estado" />
+              </SelectTrigger>
+              <SelectContent>
+                {brazilianStates.map((state) => (
+                  <SelectItem key={state.value} value={state.value}>
+                    {state.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex items-center space-x-2 pt-2">
             <Switch id="isDefault" />
