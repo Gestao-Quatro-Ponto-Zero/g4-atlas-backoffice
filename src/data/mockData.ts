@@ -27,6 +27,7 @@ export interface PaymentCard {
   holderName?: string;
   type?: "credit" | "debit";
   addressId?: string;
+  nickname?: string; // Added nickname field for card naming
 }
 
 export interface PaymentDetails {
@@ -84,7 +85,8 @@ export const mockCards: PaymentCard[] = [
     lastFourDigits: "5367",
     holderName: "CARLOS SILVA",
     type: "credit",
-    addressId: "addr1"
+    addressId: "addr1",
+    nickname: "Cartão Pessoal"
   },
   {
     id: "card2",
