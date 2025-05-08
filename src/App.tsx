@@ -52,16 +52,17 @@ const PageTransition = () => {
   );
 };
 
+// App component with proper provider nesting order
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+      <BrowserRouter>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
           <PageTransition />
-        </BrowserRouter>
-      </TooltipProvider>
+        </TooltipProvider>
+      </BrowserRouter>
     </AuthProvider>
   </QueryClientProvider>
 );
