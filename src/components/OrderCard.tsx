@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Order, PaymentDetails } from '@/data/mockData';
@@ -16,7 +17,7 @@ import {
   ChevronsDown,
   ChevronsUp,
   Download,
-  WhatsApp
+  MessageCircle
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Card, CardContent } from '@/components/ui/card';
@@ -411,7 +412,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                 variant="whatsapp"
                 className="w-full"
               >
-                <WhatsApp className="mr-2 h-4 w-4" />
+                <MessageCircle className="mr-2 h-4 w-4" />
                 Falar com o Suporte
               </Button>
             </div>
