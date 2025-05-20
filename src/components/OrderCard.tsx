@@ -17,7 +17,8 @@ import {
   ChevronsDown,
   ChevronsUp,
   Download,
-  MessageCircle
+  MessageCircle,
+  Package
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Card, CardContent } from '@/components/ui/card';
@@ -75,11 +76,30 @@ const mockBoletoTransactions = [
   }
 ];
 
+// New component to display individual product items
+const ProductItem = ({ name, price }: { name: string, price: number }) => (
+  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md mb-2 last:mb-0">
+    <div className="flex items-center">
+      <Package className="h-4 w-4 text-gray-500 mr-2" />
+      <span className="text-sm font-medium">{name}</span>
+    </div>
+    <span className="text-sm">{formatCurrency(price)}</span>
+  </div>
+);
+
 const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const [isPaymentsOpen, setIsPaymentsOpen] = useState(false);
   const [isCobrancasOpen, setIsCobrancasOpen] = useState(false);
   const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
   const navigate = useNavigate();
+  
+  // Parse product list - for demo purposes, we'll create multiple products for some orders
+  const products = order.productName.includes(',') 
+    ? order.productName.split(',').map((name, i) => ({
+        name: name.trim(),
+        price: order.price / (order.productName.split(',').length) // Split price evenly for demo
+      }))
+    : [{ name: order.productName, price: order.price }];
   
   const getStatusIcon = () => {
     switch (order.status) {
@@ -296,9 +316,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         <CardContent className="p-0">
           <div className="border-b border-gray-100 bg-gray-50/50 px-4 py-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <h3 className="text-sm font-medium text-gray-900">{order.productName}</h3>
-                <p className="text-xs text-gray-500">#{order.id}</p>
+              <div className="text-sm font-medium text-gray-900">
+                Pedido #{order.id}
               </div>
               <div className={cn("px-2.5 py-1 rounded-full text-xs font-medium border flex items-center gap-1.5", getStatusStyles())}>
                 {getStatusIcon()}
@@ -308,6 +327,20 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           </div>
           
           <div className="p-4">
+            {/* Product list */}
+            <div className="mb-4">
+              <p className="text-xs font-medium uppercase text-gray-500 mb-2">Produtos</p>
+              <div className="space-y-2">
+                {products.map((product, idx) => (
+                  <ProductItem 
+                    key={`${order.id}-product-${idx}`} 
+                    name={product.name} 
+                    price={product.price} 
+                  />
+                ))}
+              </div>
+            </div>
+            
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-md bg-gray-50/70 p-3">
                 <p className="text-xs font-medium uppercase text-gray-500">Data</p>
@@ -315,7 +348,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               </div>
               
               <div className="rounded-md bg-gray-50/70 p-3">
-                <p className="text-xs font-medium uppercase text-gray-500">Valor</p>
+                <p className="text-xs font-medium uppercase text-gray-500">Valor Total</p>
                 <p className="mt-1 font-medium text-sm">{formatCurrency(order.price)}</p>
               </div>
             </div>
@@ -336,11 +369,25 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               </div>
             </DialogTitle>
             <DialogDescription className="pt-2 pb-0">
-              {order.productName} - {formatDate(order.date)}
+              Realizado em {formatDate(order.date)}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-5">
+            {/* Products section in dialog */}
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <h3 className="text-sm font-semibold mb-3">Produtos</h3>
+              <div className="space-y-2">
+                {products.map((product, idx) => (
+                  <ProductItem 
+                    key={`dialog-${order.id}-product-${idx}`} 
+                    name={product.name} 
+                    price={product.price} 
+                  />
+                ))}
+              </div>
+            </div>
+            
             <div className="p-4 bg-gray-50 rounded-lg">
               <h3 className="text-sm font-semibold mb-3">Detalhes do Pagamento</h3>
               <div className="grid gap-4">

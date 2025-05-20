@@ -1,191 +1,84 @@
-
-// Mock data for development purposes
-// This would be replaced with actual API calls in production
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  documentNumber: string; // CPF
-  phone: string;
-}
-
-export interface Address {
-  id: string;
-  street: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  isDefault: boolean;
-}
-
-export interface PaymentCard {
-  id: string;
-  brand: string;
-  lastFourDigits: string;
-  holderName?: string;
-  type?: "credit" | "debit";
-  addressId?: string;
-  nickname?: string; // Added nickname field for card naming
-}
-
 export interface PaymentDetails {
   id: string;
-  method: "credit_card" | "boleto" | "pix";
-  amount: number; // Valor parcial do pagamento
+  method: string;
+  amount: number;
+  cardDetails?: {
+    brand: string;
+    lastFourDigits: string;
+    type: 'credit' | 'debit';
+  };
   installments?: number;
-  cardDetails?: PaymentCard;
-  failureReason?: string;
   receiptUrl?: string;
 }
 
 export interface Order {
   id: string;
-  productName: string;
-  price: number;
   date: string;
-  status: "pending" | "approved" | "denied";
-  payments: PaymentDetails[]; // Agora um array de pagamentos
+  productName: string; // Now this can contain multiple products separated by commas
+  price: number;
+  status: 'approved' | 'pending' | 'denied';
+  payments: PaymentDetails[];
 }
-
-export const mockUser: User = {
-  id: "user123",
-  name: "Carlos Silva",
-  email: "carlos.silva@gmail.com",
-  documentNumber: "123.456.789-00",
-  phone: "+55 11 98765-4321",
-};
-
-export const mockAddresses: Address[] = [
-  {
-    id: "addr1",
-    street: "Rua das Flores, 123",
-    neighborhood: "Centro",
-    city: "São Paulo",
-    state: "SP",
-    zipCode: "01001-000",
-    isDefault: true
-  },
-  {
-    id: "addr2",
-    street: "Av. Paulista, 1000",
-    neighborhood: "Bela Vista",
-    city: "São Paulo",
-    state: "SP",
-    zipCode: "01310-100",
-    isDefault: false
-  }
-];
-
-export const mockCards: PaymentCard[] = [
-  {
-    id: "card1",
-    brand: "mastercard",
-    lastFourDigits: "5367",
-    holderName: "CARLOS SILVA",
-    type: "credit",
-    addressId: "addr1",
-    nickname: "Cartão Pessoal"
-  },
-  {
-    id: "card2",
-    brand: "visa",
-    lastFourDigits: "4123",
-    holderName: "CARLOS SILVA",
-    type: "debit",
-    addressId: "addr2"
-  }
-];
 
 export const mockOrders: Order[] = [
   {
-    id: "order1",
-    productName: "MBA em Gestão Empresarial",
-    price: 4997.00,
-    date: "2025-03-25",
+    id: "ORD7829",
+    date: "2025-05-15T10:30:00",
+    productName: "Curso de Programação Java, Curso de Python Avançado",
+    price: 399.90,
     status: "approved",
     payments: [
       {
-        id: "payment1",
+        id: "PAY1234",
         method: "credit_card",
-        amount: 4997.00,
-        installments: 12,
+        amount: 399.90,
         cardDetails: {
-          id: "card1", // Adding the required id property
           brand: "mastercard",
-          lastFourDigits: "5367",
-          holderName: "CARLOS SILVA",
+          lastFourDigits: "4321",
           type: "credit"
         },
-        receiptUrl: "https://receipt.example.com/123456"
+        installments: 3,
+        receiptUrl: "https://example.com/receipt/1234"
       }
     ]
   },
   {
-    id: "order2",
-    productName: "Curso de Marketing Digital",
-    price: 997.00,
-    date: "2025-04-01",
+    id: "ORD7830",
+    date: "2025-05-14T14:45:00",
+    productName: "Assinatura Premium",
+    price: 59.90,
     status: "pending",
     payments: [
       {
-        id: "payment2",
+        id: "PAY1235",
         method: "boleto",
-        amount: 997.00,
-        installments: 2,
-        receiptUrl: "https://boleto.example.com/789012"
+        amount: 59.90,
+        installments: 1,
       }
     ]
   },
   {
-    id: "order3",
-    productName: "Workshop de Liderança",
-    price: 497.00,
-    date: "2025-02-15",
+    id: "ORD7831",
+    date: "2025-05-10T09:15:00",
+    productName: "Curso de Marketing Digital, E-book Marketing nas Redes Sociais, Mentoria Individual",
+    price: 899.90,
     status: "denied",
     payments: [
       {
-        id: "payment3",
+        id: "PAY1236",
         method: "credit_card",
-        amount: 497.00,
+        amount: 449.95,
         cardDetails: {
-          id: "card3", // Adding the required id property
           brand: "visa",
-          lastFourDigits: "4123",
-          holderName: "CARLOS SILVA",
+          lastFourDigits: "5678",
           type: "credit"
         },
-        failureReason: "Cartão expirado"
-      }
-    ]
-  },
-  {
-    id: "order4",
-    productName: "Curso de Data Science",
-    price: 2500.00,
-    date: "2025-03-10",
-    status: "approved",
-    payments: [
-      {
-        id: "payment4a",
-        method: "pix",
-        amount: 1250.00,
-        receiptUrl: "https://pix.example.com/123abc"
+        installments: 2
       },
       {
-        id: "payment4b",
-        method: "credit_card",
-        amount: 1250.00,
-        installments: 10,
-        cardDetails: {
-          id: "card4", // Adding the required id property
-          brand: "mastercard",
-          lastFourDigits: "5367",
-          holderName: "CARLOS SILVA",
-          type: "credit"
-        },
-        receiptUrl: "https://receipt.example.com/456def"
+        id: "PAY1237",
+        method: "pix",
+        amount: 449.95,
       }
     ]
   }
