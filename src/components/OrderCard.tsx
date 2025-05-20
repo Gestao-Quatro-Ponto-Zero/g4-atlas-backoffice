@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Order, PaymentDetails } from '@/data/mockData';
+import { Order, PaymentDetails, Product } from '@/data/mockData';
 import { 
   CheckCircle, 
   Clock, 
@@ -77,13 +76,18 @@ const mockBoletoTransactions = [
 ];
 
 // New component to display individual product items
-const ProductItem = ({ name, price }: { name: string, price: number }) => (
+const ProductItem = ({ name, price, quantity }: { name: string, price: number, quantity: number }) => (
   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md mb-2 last:mb-0">
     <div className="flex items-center">
       <Package className="h-4 w-4 text-gray-500 mr-2" />
       <span className="text-sm font-medium">{name}</span>
+      {quantity > 1 && (
+        <span className="ml-2 px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs">
+          {quantity}x
+        </span>
+      )}
     </div>
-    <span className="text-sm">{formatCurrency(price)}</span>
+    <span className="text-sm">{formatCurrency(price * quantity)}</span>
   </div>
 );
 
@@ -93,13 +97,14 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
   const navigate = useNavigate();
   
-  // Parse product list - for demo purposes, we'll create multiple products for some orders
-  const products = order.productName.includes(',') 
+  // Use products array if available, otherwise parse from productName string
+  const products = order.products || (order.productName.includes(',') 
     ? order.productName.split(',').map((name, i) => ({
         name: name.trim(),
-        price: order.price / (order.productName.split(',').length) // Split price evenly for demo
+        price: order.price / (order.productName.split(',').length), // Split price evenly for demo
+        quantity: 1
       }))
-    : [{ name: order.productName, price: order.price }];
+    : [{ name: order.productName, price: order.price, quantity: 1 }]);
   
   const getStatusIcon = () => {
     switch (order.status) {
@@ -336,6 +341,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                     key={`${order.id}-product-${idx}`} 
                     name={product.name} 
                     price={product.price} 
+                    quantity={product.quantity}
                   />
                 ))}
               </div>
@@ -383,6 +389,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                     key={`dialog-${order.id}-product-${idx}`} 
                     name={product.name} 
                     price={product.price} 
+                    quantity={product.quantity}
                   />
                 ))}
               </div>

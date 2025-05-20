@@ -11,13 +11,20 @@ export interface PaymentDetails {
   receiptUrl?: string;
 }
 
+export interface Product {
+  name: string;
+  price: number;
+  quantity: number;
+}
+
 export interface Order {
   id: string;
   date: string;
-  productName: string; // Now this can contain multiple products separated by commas
+  productName: string; // For backward compatibility
   price: number;
   status: 'approved' | 'pending' | 'denied';
   payments: PaymentDetails[];
+  products?: Product[]; // Add structured products array
 }
 
 // Interface for User data
@@ -136,6 +143,18 @@ export const mockOrders: Order[] = [
         installments: 3,
         receiptUrl: "https://example.com/receipt/1234"
       }
+    ],
+    products: [
+      {
+        name: "Curso de Programação Java",
+        price: 199.95,
+        quantity: 1
+      },
+      {
+        name: "Curso de Python Avançado",
+        price: 199.95,
+        quantity: 1
+      }
     ]
   },
   {
@@ -150,6 +169,13 @@ export const mockOrders: Order[] = [
         method: "boleto",
         amount: 59.90,
         installments: 1,
+      }
+    ],
+    products: [
+      {
+        name: "Assinatura Premium",
+        price: 59.90,
+        quantity: 1
       }
     ]
   },
@@ -176,6 +202,23 @@ export const mockOrders: Order[] = [
         method: "pix",
         amount: 449.95,
       }
+    ],
+    products: [
+      {
+        name: "Curso de Marketing Digital",
+        price: 399.90,
+        quantity: 1
+      },
+      {
+        name: "E-book Marketing nas Redes Sociais",
+        price: 49.90,
+        quantity: 1
+      },
+      {
+        name: "Mentoria Individual",
+        price: 450.10,
+        quantity: 2
+      }
     ]
   },
   {
@@ -197,6 +240,23 @@ export const mockOrders: Order[] = [
         installments: 12,
         receiptUrl: "https://example.com/receipt/1238"
       }
+    ],
+    products: [
+      {
+        name: "Workshop de Desenvolvimento Web",
+        price: 599.90,
+        quantity: 1
+      },
+      {
+        name: "Curso de UX/UI Design",
+        price: 499.90,
+        quantity: 1
+      },
+      {
+        name: "Kit de Ferramentas para Desenvolvedor",
+        price: 200.10,
+        quantity: 1
+      }
     ]
   },
   {
@@ -211,6 +271,23 @@ export const mockOrders: Order[] = [
         method: "boleto",
         amount: 599.70,
         installments: 3
+      }
+    ],
+    products: [
+      {
+        name: "Curso de Excel Avançado",
+        price: 199.90,
+        quantity: 1
+      },
+      {
+        name: "Curso de PowerBI",
+        price: 199.90,
+        quantity: 1
+      },
+      {
+        name: "Curso de SQL para Análise de Dados",
+        price: 199.90,
+        quantity: 1
       }
     ]
   }
