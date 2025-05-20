@@ -17,7 +17,8 @@ import {
   ChevronsUp,
   Download,
   MessageCircle,
-  Package
+  Package,
+  AlertCircle
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Card, CardContent } from '@/components/ui/card';
@@ -184,6 +185,35 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     }
   };
 
+  const getPaymentStatusBadge = (payment: PaymentDetails) => {
+    // We'll infer the payment status from the order status
+    // In a real app, each payment would have its own status
+    if (order.status === 'approved') {
+      return (
+        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-100">
+          <CheckCircle className="h-3 w-3 mr-1" />
+          Aprovado
+        </Badge>
+      );
+    } else if (order.status === 'pending') {
+      return (
+        <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-100">
+          <Clock className="h-3 w-3 mr-1" />
+          Pendente
+        </Badge>
+      );
+    } else if (order.status === 'denied') {
+      return (
+        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-100">
+          <XCircle className="h-3 w-3 mr-1" />
+          Recusado
+        </Badge>
+      );
+    }
+    
+    return null;
+  };
+
   const renderPaymentMethod = (payment: PaymentDetails) => {
     if (payment.method === "credit_card" && payment.cardDetails) {
       return (
@@ -255,7 +285,9 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     window.open(`https://wa.me/${supportPhoneNumber}?text=${message}`, '_blank');
   };
 
-  const renderPaymentActions = (payment: PaymentDetails) => {
+  // Updated renderPaymentActions to only show retry button for denied payments
+  const renderPaymentActions = (payment: PaymentDetails, index: number) => {
+    // For a denied order, show the retry button only for this specific payment
     if (order.status === 'denied') {
       return (
         <div className="mt-2">
@@ -471,23 +503,41 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             
             <div className="p-4 bg-gray-50 rounded-lg">
               <h3 className="text-sm font-semibold mb-3">Detalhes do Pagamento</h3>
+              
+              {/* Add warning message for declined orders */}
+              {order.status === 'denied' && (
+                <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4 flex items-start">
+                  <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 mr-2 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-red-800">Pagamento recusado</p>
+                    <p className="text-xs text-red-700 mt-1">
+                      Seu pagamento não foi aprovado. Por favor, verifique os dados do cartão ou escolha outra forma de pagamento.
+                    </p>
+                  </div>
+                </div>
+              )}
+              
               <div className="grid gap-4">
                 {order.payments.map((payment, idx) => (
                   <div key={payment.id} className="bg-white p-3 rounded-md border border-gray-100">
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-start">
                       <div className="flex items-center">
                         {renderPaymentMethod(payment)}
                       </div>
-                      <div className="text-right">
+                      <div className="text-right flex flex-col items-end">
                         <div className="text-sm font-medium">{formatCurrency(payment.amount)}</div>
-                        {hasMultiplePayments && (
-                          <span className="text-xs text-gray-500 px-2 py-0.5 bg-gray-100 rounded-full">
-                            {((payment.amount / calculateOrderTotal()) * 100).toFixed(0)}%
-                          </span>
-                        )}
+                        <div className="flex flex-wrap gap-1 mt-1 justify-end">
+                          {hasMultiplePayments && (
+                            <span className="text-xs text-gray-500 px-2 py-0.5 bg-gray-100 rounded-full">
+                              {((payment.amount / calculateOrderTotal()) * 100).toFixed(0)}%
+                            </span>
+                          )}
+                          {/* Show payment status badge */}
+                          {getPaymentStatusBadge(payment)}
+                        </div>
                       </div>
                     </div>
-                    {renderPaymentActions(payment)}
+                    {renderPaymentActions(payment, idx)}
                   </div>
                 ))}
               </div>
