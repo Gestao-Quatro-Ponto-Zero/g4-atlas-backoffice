@@ -45,6 +45,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useNavigate } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface OrderCardProps {
   order: Order;
@@ -88,6 +90,43 @@ const ProductItem = ({ name, price, quantity }: { name: string, price: number, q
       )}
     </div>
     <span className="text-sm">{formatCurrency(price * quantity)}</span>
+  </div>
+);
+
+// New component that shows detailed product information in a table format
+const ProductsTable = ({ products }: { products: Product[] }) => (
+  <div className="w-full overflow-auto">
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Produto</TableHead>
+          <TableHead className="text-right">Valor Unitário</TableHead>
+          <TableHead className="text-right">Quantidade</TableHead>
+          <TableHead className="text-right">Total</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {products.map((product, index) => (
+          <TableRow key={`product-row-${index}`}>
+            <TableCell className="font-medium">
+              <div className="flex items-center">
+                <Package className="h-4 w-4 text-gray-500 mr-2" />
+                {product.name}
+              </div>
+            </TableCell>
+            <TableCell className="text-right">{formatCurrency(product.price)}</TableCell>
+            <TableCell className="text-right">
+              <Badge variant="outline" className="ml-auto">
+                {product.quantity}
+              </Badge>
+            </TableCell>
+            <TableCell className="text-right font-medium">
+              {formatCurrency(product.price * product.quantity)}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   </div>
 );
 
@@ -312,6 +351,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     window.history.pushState({}, '', '/');
   };
 
+  // Calculate order total from products
+  const calculateOrderTotal = () => {
+    return products.reduce((total, product) => total + (product.price * product.quantity), 0);
+  };
+
   return (
     <>
       <Card 
@@ -355,7 +399,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               
               <div className="rounded-md bg-gray-50/70 p-3">
                 <p className="text-xs font-medium uppercase text-gray-500">Valor Total</p>
-                <p className="mt-1 font-medium text-sm">{formatCurrency(order.price)}</p>
+                <p className="mt-1 font-medium text-sm">{formatCurrency(calculateOrderTotal())}</p>
               </div>
             </div>
           </div>
@@ -364,7 +408,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
       {/* Order Detail Dialog */}
       <Dialog open={isOrderDialogOpen} onOpenChange={handleDialogClose}>
-        <DialogContent className="sm:max-w-2xl">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <div>
@@ -380,18 +424,48 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           </DialogHeader>
 
           <div className="space-y-5">
-            {/* Products section in dialog */}
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-sm font-semibold mb-3">Produtos</h3>
-              <div className="space-y-2">
-                {products.map((product, idx) => (
-                  <ProductItem 
-                    key={`dialog-${order.id}-product-${idx}`} 
-                    name={product.name} 
-                    price={product.price} 
-                    quantity={product.quantity}
-                  />
-                ))}
+            {/* Products section with detailed table in dialog */}
+            <div className="bg-gray-50 rounded-lg overflow-hidden">
+              <div className="px-4 py-3 border-b border-gray-200">
+                <h3 className="text-sm font-semibold">Detalhes dos Produtos</h3>
+              </div>
+              <div className="p-4">
+                {/* Desktop view - Table format */}
+                <div className="hidden md:block">
+                  <ProductsTable products={products} />
+                </div>
+                
+                {/* Mobile view - Cards format */}
+                <div className="md:hidden space-y-3">
+                  {products.map((product, idx) => (
+                    <div key={`mobile-product-${idx}`} className="bg-white p-3 rounded-md border border-gray-100">
+                      <div className="flex items-center mb-2">
+                        <Package className="h-4 w-4 text-gray-500 mr-2" />
+                        <span className="text-sm font-medium flex-grow">{product.name}</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div>
+                          <p className="text-gray-500">Valor Unit.</p>
+                          <p className="font-medium">{formatCurrency(product.price)}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Quant.</p>
+                          <p className="font-medium">{product.quantity}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Total</p>
+                          <p className="font-medium">{formatCurrency(product.price * product.quantity)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Order summary with total */}
+                <div className="mt-4 pt-3 border-t border-gray-200 flex justify-between items-center">
+                  <span className="font-medium">Total do pedido:</span>
+                  <span className="text-lg font-bold">{formatCurrency(calculateOrderTotal())}</span>
+                </div>
               </div>
             </div>
             
@@ -408,7 +482,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                         <div className="text-sm font-medium">{formatCurrency(payment.amount)}</div>
                         {hasMultiplePayments && (
                           <span className="text-xs text-gray-500 px-2 py-0.5 bg-gray-100 rounded-full">
-                            {((payment.amount / order.price) * 100).toFixed(0)}%
+                            {((payment.amount / calculateOrderTotal()) * 100).toFixed(0)}%
                           </span>
                         )}
                       </div>
