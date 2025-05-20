@@ -1,4 +1,3 @@
-
 export interface PaymentDetails {
   id: string;
   method: string;
@@ -39,6 +38,8 @@ export interface PaymentCard {
   expiryDate: string;
   holderName: string;
   isDefault?: boolean;
+  addressId?: string; // Added missing property
+  nickname?: string;  // Added missing property
 }
 
 // Interface for Address data
@@ -73,7 +74,9 @@ export const mockCards: PaymentCard[] = [
     lastFourDigits: '4321',
     expiryDate: '12/25',
     holderName: 'JOAO SILVA',
-    isDefault: true
+    isDefault: true,
+    addressId: 'addr-001', // Adding reference to the default address
+    nickname: 'Cartão Principal'
   },
   {
     id: 'card-002',
@@ -81,7 +84,9 @@ export const mockCards: PaymentCard[] = [
     brand: 'visa',
     lastFourDigits: '5678',
     expiryDate: '06/26',
-    holderName: 'JOAO SILVA'
+    holderName: 'JOAO SILVA',
+    addressId: 'addr-002', // Adding reference to the work address
+    nickname: 'Cartão Trabalho'
   }
 ];
 
