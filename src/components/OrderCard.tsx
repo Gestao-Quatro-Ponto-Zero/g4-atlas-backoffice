@@ -21,7 +21,8 @@ import {
   ExternalLink,
   Smartphone,
   FileText,
-  Calendar
+  Calendar,
+  ClockAlert
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Card, CardContent } from '@/components/ui/card';
@@ -130,8 +131,8 @@ const ContractDetails = ({ contract }: { contract: Contract }) => {
       case 'pending':
         return (
           <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-100">
-            <Clock className="h-3 w-3 mr-1" />
-            Pendente
+            <ClockAlert className="h-3 w-3 mr-1" />
+            Pendente de Assinatura
           </Badge>
         );
       case 'expired':
@@ -159,7 +160,8 @@ const ContractDetails = ({ contract }: { contract: Contract }) => {
         <div className="flex items-center">
           <FileText className="h-4 w-4 text-blue-600 mr-2" />
           <span className="font-medium">
-            {contract.type === 'assinatura' ? 'Contrato de Assinatura' : 'Contrato'}
+            {contract.type === 'assinatura' ? 'Contrato de Assinatura' : 
+             contract.type === 'educacional' ? 'Contrato Educacional' : 'Contrato'}
           </span>
         </div>
         <div>
@@ -516,6 +518,54 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     }
   };
 
+  // Get contract styling based on status
+  const getContractStyle = (status: string) => {
+    switch(status) {
+      case 'active':
+        return "bg-blue-50 text-blue-700 border-blue-200";
+      case 'pending':
+        return "bg-amber-50 text-amber-700 border-amber-200";
+      case 'expired':
+        return "bg-gray-50 text-gray-700 border-gray-200";
+      case 'canceled':
+        return "bg-red-50 text-red-700 border-red-200";
+      default:
+        return "bg-blue-50 text-blue-700 border-blue-200";
+    }
+  };
+
+  // Get contract label based on status
+  const getContractLabel = (status: string) => {
+    switch(status) {
+      case 'active':
+        return "Ativo";
+      case 'pending':
+        return "Pendente de Assinatura";
+      case 'expired':
+        return "Expirado";
+      case 'canceled':
+        return "Cancelado";
+      default:
+        return "Status Desconhecido";
+    }
+  };
+
+  // Get contract icon based on status
+  const getContractIcon = (status: string) => {
+    switch(status) {
+      case 'active':
+        return <CheckCircle className="h-3.5 w-3.5 mr-1.5" />;
+      case 'pending':
+        return <ClockAlert className="h-3.5 w-3.5 mr-1.5" />;
+      case 'expired':
+        return <AlertCircle className="h-3.5 w-3.5 mr-1.5" />;
+      case 'canceled':
+        return <XCircle className="h-3.5 w-3.5 mr-1.5" />;
+      default:
+        return <FileText className="h-3.5 w-3.5 mr-1.5" />;
+    }
+  };
+
   return (
     <>
       <Card 
@@ -553,16 +603,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             
             {/* Show contract indicator on card if there's a contract */}
             {hasContract && (
-              <div className="mb-4 flex items-center justify-between bg-blue-50 text-blue-700 rounded-md p-2 text-xs">
+              <div className={`mb-4 flex items-center justify-between rounded-md p-2 text-xs ${getContractStyle(order.contract?.status || 'active')}`}>
                 <div className="flex items-center">
-                  <FileText className="h-3.5 w-3.5 mr-1.5" />
-                  <span>Contrato associado</span>
+                  {getContractIcon(order.contract?.status || 'active')}
+                  <span>Contrato {getContractLabel(order.contract?.status || 'active')}</span>
                 </div>
-                <Badge variant="outline" className="bg-blue-100 border-blue-200 text-blue-700">
-                  {order.contract?.status === 'active' ? 'Ativo' : 
-                   order.contract?.status === 'pending' ? 'Pendente' : 
-                   order.contract?.status === 'expired' ? 'Expirado' : 'Cancelado'}
-                </Badge>
               </div>
             )}
             
@@ -675,6 +720,19 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                 </div>
                 
                 <ContractDetails contract={order.contract} />
+                
+                {/* Show sign contract button for pending contracts */}
+                {order.contract.status === 'pending' && (
+                  <div className="mt-4">
+                    <Button 
+                      className="w-full"
+                      onClick={() => window.open(order.contract?.documentUrl, '_blank')}
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      Assinar Contrato
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
             

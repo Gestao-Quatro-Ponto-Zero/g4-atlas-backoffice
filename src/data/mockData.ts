@@ -357,5 +357,38 @@ export const mockOrders: Order[] = [
       automaticRenewal: true,
       description: "Contrato de assinatura anual com renovação automática"
     }
+  },
+  {
+    id: "ORD7835",
+    date: "2025-05-21T09:45:00",
+    productName: "MBA em Gestão de Projetos",
+    price: 11999.90,
+    status: "pending",
+    payments: [
+      {
+        id: "PAY1241",
+        method: "boleto",
+        amount: 11999.90,
+        installments: 12,
+        orderId: "ORD7835"
+      }
+    ],
+    products: [
+      {
+        name: "MBA em Gestão de Projetos",
+        price: 11999.90,
+        quantity: 1
+      }
+    ],
+    contract: {
+      id: "CTR002",
+      type: "educacional",
+      startDate: "2025-06-01T00:00:00",
+      endDate: "2027-06-01T00:00:00",
+      status: "pending",
+      documentUrl: "https://example.com/contracts/CTR002.pdf",
+      automaticRenewal: false,
+      description: "Contrato educacional pendente de assinatura. Por favor, assine o contrato para liberar o acesso ao curso."
+    }
   }
 ];
