@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { mockOrders } from '@/data/mockData';
 
 // Enhanced mock data structure with orderId field to establish relationship
@@ -241,6 +242,10 @@ const Contas = () => {
     
     return charges;
   };
+
+  // Count payments by status for badges
+  const pendingPaymentsCount = getFilteredCharges('pendente').length;
+  const overduePaymentsCount = getFilteredCharges('vencido').length;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -565,8 +570,25 @@ const Contas = () => {
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="all">Todos</TabsTrigger>
             <TabsTrigger value="pago">Pagos</TabsTrigger>
-            <TabsTrigger value="pendente">À vencer</TabsTrigger>
-            <TabsTrigger value="vencido">Vencidos</TabsTrigger>
+            <TabsTrigger value="pendente" className="relative">
+              À vencer
+              {pendingPaymentsCount > 0 && (
+                <Badge variant="secondary" className="ml-1 bg-amber-100 text-amber-800 hover:bg-amber-100">
+                  {pendingPaymentsCount}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger 
+              value="vencido" 
+              className={`relative ${overduePaymentsCount > 0 ? 'bg-red-50 border-b-2 border-red-500 font-semibold text-red-700 hover:text-red-800 hover:bg-red-100' : ''}`}
+            >
+              Vencidos
+              {overduePaymentsCount > 0 && (
+                <Badge variant="destructive" className="ml-1">
+                  {overduePaymentsCount}
+                </Badge>
+              )}
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="all" className="mt-4">

@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
@@ -13,7 +14,8 @@ import {
   Plus,
   LogOut,
   Receipt,
-  FileText 
+  FileText,
+  CircleAlert 
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -49,8 +51,9 @@ import {
   SidebarMenuButton,
   SidebarProvider
 } from '@/components/ui/sidebar';
-import { mockCards } from '@/data/mockData';
+import { mockCards, mockCharges } from '@/data/mockData';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Badge } from '@/components/ui/badge';
 
 interface SideMenuProps {
   isOpen?: boolean;
@@ -66,7 +69,13 @@ interface MenuItem {
   popoverContent?: React.ReactNode;
   dropdown?: boolean;
   dropdownContent?: React.ReactNode;
+  showAlert?: boolean;
 }
+
+// Function to check if there are any overdue payments
+const hasOverduePayments = () => {
+  return mockCharges.some(charge => charge.status === 'vencido');
+};
 
 const WalletContent = () => {
   return (
@@ -131,10 +140,19 @@ const MobileMenu = () => {
   const firstLetter = user?.name?.charAt(0) || 'U';
   const location = useLocation();
   const pathname = location.pathname;
+  
+  // Check for overdue payments
+  const overduePaymentsExist = hasOverduePayments();
 
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
-    { icon: Receipt, label: 'Pagamentos', href: '/contas', active: pathname === '/contas' },
+    { 
+      icon: Receipt, 
+      label: 'Pagamentos', 
+      href: '/contas', 
+      active: pathname === '/contas', 
+      showAlert: overduePaymentsExist 
+    },
     { icon: FileText, label: 'Contratos', href: '/contratos', active: pathname === '/contratos' },
     { icon: Wallet, label: 'Minha Carteira', href: '/carteira', active: pathname === '/carteira' },
     { icon: MapPin, label: 'Endereços', href: '/enderecos', active: pathname === '/enderecos' },
@@ -246,6 +264,9 @@ const MobileMenu = () => {
                       item.active && "text-[#ea384c]"
                     )} />
                     <span className="ml-3 text-sm font-medium">{item.label}</span>
+                    {item.showAlert && (
+                      <CircleAlert className="ml-2 h-4 w-4 text-red-500" />
+                    )}
                   </div>
                   <ChevronRight className="h-4 w-4 text-gray-400" />
                 </Link>
@@ -275,9 +296,18 @@ const DesktopMenu = () => {
   const location = useLocation();
   const pathname = location.pathname;
   
+  // Check for overdue payments
+  const overduePaymentsExist = hasOverduePayments();
+  
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
-    { icon: Receipt, label: 'Pagamentos', href: '/contas', active: pathname === '/contas' },
+    { 
+      icon: Receipt, 
+      label: 'Pagamentos', 
+      href: '/contas', 
+      active: pathname === '/contas', 
+      showAlert: overduePaymentsExist 
+    },
     { icon: FileText, label: 'Contratos', href: '/contratos', active: pathname === '/contratos' },
     { icon: Wallet, label: 'Minha Carteira', href: '/carteira', active: pathname === '/carteira' },
     { icon: MapPin, label: 'Endereços', href: '/enderecos', active: pathname === '/enderecos' },
@@ -364,6 +394,9 @@ const DesktopMenu = () => {
                           item.active ? "text-[#ea384c]" : ""
                         )} />
                         <span className="ml-2 text-sm">{item.label}</span>
+                        {item.showAlert && (
+                          <CircleAlert className="ml-1 h-3 w-3 text-red-500" />
+                        )}
                       </div>
                       <ChevronRight className="h-3 w-3 opacity-70" />
                     </Link>
