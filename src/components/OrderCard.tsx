@@ -116,7 +116,7 @@ const ProductsTable = ({ products }: { products: Product[] }) => {
   );
 };
 
-// New component to display contract information
+// Simplified ContractDetails component
 const ContractDetails = ({ contract }: { contract: Contract }) => {
   // Format contract status label and styling
   const getContractStatusBadge = (status: string) => {
@@ -169,7 +169,7 @@ const ContractDetails = ({ contract }: { contract: Contract }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex items-center text-sm">
           <Calendar className="h-4 w-4 text-gray-500 mr-2" />
           <div>
@@ -188,31 +188,6 @@ const ContractDetails = ({ contract }: { contract: Contract }) => {
           </div>
         )}
       </div>
-
-      {contract.description && (
-        <div className="bg-gray-50 p-3 rounded-md text-sm mb-4">
-          {contract.description}
-        </div>
-      )}
-
-      {contract.automaticRenewal && (
-        <div className="flex items-center text-sm text-amber-600 mb-4">
-          <RefreshCw className="h-4 w-4 mr-2" />
-          <span>Renovação automática habilitada</span>
-        </div>
-      )}
-
-      {contract.documentUrl && (
-        <a 
-          href={contract.documentUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center text-blue-600 hover:underline text-sm"
-        >
-          <Download className="h-4 w-4 mr-2" />
-          <span>Baixar contrato completo</span>
-        </a>
-      )}
     </div>
   );
 };
@@ -702,22 +677,20 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               </div>
             </div>
             
-            {/* Contract details section - only display if there's a contract */}
+            {/* Simplified Contract details section - only display if there's a contract */}
             {hasContract && order.contract && (
               <div className="p-4 bg-gray-50 rounded-lg">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="text-sm font-semibold">Detalhes do Contrato</h3>
-                  {order.contract.documentUrl && (
-                    <Button 
-                      onClick={handleViewContract} 
-                      variant="outline" 
-                      size="sm" 
-                      className="flex items-center gap-2"
-                    >
-                      Ver Contrato
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </Button>
-                  )}
+                  <Button 
+                    onClick={handleViewContract} 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex items-center gap-2"
+                  >
+                    Ver Contrato
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </Button>
                 </div>
                 
                 <ContractDetails contract={order.contract} />
@@ -727,7 +700,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                   <div className="mt-4">
                     <Button 
                       className="w-full"
-                      onClick={() => window.open(order.contract?.documentUrl, '_blank')}
+                      onClick={() => navigate(`/contratos?order=${order.id}`)}
                     >
                       <FileText className="mr-2 h-4 w-4" />
                       Assinar Contrato
