@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -27,10 +26,15 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mockOrders, Contract } from '@/data/mockData';
 
+// Extended Contract interface that includes orderId
+interface ContractWithOrderId extends Contract {
+  orderId: string;
+}
+
 const Contratos = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const isMobile = useIsMobile();
-  const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+  const [selectedContract, setSelectedContract] = useState<ContractWithOrderId | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [searchParams] = useSearchParams();
@@ -39,7 +43,7 @@ const Contratos = () => {
   
   // Extract contracts from orders
   const extractContracts = () => {
-    const contracts: (Contract & { orderId: string })[] = [];
+    const contracts: ContractWithOrderId[] = [];
     
     mockOrders.forEach(order => {
       if (order.contract) {
@@ -108,7 +112,7 @@ const Contratos = () => {
     }
   };
 
-  const handleOpenModal = (contract: Contract & { orderId: string }) => {
+  const handleOpenModal = (contract: ContractWithOrderId) => {
     setSelectedContract(contract);
     setIsModalOpen(true);
   };
@@ -117,7 +121,7 @@ const Contratos = () => {
     return mockOrders.find(order => order.id === orderId);
   };
 
-  const renderContractsList = (filteredContracts: (Contract & { orderId: string })[]) => (
+  const renderContractsList = (filteredContracts: ContractWithOrderId[]) => (
     <Card className="max-w-full overflow-hidden">
       <CardContent className="p-0">
         {orderFilter && (
