@@ -1,3 +1,4 @@
+
 export interface PaymentDetails {
   id: string;
   method: string;
@@ -67,6 +68,18 @@ export interface Address {
   isDefault?: boolean;
 }
 
+// Interface for Charge data
+export interface Charge {
+  id: string;
+  description: string;
+  amount: number;
+  dueDate: string;
+  status: 'pago' | 'pendente' | 'vencido' | 'cancelado';
+  paymentMethod?: string;
+  orderId?: string;
+  documentUrl?: string;
+}
+
 // Mock user data
 export const mockUser: User = {
   id: 'usr-001',
@@ -124,6 +137,57 @@ export const mockAddresses: Address[] = [
     city: 'São Paulo',
     state: 'SP',
     zipCode: '01310-200'
+  }
+];
+
+// Mock charges data
+export const mockCharges: Charge[] = [
+  {
+    id: 'CHG001',
+    description: 'Mensalidade Curso de Marketing Digital',
+    amount: 199.90,
+    dueDate: '2025-05-10T00:00:00',
+    status: 'vencido',
+    paymentMethod: 'boleto',
+    orderId: 'ORD7831',
+    documentUrl: 'https://example.com/boleto/CHG001.pdf'
+  },
+  {
+    id: 'CHG002',
+    description: 'Mensalidade Assinatura Premium',
+    amount: 59.90,
+    dueDate: '2025-05-25T00:00:00',
+    status: 'pendente',
+    paymentMethod: 'boleto',
+    orderId: 'ORD7830',
+    documentUrl: 'https://example.com/boleto/CHG002.pdf'
+  },
+  {
+    id: 'CHG003',
+    description: 'Parcela 1/12 - MBA em Gestão de Projetos',
+    amount: 999.99,
+    dueDate: '2025-06-05T00:00:00',
+    status: 'pendente',
+    paymentMethod: 'boleto',
+    orderId: 'ORD7835',
+    documentUrl: 'https://example.com/boleto/CHG003.pdf'
+  },
+  {
+    id: 'CHG004',
+    description: 'Parcela 2/12 - MBA em Gestão de Projetos',
+    amount: 999.99,
+    dueDate: '2025-07-05T00:00:00',
+    status: 'pendente',
+    orderId: 'ORD7835'
+  },
+  {
+    id: 'CHG005',
+    description: 'Mensalidade Curso de Excel Avançado',
+    amount: 199.90,
+    dueDate: '2025-05-15T00:00:00',
+    status: 'pago',
+    paymentMethod: 'credit_card',
+    orderId: 'ORD7833'
   }
 ];
 
