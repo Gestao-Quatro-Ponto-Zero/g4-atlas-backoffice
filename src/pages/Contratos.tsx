@@ -1,86 +1,361 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell
+} from '@/components/ui/table';
 import { formatCurrency, formatDate } from '@/utils/formatters';
-import { FileText, RefreshCw, X } from 'lucide-react';
+import { ArrowLeft, Eye, FileText, Download, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-// Mock data for contracts
-const mockActiveContracts = [
-  {
-    id: 'cont_1',
-    name: 'Assinatura Curso Desenvolvimento Full Stack',
-    startDate: new Date(2025, 1, 15),
-    nextBillingDate: new Date(2025, 4, 15),
-    amount: 99.90,
-    status: 'active',
-    type: 'monthly'
-  },
-  {
-    id: 'cont_2',
-    name: 'Assinatura Plataforma Completa',
-    startDate: new Date(2025, 0, 5),
-    nextBillingDate: new Date(2025, 3, 5),
-    amount: 299.90,
-    status: 'active',
-    type: 'quarterly'
-  }
-];
-
-const mockInactiveContracts = [
-  {
-    id: 'cont_3',
-    name: 'Assinatura Curso de Inglês',
-    startDate: new Date(2024, 10, 10),
-    endDate: new Date(2025, 1, 10),
-    amount: 49.90,
-    status: 'canceled',
-    type: 'monthly',
-    cancelReason: 'Solicitado pelo cliente'
-  },
-  {
-    id: 'cont_4',
-    name: 'Assinatura Curso de UX/UI',
-    startDate: new Date(2024, 9, 15),
-    endDate: new Date(2025, 0, 15),
-    amount: 89.90,
-    status: 'renewed',
-    type: 'monthly',
-    newContractId: 'cont_5'
-  }
-];
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { mockOrders, Contract } from '@/data/mockData';
 
 const Contratos = () => {
   const { isAuthenticated, isLoading } = useAuth();
-  const [activeTab, setActiveTab] = useState('active');
+  const isMobile = useIsMobile();
+  const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
+  const [searchParams] = useSearchParams();
+  const orderFilter = searchParams.get('order');
+  const location = useLocation();
+  
+  // Extract contracts from orders
+  const extractContracts = () => {
+    const contracts: (Contract & { orderId: string })[] = [];
+    
+    mockOrders.forEach(order => {
+      if (order.contract) {
+        contracts.push({
+          ...order.contract,
+          orderId: order.id
+        });
+      }
+    });
+    
+    return contracts;
+  };
+  
+  const allContracts = extractContracts();
+  
+  // Set the activeTab to 'all' when orderFilter changes
+  useEffect(() => {
+    if (orderFilter) {
+      setActiveTab('all');
+    }
+  }, [orderFilter]);
+
+  const getFilteredContracts = (statusFilter: string) => {
+    // First apply the order filter, if present
+    let contracts = [...allContracts];
+    
+    if (orderFilter) {
+      contracts = contracts.filter(contract => contract.orderId === orderFilter);
+    }
+    
+    // Then apply status filter
+    if (statusFilter === 'all') {
+      return contracts.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+    }
+    if (statusFilter === 'active') return contracts.filter(contract => contract.status === 'active');
+    if (statusFilter === 'pending') return contracts.filter(contract => contract.status === 'pending');
+    if (statusFilter === 'expired') return contracts.filter(contract => contract.status === 'expired');
+    if (statusFilter === 'canceled') return contracts.filter(contract => contract.status === 'canceled');
+    
+    return contracts;
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <span className="px-2 py-1 bg-green-50 text-green-700 border border-green-100 rounded-full text-xs font-medium">Ativo</span>;
+        return <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Ativo</span>;
+      case 'pending':
+        return <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">Pendente</span>;
+      case 'expired':
+        return <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Expirado</span>;
       case 'canceled':
-        return <span className="px-2 py-1 bg-red-50 text-red-700 border border-red-100 rounded-full text-xs font-medium">Cancelado</span>;
-      case 'renewed':
-        return <span className="px-2 py-1 bg-sky-50 text-sky-700 border border-sky-100 rounded-full text-xs font-medium">Renovado</span>;
+        return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">Cancelado</span>;
       default:
-        return <span className="px-2 py-1 bg-gray-50 text-gray-700 border border-gray-100 rounded-full text-xs font-medium">{status}</span>;
+        return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">{status}</span>;
     }
   };
 
-  const formatSubscriptionType = (type: string) => {
+  const getContractTypeDisplay = (type: string) => {
     switch (type) {
-      case 'monthly':
-        return 'Mensal';
-      case 'quarterly':
-        return 'Trimestral';
-      case 'yearly':
-        return 'Anual';
+      case 'assinatura':
+        return 'Assinatura';
+      case 'educacional':
+        return 'Educacional';
       default:
-        return type;
+        return type.charAt(0).toUpperCase() + type.slice(1);
     }
+  };
+
+  const handleOpenModal = (contract: Contract & { orderId: string }) => {
+    setSelectedContract(contract);
+    setIsModalOpen(true);
+  };
+
+  const getAssociatedOrder = (orderId: string) => {
+    return mockOrders.find(order => order.id === orderId);
+  };
+
+  const renderContractsList = (filteredContracts: (Contract & { orderId: string })[]) => (
+    <Card className="max-w-full overflow-hidden">
+      <CardContent className="p-0">
+        {orderFilter && (
+          <div className="bg-blue-50 p-4 border-b border-blue-100 flex justify-between items-center">
+            <div>
+              <h3 className="font-medium text-blue-800">Filtrando pelo pedido: #{orderFilter}</h3>
+              <p className="text-sm text-blue-600">
+                {filteredContracts.length} contrato(s) encontrado(s)
+              </p>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => {
+              // Remove the order filter from the URL without navigating
+              const newSearchParams = new URLSearchParams(searchParams);
+              newSearchParams.delete('order');
+              window.history.pushState({}, '', `${location.pathname}${newSearchParams.toString() ? `?${newSearchParams.toString()}` : ''}`);
+              window.location.reload(); // Simple way to refresh with new URL
+            }}>
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Voltar para todos
+            </Button>
+          </div>
+        )}
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="whitespace-nowrap">Data de Início</TableHead>
+                <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Tipo</TableHead>
+                <TableHead className="whitespace-nowrap">Status</TableHead>
+                <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Pedido</TableHead>
+                <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Valor</TableHead>
+                <TableHead className="whitespace-nowrap text-right">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredContracts.map((contract) => {
+                const associatedOrder = getAssociatedOrder(contract.orderId);
+                return (
+                  <TableRow 
+                    key={contract.id}
+                    className="cursor-pointer hover:bg-gray-50"
+                    onClick={() => handleOpenModal(contract)}
+                  >
+                    <TableCell className="font-medium whitespace-nowrap">{formatDate(contract.startDate)}</TableCell>
+                    <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{getContractTypeDisplay(contract.type)}</TableCell>
+                    <TableCell className="whitespace-nowrap">{getStatusBadge(contract.status)}</TableCell>
+                    <TableCell className={isMobile ? "hidden md:table-cell" : ""}>
+                      {contract.orderId && (
+                        <span className="text-sm font-medium">#{contract.orderId}</span>
+                      )}
+                    </TableCell>
+                    <TableCell className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>
+                      {associatedOrder && (
+                        <span>{formatCurrency(associatedOrder.price)}</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          title="Ver detalhes"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenModal(contract);
+                          }}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        {contract.documentUrl && (
+                          <Button variant="ghost" size="sm" asChild title="Ver documento">
+                            <a 
+                              href={contract.documentUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <FileText className="h-4 w-4" />
+                            </a>
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+              {filteredContracts.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-6 text-gray-500">
+                    {orderFilter 
+                      ? `Nenhum contrato encontrado para o pedido #${orderFilter}` 
+                      : 'Nenhum contrato encontrado para este filtro'}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const renderModalContent = () => {
+    if (!selectedContract) return null;
+    
+    const associatedOrder = getAssociatedOrder(selectedContract.orderId);
+    
+    return (
+      <>
+        <DialogDescription className="sr-only">Detalhes do contrato selecionado</DialogDescription>
+        
+        <div className="border rounded-lg overflow-hidden mb-6">
+          <div className="bg-gray-50 p-4">
+            <h3 className="text-lg font-medium mb-2">Detalhes do Contrato</h3>
+            
+            <div className="grid grid-cols-2 gap-4 mb-3">
+              <div>
+                <p className="text-sm text-gray-500">ID do Contrato</p>
+                <p className="font-medium">{selectedContract.id}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Tipo de Contrato</p>
+                <p className="font-medium">{getContractTypeDisplay(selectedContract.type)}</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 mb-3">
+              <div>
+                <p className="text-sm text-gray-500">Status do Contrato</p>
+                <div className="mt-1">{getStatusBadge(selectedContract.status)}</div>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Renovação Automática</p>
+                <p className="font-medium">{selectedContract.automaticRenewal ? 'Sim' : 'Não'}</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 mb-3">
+              <div>
+                <p className="text-sm text-gray-500">Data de Início</p>
+                <p className="font-medium">{formatDate(selectedContract.startDate)}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Data de Término</p>
+                <p className="font-medium">{selectedContract.endDate ? formatDate(selectedContract.endDate) : 'N/A'}</p>
+              </div>
+            </div>
+            
+            {selectedContract.description && (
+              <div className="mt-3">
+                <p className="text-sm text-gray-500">Descrição</p>
+                <p className="text-sm mt-1">{selectedContract.description}</p>
+              </div>
+            )}
+            
+            {selectedContract.status === 'pending' && (
+              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
+                <div className="flex items-start">
+                  <AlertCircle className="h-5 w-5 text-amber-500 mr-2 mt-0.5" />
+                  <div>
+                    <p className="font-medium text-amber-800">Contrato pendente de assinatura</p>
+                    <p className="text-sm text-amber-700 mt-1">Este contrato precisa ser assinado para ativar os serviços contratados.</p>
+                  </div>
+                </div>
+                <Button className="mt-3 bg-amber-600 hover:bg-amber-700" size="sm">
+                  Assinar Contrato
+                </Button>
+              </div>
+            )}
+          </div>
+          
+          <div className="border-t p-4">
+            <h4 className="font-medium mb-2">Documentos</h4>
+            
+            <div className="mt-3 flex flex-wrap gap-2">
+              {selectedContract.documentUrl && (
+                <Button size="sm" variant="outline" asChild>
+                  <a href={selectedContract.documentUrl} target="_blank" rel="noopener noreferrer">
+                    <FileText className="h-4 w-4 mr-1" /> Ver documento
+                  </a>
+                </Button>
+              )}
+              
+              {!selectedContract.documentUrl && (
+                <p className="text-sm text-gray-500">Nenhum documento disponível</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="border rounded-lg overflow-hidden">
+          <div className="bg-gray-50 p-4">
+            <h3 className="text-lg font-medium mb-2">Informações do Pedido</h3>
+            
+            <div className="grid grid-cols-2 gap-4 mb-3">
+              <div>
+                <p className="text-sm text-gray-500">Número do pedido</p>
+                <p className="font-medium">#{selectedContract.orderId}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Valor do Pedido</p>
+                <p className="font-medium">{associatedOrder ? formatCurrency(associatedOrder.price) : 'N/A'}</p>
+              </div>
+            </div>
+            
+            <div className="mt-3">
+              <Button size="sm" variant="outline" asChild>
+                <a href={`/contas?order=${selectedContract.orderId}`}>
+                  Ver Pagamentos Relacionados
+                </a>
+              </Button>
+            </div>
+          </div>
+          
+          {associatedOrder && associatedOrder.products && (
+            <div className="border-t">
+              <h4 className="p-3 font-medium border-b bg-gray-50">Itens do Pedido</h4>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Item</TableHead>
+                    <TableHead className="text-right">Valor</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {associatedOrder.products.map((product, idx) => (
+                    <TableRow key={idx}>
+                      <TableCell>{product.name}</TableCell>
+                      <TableCell className="text-right">{formatCurrency(product.price)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </div>
+      </>
+    );
   };
 
   if (isLoading) {
@@ -93,127 +368,54 @@ const Contratos = () => {
 
   return (
     <Layout>
-      <div className="w-full mx-auto px-2 sm:px-0" style={{ maxWidth: "900px" }}>
+      <div className="w-full max-w-full px-2 sm:px-0 mx-auto overflow-hidden" style={{ maxWidth: "900px" }}>
         <div className="mb-5 text-left">
           <h1 className="text-2xl font-bold sm:text-3xl">Meus Contratos</h1>
           <p className="text-gray-600 text-sm sm:text-base">
-            Gerencie suas assinaturas e contratos
+            Visualize todos os seus contratos
+            {orderFilter && <span className="font-medium"> - Pedido #{orderFilter}</span>}
           </p>
         </div>
         
-        <Tabs defaultValue="active" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-6">
+        <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-6">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="all">Todos</TabsTrigger>
             <TabsTrigger value="active">Ativos</TabsTrigger>
-            <TabsTrigger value="inactive">Inativos</TabsTrigger>
+            <TabsTrigger value="pending">Pendentes</TabsTrigger>
+            <TabsTrigger value="expired">Expirados</TabsTrigger>
+            <TabsTrigger value="canceled">Cancelados</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="active">
-            <div className="space-y-4">
-              {mockActiveContracts.map((contract) => (
-                <Card key={contract.id} className="overflow-hidden">
-                  <CardContent className="p-0">
-                    <div className="bg-green-50/30 border-l-4 border-green-500 p-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-medium text-base">{contract.name}</h3>
-                          <div className="flex items-center gap-2 mt-1">
-                            {getStatusBadge(contract.status)}
-                            <span className="text-sm text-gray-600">{formatSubscriptionType(contract.type)}</span>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold">{formatCurrency(contract.amount)}</div>
-                          <div className="text-sm text-gray-600">
-                            Próxima cobrança: {formatDate(contract.nextBillingDate.toISOString())}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="mt-4 flex justify-between items-center">
-                        <div className="text-sm text-gray-600">
-                          Início: {formatDate(contract.startDate.toISOString())}
-                        </div>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
-                            <FileText className="h-4 w-4 mr-1" />
-                            Detalhes
-                          </Button>
-                          <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50">
-                            <X className="h-4 w-4 mr-1" />
-                            Cancelar
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+          <TabsContent value="all" className="mt-4">
+            {renderContractsList(getFilteredContracts('all'))}
           </TabsContent>
           
-          <TabsContent value="inactive">
-            <div className="space-y-4">
-              {mockInactiveContracts.map((contract) => (
-                <Card key={contract.id} className="overflow-hidden">
-                  <CardContent className="p-0">
-                    <div className={`p-4 border-l-4 ${
-                      contract.status === 'canceled' 
-                        ? 'border-red-500 bg-red-50/30'
-                        : 'border-sky-500 bg-sky-50/30'
-                    }`}>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-medium text-base">{contract.name}</h3>
-                          <div className="flex items-center gap-2 mt-1">
-                            {getStatusBadge(contract.status)}
-                            <span className="text-sm text-gray-600">{formatSubscriptionType(contract.type)}</span>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold">{formatCurrency(contract.amount)}</div>
-                          <div className="text-sm text-gray-600">
-                            Encerrado em: {formatDate(contract.endDate.toISOString())}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="mt-4 flex justify-between items-center">
-                        <div className="text-sm text-gray-600">
-                          Início: {formatDate(contract.startDate.toISOString())}
-                        </div>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
-                            <FileText className="h-4 w-4 mr-1" />
-                            Detalhes
-                          </Button>
-                          {contract.status === 'canceled' && (
-                            <Button size="sm" variant="outline" className="text-sky-600 border-sky-200 hover:bg-sky-50">
-                              <RefreshCw className="h-4 w-4 mr-1" />
-                              Reativar
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {contract.status === 'canceled' && contract.cancelReason && (
-                        <div className="mt-3 text-sm text-gray-700 bg-red-50 p-2 rounded-md">
-                          <span className="font-medium">Motivo do cancelamento:</span> {contract.cancelReason}
-                        </div>
-                      )}
-                      
-                      {contract.status === 'renewed' && contract.newContractId && (
-                        <div className="mt-3 text-sm text-blue-700 bg-blue-50 p-2 rounded-md">
-                          Este contrato foi renovado com novas condições.
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+          <TabsContent value="active" className="mt-4">
+            {renderContractsList(getFilteredContracts('active'))}
+          </TabsContent>
+          
+          <TabsContent value="pending" className="mt-4">
+            {renderContractsList(getFilteredContracts('pending'))}
+          </TabsContent>
+          
+          <TabsContent value="expired" className="mt-4">
+            {renderContractsList(getFilteredContracts('expired'))}
+          </TabsContent>
+          
+          <TabsContent value="canceled" className="mt-4">
+            {renderContractsList(getFilteredContracts('canceled'))}
           </TabsContent>
         </Tabs>
       </div>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Detalhes do Contrato</DialogTitle>
+          </DialogHeader>
+          {renderModalContent()}
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };
