@@ -391,16 +391,26 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   return (
     <>
       <Card 
-        className="overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer" 
+        className="overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer border-gray-200" 
         onClick={handleOrderClick}
       >
         <CardContent className="p-0">
-          <div className="border-b border-gray-100 bg-gray-50/50 px-4 py-3">
+          <div className="border-b border-gray-100 bg-white px-4 py-3">
             <div className="flex items-center justify-between">
-              <div className="text-sm font-medium text-gray-900">
-                Pedido #{order.id}
+              <div className="flex items-center gap-3">
+                <div className="text-sm font-medium text-gray-900">
+                  {formatDate(order.date)}
+                </div>
+                <div className="text-sm font-medium text-gray-500">
+                  #{order.id}
+                </div>
               </div>
-              <div className={cn("px-2.5 py-1 rounded-full text-xs font-medium border flex items-center gap-1.5", getStatusStyles())}>
+              <div className={cn(
+                "px-2.5 py-1 rounded-full text-xs font-medium flex items-center gap-1.5",
+                order.status === 'approved' ? "bg-green-50 text-green-700" :
+                order.status === 'pending' ? "bg-amber-50 text-amber-700" :
+                "bg-red-50 text-red-700"
+              )}>
                 {getStatusIcon()}
                 <span>{getStatusText()}</span>
               </div>
@@ -408,31 +418,46 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           </div>
           
           <div className="p-4">
-            {/* Product list */}
             <div className="mb-4">
-              <p className="text-xs font-medium uppercase text-gray-500 mb-2">Produtos</p>
-              <div className="space-y-2">
-                {products.map((product, idx) => (
-                  <ProductItem 
-                    key={`${order.id}-product-${idx}`} 
-                    name={product.name} 
-                    price={product.price} 
-                    quantity={product.quantity}
-                  />
-                ))}
+              <div className="flex items-baseline justify-between mb-2">
+                <p className="text-sm font-medium text-gray-700">{products[0].name}</p>
+                <p className="text-sm font-medium text-gray-900">{formatCurrency(calculateOrderTotal())}</p>
               </div>
+              {products.length > 1 && (
+                <p className="text-xs text-gray-500">
+                  + {products.length - 1} outros produtos
+                </p>
+              )}
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-md bg-gray-50/70 p-3">
-                <p className="text-xs font-medium uppercase text-gray-500">Data</p>
-                <p className="mt-1 font-medium text-sm">{formatDate(order.date)}</p>
-              </div>
-              
-              <div className="rounded-md bg-gray-50/70 p-3">
-                <p className="text-xs font-medium uppercase text-gray-500">Valor Total</p>
-                <p className="mt-1 font-medium text-sm">{formatCurrency(calculateOrderTotal())}</p>
-              </div>
+            <div className="flex items-center gap-3">
+              {order.payments.map((payment, idx) => (
+                <div key={payment.id} className="flex items-center gap-2">
+                  {payment.method === "credit_card" && payment.cardDetails && (
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-8 h-5 bg-gray-100 rounded flex items-center justify-center">
+                        <span className="text-[10px] font-bold text-gray-600">
+                          {payment.cardDetails.brand.toUpperCase()}
+                        </span>
+                      </div>
+                      <span className="text-xs text-gray-600">
+                        •••• {payment.cardDetails.lastFourDigits}
+                      </span>
+                    </div>
+                  )}
+                  {payment.method === "pix" && (
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-8 h-5 bg-green-100 rounded flex items-center justify-center">
+                        <Smartphone className="w-3 h-3 text-green-700" />
+                      </div>
+                      <span className="text-xs text-gray-600">PIX</span>
+                    </div>
+                  )}
+                  {idx < order.payments.length - 1 && (
+                    <span className="text-gray-300">•</span>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </CardContent>
