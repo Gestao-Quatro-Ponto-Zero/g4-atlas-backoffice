@@ -10,7 +10,8 @@ import {
   Receipt, 
   ArrowRight,
   MessageCircle,
-  AlertCircle
+  AlertCircle,
+  Smartphone
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Card, CardContent } from '@/components/ui/card';
