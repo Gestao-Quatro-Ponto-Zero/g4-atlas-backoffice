@@ -134,7 +134,7 @@ const MobileMenu = () => {
 
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
-    { icon: Receipt, label: 'Faturas', href: '/contas', active: pathname === '/contas' },
+    { icon: Receipt, label: 'Pagamentos', href: '/contas', active: pathname === '/contas' },
     { icon: FileText, label: 'Contratos', href: '/contratos', active: pathname === '/contratos' },
     { icon: Wallet, label: 'Minha Carteira', href: '/carteira', active: pathname === '/carteira' },
     { icon: MapPin, label: 'Endereços', href: '/enderecos', active: pathname === '/enderecos' },
@@ -277,7 +277,7 @@ const DesktopMenu = () => {
   
   const menuItems: MenuItem[] = [
     { icon: ShoppingBag, label: 'Meus Pedidos', href: '/', active: pathname === '/' },
-    { icon: Receipt, label: 'Faturas', href: '/contas', active: pathname === '/contas' },
+    { icon: Receipt, label: 'Pagamentos', href: '/contas', active: pathname === '/contas' },
     { icon: FileText, label: 'Contratos', href: '/contratos', active: pathname === '/contratos' },
     { icon: Wallet, label: 'Minha Carteira', href: '/carteira', active: pathname === '/carteira' },
     { icon: MapPin, label: 'Endereços', href: '/enderecos', active: pathname === '/enderecos' },
