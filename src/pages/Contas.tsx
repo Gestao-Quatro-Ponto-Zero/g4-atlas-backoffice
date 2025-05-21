@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -57,6 +57,7 @@ const mockChargesWithProducts = mockCharges.map(charge => {
 const Contas = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const [selectedCharge, setSelectedCharge] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
@@ -173,6 +174,11 @@ const Contas = () => {
     setIsModalOpen(true);
   };
 
+  // Handle order ID click to navigate to order details
+  const handleOrderClick = (orderId) => {
+    navigate(`/orders/${orderId}`);
+  };
+
   const renderChargesList = (filteredCharges) => (
     <Card className="max-w-full overflow-hidden">
       <CardContent className="p-0">
@@ -200,13 +206,12 @@ const Contas = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="whitespace-nowrap">Data</TableHead>
                 <TableHead className="whitespace-nowrap">Pedido</TableHead>
+                <TableHead className="whitespace-nowrap">Data</TableHead>
                 <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Produtos</TableHead>
                 <TableHead className="whitespace-nowrap">Valor</TableHead>
                 <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Forma de Pagamento</TableHead>
                 <TableHead className="whitespace-nowrap">Status</TableHead>
-                <TableHead className="whitespace-nowrap text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -216,65 +221,29 @@ const Contas = () => {
                   className="cursor-pointer hover:bg-gray-50"
                   onClick={() => handleOpenModal(charge)}
                 >
-                  <TableCell className="font-medium whitespace-nowrap">{formatDate(charge.dueDate)}</TableCell>
                   <TableCell className="font-medium text-blue-700">
-                    #{charge.orderId}
+                    <button 
+                      className="hover:underline focus:outline-none" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOrderClick(charge.orderId);
+                      }}
+                    >
+                      #{charge.orderId}
+                    </button>
                   </TableCell>
+                  <TableCell className="font-medium whitespace-nowrap">{formatDate(charge.dueDate)}</TableCell>
                   <TableCell className={isMobile ? "hidden md:table-cell" : ""}>
                     {getProductsDisplay(charge.products)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">{formatCurrency(charge.amount)}</TableCell>
                   <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{getPaymentMethodDisplay(charge.paymentMethod)}</TableCell>
                   <TableCell className="whitespace-nowrap">{getStatusBadge(charge.status)}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        title="Ver detalhes"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenModal(charge);
-                        }}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      {charge.status === 'pago' && charge.receiptUrl && (
-                        <Button variant="ghost" size="sm" asChild title="Ver comprovante">
-                          <a 
-                            href={charge.receiptUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <FileText className="h-4 w-4" />
-                          </a>
-                        </Button>
-                      )}
-                      {charge.paymentMethod === 'boleto' && charge.documentUrl && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          asChild 
-                          title="Baixar boleto"
-                        >
-                          <a 
-                            href={charge.documentUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Download className="h-4 w-4" />
-                          </a>
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
                 </TableRow>
               ))}
               {filteredCharges.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-6 text-gray-500">
+                  <TableCell colSpan={6} className="text-center py-6 text-gray-500">
                     {orderFilter 
                       ? `Nenhuma fatura encontrada para o pedido #${orderFilter}` 
                       : 'Nenhuma fatura encontrada para este filtro'}
@@ -372,7 +341,18 @@ const Contas = () => {
             <div className="grid grid-cols-2 gap-4 mb-3">
               <div>
                 <p className="text-sm text-gray-500">Número do pedido</p>
-                <p className="font-medium">#{selectedCharge.orderId}</p>
+                <p className="font-medium">
+                  <Button 
+                    variant="link" 
+                    className="p-0 h-auto font-medium text-blue-700" 
+                    onClick={() => {
+                      handleOrderClick(selectedCharge.orderId);
+                      setIsModalOpen(false);
+                    }}
+                  >
+                    #{selectedCharge.orderId}
+                  </Button>
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Status do Pedido</p>

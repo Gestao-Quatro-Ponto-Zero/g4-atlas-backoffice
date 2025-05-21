@@ -40,6 +40,7 @@ const PageTransition = () => {
         <Routes location={location}>
           <Route path="/" element={<Index />} />
           <Route path="/order/:id" element={<Index />} />
+          <Route path="/orders/:id" element={<Index />} />
           <Route path="/carteira" element={<Carteira />} />
           <Route path="/billings" element={<Contas />} />
           <Route path="/contas" element={<Contas />} />
