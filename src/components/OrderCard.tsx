@@ -513,8 +513,9 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
   // View contract details
   const handleViewContract = () => {
-    if (order.contract?.documentUrl) {
-      window.open(order.contract.documentUrl, '_blank');
+    if (order.contract) {
+      // Instead of opening the contract document directly, navigate to contracts page with order filter
+      navigate(`/contratos?order=${order.id}`);
     }
   };
 
