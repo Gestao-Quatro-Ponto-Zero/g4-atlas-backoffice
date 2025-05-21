@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
@@ -12,7 +11,7 @@ import {
   TableCell
 } from '@/components/ui/table';
 import { formatCurrency, formatDate } from '@/utils/formatters';
-import { Eye, FileText, Download, Receipt, CreditCard, AlertCircle, ArrowLeft, ChevronRight } from 'lucide-react';
+import { Eye, FileText, Download, Receipt, CreditCard, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -24,16 +23,14 @@ import {
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const mockCharges = [
   {
@@ -180,19 +177,22 @@ const Contas = () => {
   const isMobile = useIsMobile();
   const [selectedCharge, setSelectedCharge] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState('groups'); // 'groups' or 'list'
-  const [activeStatus, setActiveStatus] = useState(null); // 'pago', 'pendente', or 'vencido'
+  const [activeTab, setActiveTab] = useState('all');
 
-  const pagoCharges = mockCharges.filter(charge => charge.status === 'pago');
-  const pendenteCharges = mockCharges.filter(charge => charge.status === 'pendente');
-  const vencidoCharges = mockCharges.filter(charge => charge.status === 'vencido');
+  const getFilteredCharges = (statusFilter) => {
+    if (statusFilter === 'all') return [...mockCharges].sort((a, b) => b.date - a.date);
+    if (statusFilter === 'pago') return mockCharges.filter(charge => charge.status === 'pago');
+    if (statusFilter === 'pendente') return mockCharges.filter(charge => charge.status === 'pendente');
+    if (statusFilter === 'vencido') return mockCharges.filter(charge => charge.status === 'vencido');
+    return mockCharges;
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pago':
         return <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Pago</span>;
       case 'pendente':
-        return <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">Pendente</span>;
+        return <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">À vencer</span>;
       case 'vencido':
         return <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Vencido</span>;
       default:
@@ -248,31 +248,103 @@ const Contas = () => {
     setIsModalOpen(true);
   };
 
-  const handleViewChargesList = (status) => {
-    setActiveStatus(status);
-    setViewMode('list');
-  };
-
-  const handleBackToGroups = () => {
-    setViewMode('groups');
-    setActiveStatus(null);
-  };
-
-  const filteredCharges = () => {
-    if (!activeStatus) return mockCharges;
-    return mockCharges.filter(charge => charge.status === activeStatus);
-  };
+  const renderChargesList = (filteredCharges) => (
+    <Card className="max-w-full overflow-hidden">
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="whitespace-nowrap">Data</TableHead>
+                <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Descrição</TableHead>
+                <TableHead className="whitespace-nowrap">Valor</TableHead>
+                <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Forma de Pagamento</TableHead>
+                <TableHead className="whitespace-nowrap">Status</TableHead>
+                <TableHead className="whitespace-nowrap text-right">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredCharges.map((charge) => (
+                <TableRow 
+                  key={charge.id}
+                  className="cursor-pointer hover:bg-gray-50"
+                  onClick={() => handleOpenModal(charge)}
+                >
+                  <TableCell className="font-medium whitespace-nowrap">{formatDate(charge.date.toISOString())}</TableCell>
+                  <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{charge.description}</TableCell>
+                  <TableCell className="whitespace-nowrap">{formatCurrency(charge.amount)}</TableCell>
+                  <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{getPaymentMethodDisplay(charge.method)}</TableCell>
+                  <TableCell className="whitespace-nowrap">{getStatusBadge(charge.status)}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        title="Ver detalhes"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenModal(charge);
+                        }}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      {charge.status === 'pago' && charge.receiptUrl && (
+                        <Button variant="ghost" size="sm" asChild title="Ver comprovante">
+                          <a 
+                            href={charge.receiptUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <FileText className="h-4 w-4" />
+                          </a>
+                        </Button>
+                      )}
+                      {charge.method === 'boleto' && charge.boletoUrl && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          asChild 
+                          title="Baixar boleto"
+                        >
+                          <a 
+                            href={charge.boletoUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Download className="h-4 w-4" />
+                          </a>
+                        </Button>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {filteredCharges.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-6 text-gray-500">
+                    Nenhuma fatura encontrada para este filtro
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   const renderModalContent = () => {
     if (!selectedCharge) return null;
     
     return (
       <>
-        <DialogDescription className="sr-only">Detalhes da conta selecionada</DialogDescription>
+        <DialogDescription className="sr-only">Detalhes da fatura selecionada</DialogDescription>
         
         <div className="border rounded-lg overflow-hidden mb-6">
           <div className="bg-gray-50 p-4">
-            <h3 className="text-lg font-medium mb-2">Detalhes da Conta</h3>
+            <h3 className="text-lg font-medium mb-2">Detalhes da Fatura</h3>
             
             <div className="grid grid-cols-2 gap-4 mb-3">
               <div>
@@ -280,14 +352,14 @@ const Contas = () => {
                 <p className="font-medium">{formatCurrency(selectedCharge.amount)}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Data da Conta</p>
+                <p className="text-sm text-gray-500">Data da Fatura</p>
                 <p className="font-medium">{formatDate(selectedCharge.date.toISOString())}</p>
               </div>
             </div>
             
             <div className="grid grid-cols-2 gap-4 mb-3">
               <div>
-                <p className="text-sm text-gray-500">Status da Conta</p>
+                <p className="text-sm text-gray-500">Status da Fatura</p>
                 <div className="mt-1">{getStatusBadge(selectedCharge.status)}</div>
               </div>
               <div>
@@ -387,122 +459,6 @@ const Contas = () => {
     );
   };
 
-  const renderStatusGroup = (title, charges, status, badgeColor) => (
-    <Card className="mb-4" onClick={() => handleViewChargesList(status)}>
-      <CardContent className="p-4 cursor-pointer">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div className={`w-3 h-3 rounded-full ${badgeColor} mr-2`}></div>
-            <span className="font-medium">{title}</span>
-          </div>
-          <div className="flex items-center">
-            <span className="text-xl font-bold mr-2">{charges.length}</span>
-            <ChevronRight className="h-5 w-5 text-gray-400" />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  const renderChargesList = () => (
-    <Card className="max-w-full overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <Button 
-          variant="ghost" 
-          className="flex items-center p-2" 
-          onClick={handleBackToGroups}
-        >
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          <span>Voltar</span>
-        </Button>
-        <CardTitle className="text-lg">
-          {activeStatus === 'pago' && 'Contas pagas'}
-          {activeStatus === 'pendente' && 'Contas pendentes'}
-          {activeStatus === 'vencido' && 'Contas vencidas'}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="whitespace-nowrap">Data</TableHead>
-                <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Descrição</TableHead>
-                <TableHead className="whitespace-nowrap">Valor</TableHead>
-                <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Forma de Pagamento</TableHead>
-                <TableHead className="whitespace-nowrap">Status</TableHead>
-                {isMobile && (
-                  <TableHead className="whitespace-nowrap text-right">Ações</TableHead>
-                )}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredCharges().map((charge) => (
-                <TableRow 
-                  key={charge.id}
-                  className="cursor-pointer hover:bg-gray-50"
-                  onClick={() => handleOpenModal(charge)}
-                >
-                  <TableCell className="font-medium whitespace-nowrap">{formatDate(charge.date.toISOString())}</TableCell>
-                  <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{charge.description}</TableCell>
-                  <TableCell className="whitespace-nowrap">{formatCurrency(charge.amount)}</TableCell>
-                  <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{getPaymentMethodDisplay(charge.method)}</TableCell>
-                  <TableCell className="whitespace-nowrap">{getStatusBadge(charge.status)}</TableCell>
-                  {isMobile && (
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          title="Ver detalhes"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenModal(charge);
-                          }}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        {charge.status === 'pago' && charge.receiptUrl && (
-                          <Button variant="ghost" size="sm" asChild title="Ver comprovante">
-                            <a 
-                              href={charge.receiptUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <FileText className="h-4 w-4" />
-                            </a>
-                          </Button>
-                        )}
-                        {charge.method === 'boleto' && charge.boletoUrl && (
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            asChild 
-                            title="Baixar boleto"
-                          >
-                            <a 
-                              href={charge.boletoUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Download className="h-4 w-4" />
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -515,27 +471,42 @@ const Contas = () => {
     <Layout>
       <div className="w-full max-w-full px-2 sm:px-0 mx-auto overflow-hidden" style={{ maxWidth: "900px" }}>
         <div className="mb-5 text-left">
-          <h1 className="text-2xl font-bold sm:text-3xl">Minhas Contas</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">Minhas Faturas</h1>
           <p className="text-gray-600 text-sm sm:text-base">
-            Visualize todos os seus pagamentos e contas
+            Visualize todas as suas faturas
           </p>
         </div>
         
-        {viewMode === 'groups' ? (
-          <div className="space-y-4">
-            {renderStatusGroup('Contas pagas', pagoCharges, 'pago', 'bg-green-500')}
-            {renderStatusGroup('Contas pendentes', pendenteCharges, 'pendente', 'bg-amber-500')}
-            {renderStatusGroup('Contas vencidas', vencidoCharges, 'vencido', 'bg-red-500')}
-          </div>
-        ) : (
-          renderChargesList()
-        )}
+        <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="all">Todas</TabsTrigger>
+            <TabsTrigger value="pago">Pagas</TabsTrigger>
+            <TabsTrigger value="pendente">À vencer</TabsTrigger>
+            <TabsTrigger value="vencido">Vencidas</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="all" className="mt-4">
+            {renderChargesList(getFilteredCharges('all'))}
+          </TabsContent>
+          
+          <TabsContent value="pago" className="mt-4">
+            {renderChargesList(getFilteredCharges('pago'))}
+          </TabsContent>
+          
+          <TabsContent value="pendente" className="mt-4">
+            {renderChargesList(getFilteredCharges('pendente'))}
+          </TabsContent>
+          
+          <TabsContent value="vencido" className="mt-4">
+            {renderChargesList(getFilteredCharges('vencido'))}
+          </TabsContent>
+        </Tabs>
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Detalhes da Conta</DialogTitle>
+            <DialogTitle>Detalhes da Fatura</DialogTitle>
           </DialogHeader>
           {renderModalContent()}
         </DialogContent>
