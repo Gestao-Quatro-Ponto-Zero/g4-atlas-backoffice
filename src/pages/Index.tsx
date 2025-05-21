@@ -37,15 +37,15 @@ const Index = () => {
           <LoginForm />
         </div>
       ) : (
-        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: "1200px" }}>
-          <div className="mb-6 border-b pb-4">
-            <h1 className="text-2xl font-semibold text-gray-900">Seus Pedidos</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Todas as assinaturas serão renovadas no final do atual período vigente a não ser que seja cancelada manualmente.
+        <div className="w-full mx-auto px-2 sm:px-0" style={{ maxWidth: "900px" }}>
+          <div className="mb-5 text-center md:text-left">
+            <h1 className="text-2xl font-bold sm:text-3xl">Meus Pedidos</h1>
+            <p className="text-gray-600 text-sm sm:text-base">
+              Visualize e gerencie suas cobranças recentes
             </p>
           </div>
           
-          <div className="space-y-4">
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
             <OrderList orders={mockOrders} />
           </div>
         </div>
