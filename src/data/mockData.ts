@@ -6,9 +6,11 @@ export interface PaymentDetails {
     brand: string;
     lastFourDigits: string;
     type: 'credit' | 'debit';
+    isRecurring?: boolean;
   };
   installments?: number;
   receiptUrl?: string;
+  isRecurring?: boolean;
 }
 
 export interface Product {
