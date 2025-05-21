@@ -12,7 +12,6 @@ import {
   RefreshCw,
   ChevronDown,
   ChevronUp,
-  Smartphone,
   Landmark,
   ChevronsDown,
   ChevronsUp,
@@ -20,7 +19,8 @@ import {
   MessageCircle,
   Package,
   AlertCircle,
-  ExternalLink
+  ExternalLink,
+  Smartphone
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Card, CardContent } from '@/components/ui/card';
@@ -82,15 +82,8 @@ const mockBoletoTransactions = [
 
 // New component to display individual product items
 const ProductItem = ({ name, price, quantity }: { name: string, price: number, quantity: number }) => {
-  const handleProductClick = () => {
-    window.open('https://plataforma.g4educacao.com/', '_blank');
-  };
-
   return (
-    <div 
-      className="flex items-center justify-between p-3 bg-gray-50 rounded-md mb-2 last:mb-0 cursor-pointer hover:bg-gray-100 transition-colors"
-      onClick={handleProductClick}
-    >
+    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md mb-2 last:mb-0">
       <div className="flex items-center">
         <Package className="h-4 w-4 text-gray-500 mr-2" />
         <span className="text-sm font-medium">{name}</span>
@@ -102,7 +95,6 @@ const ProductItem = ({ name, price, quantity }: { name: string, price: number, q
       </div>
       <div className="flex items-center gap-2">
         <span className="text-sm">{formatCurrency(price * quantity)}</span>
-        <ExternalLink className="h-3.5 w-3.5 text-blue-600" />
       </div>
     </div>
   );
@@ -110,10 +102,6 @@ const ProductItem = ({ name, price, quantity }: { name: string, price: number, q
 
 // New component that shows detailed product information in a table format
 const ProductsTable = ({ products }: { products: Product[] }) => {
-  const handleProductClick = (productName: string) => {
-    window.open('https://plataforma.g4educacao.com/', '_blank');
-  };
-
   return (
     <div className="w-full overflow-auto">
       <Table>
@@ -123,16 +111,11 @@ const ProductsTable = ({ products }: { products: Product[] }) => {
             <TableHead className="text-right">Valor Unitário</TableHead>
             <TableHead className="text-right">Quantidade</TableHead>
             <TableHead className="text-right">Total</TableHead>
-            <TableHead></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {products.map((product, index) => (
-            <TableRow 
-              key={`product-row-${index}`}
-              className="cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={() => handleProductClick(product.name)}
-            >
+            <TableRow key={`product-row-${index}`}>
               <TableCell className="font-medium">
                 <div className="flex items-center">
                   <Package className="h-4 w-4 text-gray-500 mr-2" />
@@ -147,9 +130,6 @@ const ProductsTable = ({ products }: { products: Product[] }) => {
               </TableCell>
               <TableCell className="text-right font-medium">
                 {formatCurrency(product.price * product.quantity)}
-              </TableCell>
-              <TableCell className="text-right">
-                <ExternalLink className="h-4 w-4 text-blue-600" />
               </TableCell>
             </TableRow>
           ))}
@@ -311,6 +291,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     const supportPhoneNumber = "5511942100072";
     const message = encodeURIComponent(`Olá, gostaria de ajuda com meu pedido #${order.id}`);
     window.open(`https://wa.me/${supportPhoneNumber}?text=${message}`, '_blank');
+  };
+
+  // Access products platform
+  const handleAccessProducts = () => {
+    window.open('https://platform.g4educacao.com/programs?tab=my_programs', '_blank');
   };
 
   // Updated renderPaymentActions to only show retry button for denied payments
@@ -486,8 +471,17 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           <div className="space-y-5">
             {/* Products section with detailed table in dialog */}
             <div className="bg-gray-50 rounded-lg overflow-hidden">
-              <div className="px-4 py-3 border-b border-gray-200">
+              <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
                 <h3 className="text-sm font-semibold">Detalhes dos Produtos</h3>
+                <Button 
+                  onClick={handleAccessProducts} 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex items-center gap-2"
+                >
+                  Acessar Produtos
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </Button>
               </div>
               <div className="p-4">
                 {/* Desktop view - Table format */}
@@ -500,15 +494,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                   {products.map((product, idx) => (
                     <div 
                       key={`mobile-product-${idx}`} 
-                      className="bg-white p-3 rounded-md border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
-                      onClick={() => window.open('https://plataforma.g4educacao.com/', '_blank')}
+                      className="bg-white p-3 rounded-md border border-gray-100"
                     >
-                      <div className="flex items-center mb-2 justify-between">
-                        <div className="flex items-center">
-                          <Package className="h-4 w-4 text-gray-500 mr-2" />
-                          <span className="text-sm font-medium flex-grow">{product.name}</span>
-                        </div>
-                        <ExternalLink className="h-3.5 w-3.5 text-blue-600" />
+                      <div className="flex items-center mb-2">
+                        <Package className="h-4 w-4 text-gray-500 mr-2" />
+                        <span className="text-sm font-medium flex-grow">{product.name}</span>
                       </div>
                       <div className="grid grid-cols-3 gap-2 text-xs">
                         <div>
