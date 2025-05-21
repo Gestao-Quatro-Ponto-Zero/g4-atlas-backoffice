@@ -554,19 +554,19 @@ const Contas = () => {
     <Layout>
       <div className="w-full max-w-full px-2 sm:px-0 mx-auto overflow-hidden" style={{ maxWidth: "900px" }}>
         <div className="mb-5 text-left">
-          <h1 className="text-2xl font-bold sm:text-3xl">Minhas Faturas</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">Meus Pagamentos</h1>
           <p className="text-gray-600 text-sm sm:text-base">
-            Visualize todas as suas faturas
+            Visualize todos os seus pagamentos
             {orderFilter && <span className="font-medium"> - Pedido #{orderFilter}</span>}
           </p>
         </div>
         
         <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="all">Todas</TabsTrigger>
-            <TabsTrigger value="pago">Pagas</TabsTrigger>
+            <TabsTrigger value="all">Todos</TabsTrigger>
+            <TabsTrigger value="pago">Pagos</TabsTrigger>
             <TabsTrigger value="pendente">À vencer</TabsTrigger>
-            <TabsTrigger value="vencido">Vencidas</TabsTrigger>
+            <TabsTrigger value="vencido">Vencidos</TabsTrigger>
           </TabsList>
           
           <TabsContent value="all" className="mt-4">
@@ -590,7 +590,7 @@ const Contas = () => {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Detalhes da Fatura</DialogTitle>
+            <DialogTitle>Detalhes do Pagamento</DialogTitle>
           </DialogHeader>
           {renderModalContent()}
         </DialogContent>
