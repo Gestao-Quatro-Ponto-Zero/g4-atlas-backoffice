@@ -28,6 +28,7 @@ export interface Order {
   status: 'approved' | 'pending' | 'denied';
   payments: PaymentDetails[];
   products?: Product[]; // Add structured products array
+  contract?: Contract; // Added contract information
 }
 
 // Interface for User data
@@ -125,6 +126,17 @@ export const mockAddresses: Address[] = [
     zipCode: '01310-200'
   }
 ];
+
+export interface Contract {
+  id: string;
+  type: string;
+  startDate: string;
+  endDate?: string;
+  status: 'active' | 'pending' | 'expired' | 'canceled';
+  documentUrl?: string;
+  automaticRenewal?: boolean;
+  description?: string;
+}
 
 export const mockOrders: Order[] = [
   {
@@ -299,5 +311,51 @@ export const mockOrders: Order[] = [
         quantity: 1
       }
     ]
+  },
+  {
+    id: "ORD7834",
+    date: "2025-05-20T11:30:00",
+    productName: "Programa de Mentoria Anual, Acesso Premium à Plataforma",
+    price: 2499.90,
+    status: "approved",
+    payments: [
+      {
+        id: "PAY1240",
+        method: "credit_card",
+        amount: 2499.90,
+        cardDetails: {
+          brand: "visa",
+          lastFourDigits: "3456",
+          type: "credit",
+          isRecurring: true
+        },
+        installments: 12,
+        receiptUrl: "https://example.com/receipt/1240",
+        isRecurring: true,
+        orderId: "ORD7834"
+      }
+    ],
+    products: [
+      {
+        name: "Programa de Mentoria Anual",
+        price: 1999.90,
+        quantity: 1
+      },
+      {
+        name: "Acesso Premium à Plataforma",
+        price: 500.00,
+        quantity: 1
+      }
+    ],
+    contract: {
+      id: "CTR001",
+      type: "assinatura",
+      startDate: "2025-05-20T00:00:00",
+      endDate: "2026-05-20T00:00:00",
+      status: "active",
+      documentUrl: "https://example.com/contracts/CTR001.pdf",
+      automaticRenewal: true,
+      description: "Contrato de assinatura anual com renovação automática"
+    }
   }
 ];

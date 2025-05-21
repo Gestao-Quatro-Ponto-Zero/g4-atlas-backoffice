@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Order, PaymentDetails, Product } from '@/data/mockData';
+import { Order, PaymentDetails, Product, Contract } from '@/data/mockData';
 import { 
   CheckCircle, 
   Clock, 
@@ -19,7 +19,9 @@ import {
   Package,
   AlertCircle,
   ExternalLink,
-  Smartphone
+  Smartphone,
+  FileText,
+  Calendar
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Card, CardContent } from '@/components/ui/card';
@@ -109,6 +111,106 @@ const ProductsTable = ({ products }: { products: Product[] }) => {
           ))}
         </TableBody>
       </Table>
+    </div>
+  );
+};
+
+// New component to display contract information
+const ContractDetails = ({ contract }: { contract: Contract }) => {
+  // Format contract status label and styling
+  const getContractStatusBadge = (status: string) => {
+    switch (status) {
+      case 'active':
+        return (
+          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-100">
+            <CheckCircle className="h-3 w-3 mr-1" />
+            Ativo
+          </Badge>
+        );
+      case 'pending':
+        return (
+          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-100">
+            <Clock className="h-3 w-3 mr-1" />
+            Pendente
+          </Badge>
+        );
+      case 'expired':
+        return (
+          <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-100">
+            <AlertCircle className="h-3 w-3 mr-1" />
+            Expirado
+          </Badge>
+        );
+      case 'canceled':
+        return (
+          <Badge variant="outline" className="bg-red-50 text-red-700 border-red-100">
+            <XCircle className="h-3 w-3 mr-1" />
+            Cancelado
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="bg-white p-4 rounded-md border border-gray-100">
+      <div className="flex justify-between items-start mb-3">
+        <div className="flex items-center">
+          <FileText className="h-4 w-4 text-blue-600 mr-2" />
+          <span className="font-medium">
+            {contract.type === 'assinatura' ? 'Contrato de Assinatura' : 'Contrato'}
+          </span>
+        </div>
+        <div>
+          {getContractStatusBadge(contract.status)}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="flex items-center text-sm">
+          <Calendar className="h-4 w-4 text-gray-500 mr-2" />
+          <div>
+            <span className="text-gray-600">Início:</span>
+            <span className="ml-1 font-medium">{formatDate(contract.startDate)}</span>
+          </div>
+        </div>
+
+        {contract.endDate && (
+          <div className="flex items-center text-sm">
+            <Calendar className="h-4 w-4 text-gray-500 mr-2" />
+            <div>
+              <span className="text-gray-600">Término:</span>
+              <span className="ml-1 font-medium">{formatDate(contract.endDate)}</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {contract.description && (
+        <div className="bg-gray-50 p-3 rounded-md text-sm mb-4">
+          {contract.description}
+        </div>
+      )}
+
+      {contract.automaticRenewal && (
+        <div className="flex items-center text-sm text-amber-600 mb-4">
+          <RefreshCw className="h-4 w-4 mr-2" />
+          <span>Renovação automática habilitada</span>
+        </div>
+      )}
+
+      {contract.documentUrl && (
+        <a 
+          href={contract.documentUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center text-blue-600 hover:underline text-sm"
+        >
+          <Download className="h-4 w-4 mr-2" />
+          <span>Baixar contrato completo</span>
+        </a>
+      )}
     </div>
   );
 };
@@ -372,6 +474,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
   const hasMultiplePayments = order.payments.length > 1;
   const hasBoletoPayment = order.payments.some(payment => payment.method === "boleto");
+  // Check if order has a contract
+  const hasContract = !!order.contract;
 
   const getBoletoStatusBadge = (status: string) => {
     switch (status) {
@@ -403,6 +507,13 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   // Calculate order total from products
   const calculateOrderTotal = () => {
     return products.reduce((total, product) => total + (product.price * product.quantity), 0);
+  };
+
+  // View contract details
+  const handleViewContract = () => {
+    if (order.contract?.documentUrl) {
+      window.open(order.contract.documentUrl, '_blank');
+    }
   };
 
   return (
@@ -439,6 +550,21 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                 ))}
               </div>
             </div>
+            
+            {/* Show contract indicator on card if there's a contract */}
+            {hasContract && (
+              <div className="mb-4 flex items-center justify-between bg-blue-50 text-blue-700 rounded-md p-2 text-xs">
+                <div className="flex items-center">
+                  <FileText className="h-3.5 w-3.5 mr-1.5" />
+                  <span>Contrato associado</span>
+                </div>
+                <Badge variant="outline" className="bg-blue-100 border-blue-200 text-blue-700">
+                  {order.contract?.status === 'active' ? 'Ativo' : 
+                   order.contract?.status === 'pending' ? 'Pendente' : 
+                   order.contract?.status === 'expired' ? 'Expirado' : 'Cancelado'}
+                </Badge>
+              </div>
+            )}
             
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-md bg-gray-50/70 p-3">
@@ -529,6 +655,28 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                 </div>
               </div>
             </div>
+            
+            {/* Contract details section - only display if there's a contract */}
+            {hasContract && order.contract && (
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-sm font-semibold">Detalhes do Contrato</h3>
+                  {order.contract.documentUrl && (
+                    <Button 
+                      onClick={handleViewContract} 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex items-center gap-2"
+                    >
+                      Ver Contrato
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
+                </div>
+                
+                <ContractDetails contract={order.contract} />
+              </div>
+            )}
             
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex justify-between items-center mb-3">
