@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Order, PaymentDetails, Product } from '@/data/mockData';
@@ -200,21 +199,21 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       return (
         <Badge variant="outline" className="bg-green-50 text-green-700 border-green-100">
           <CheckCircle className="h-3 w-3 mr-1" />
-          Aprovado
+          Pago
         </Badge>
       );
     } else if (order.status === 'pending') {
       return (
         <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-100">
           <Clock className="h-3 w-3 mr-1" />
-          Pendente
+          À pagar
         </Badge>
       );
     } else if (order.status === 'denied') {
       return (
         <Badge variant="outline" className="bg-red-50 text-red-700 border-red-100">
           <XCircle className="h-3 w-3 mr-1" />
-          Recusado
+          Valores em Aberto
         </Badge>
       );
     }
@@ -224,6 +223,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
   const renderPaymentMethod = (payment: PaymentDetails) => {
     if (payment.method === "credit_card" && payment.cardDetails) {
+      const isRecurring = payment.isRecurring || payment.cardDetails.isRecurring;
       return (
         <div className="flex items-center space-x-2">
           {payment.cardDetails.brand === "mastercard" && (
@@ -241,7 +241,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             <div className="flex items-center">
               <span className="text-sm font-medium">•••• {payment.cardDetails.lastFourDigits}</span>
               <span className="text-xs ml-2 bg-gray-100 px-2 py-0.5 rounded">
-                {payment.cardDetails.type === 'credit' ? 'Crédito' : 'Débito'}
+                {isRecurring ? 'Cartão Recorrente' : 'Cartão de Crédito'}
               </span>
             </div>
             {payment.installments && payment.installments > 1 && (
@@ -252,14 +252,39 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           </div>
         </div>
       );
+    } else if (payment.method === "debit_card" && payment.cardDetails) {
+      return (
+        <div className="flex items-center space-x-2">
+          {payment.cardDetails.brand === "mastercard" && (
+            <div className="w-8 h-6 bg-[#FF5F00] rounded flex items-center justify-center">
+              <div className="w-3 h-3 rounded-full bg-[#EB001B] opacity-85 -mr-1"></div>
+              <div className="w-3 h-3 rounded-full bg-[#F79E1B] opacity-85 -ml-1"></div>
+            </div>
+          )}
+          {payment.cardDetails.brand === "visa" && (
+            <div className="w-8 h-6 bg-blue-100 border border-blue-200 rounded text-blue-700 flex items-center justify-center">
+              <span className="text-[10px] font-bold">VISA</span>
+            </div>
+          )}
+          <div>
+            <div className="flex items-center">
+              <span className="text-sm font-medium">•••• {payment.cardDetails.lastFourDigits}</span>
+              <span className="text-xs ml-2 bg-gray-100 px-2 py-0.5 rounded">
+                Cartão de Débito
+              </span>
+            </div>
+          </div>
+        </div>
+      );
     } else if (payment.method === "boleto") {
+      const isRecurring = payment.isRecurring;
       return (
         <div className="flex items-center space-x-2">
           <div className="w-8 h-6 bg-gray-100 border border-gray-200 rounded flex items-center justify-center">
             <Landmark className="w-4 h-4 text-gray-500" />
           </div>
           <div>
-            <span className="text-sm">Boleto Bancário</span>
+            <span className="text-sm">{isRecurring ? 'Boleto Recorrente' : 'Boleto Bancário'}</span>
             {payment.installments && payment.installments > 1 && (
               <div className="text-xs text-gray-600">
                 {payment.installments}x de {formatCurrency(payment.amount / payment.installments)}
@@ -296,6 +321,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   // Access products platform
   const handleAccessProducts = () => {
     window.open('https://platform.g4educacao.com/programs?tab=my_programs', '_blank');
+  };
+  
+  // Navigate to billings page with order filter
+  const handleViewPaymentHistory = () => {
+    navigate(`/billings?orderId=${order.id}`);
   };
 
   // Updated renderPaymentActions to only show retry button for denied payments
@@ -527,7 +557,18 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             </div>
             
             <div className="p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-sm font-semibold mb-3">Detalhes do Pagamento</h3>
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-sm font-semibold">Detalhes do Pagamento</h3>
+                <Button 
+                  onClick={handleViewPaymentHistory} 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex items-center gap-2"
+                >
+                  Histórico de Pagamento
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </Button>
+              </div>
               
               {/* Add warning message for declined orders */}
               {order.status === 'denied' && (
@@ -627,4 +668,3 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 };
 
 export default OrderCard;
-
