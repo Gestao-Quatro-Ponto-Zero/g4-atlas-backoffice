@@ -1,13 +1,41 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import LoginForm from '../components/LoginForm';
 import OrderList from '../components/OrderList';
 import { mockOrders } from '../data/mockData';
+import OrderCard from '@/components/OrderCard';
 
 const Index = () => {
   const { isAuthenticated, isLoading } = useAuth();
+  const { id } = useParams(); // Get the order ID from URL params
+  const navigate = useNavigate();
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
+  
+  // Effect to handle order ID in URL
+  useEffect(() => {
+    if (id && isAuthenticated) {
+      // Find the order with the matching ID
+      const order = mockOrders.find(order => order.id === id);
+      if (order) {
+        setSelectedOrder(order);
+        setIsOrderDialogOpen(true);
+      } else {
+        // If order not found, redirect to home
+        navigate('/', { replace: true });
+      }
+    }
+  }, [id, isAuthenticated, navigate]);
+
+  // Handle dialog close
+  const handleOrderDialogClose = () => {
+    setIsOrderDialogOpen(false);
+    // Reset URL without page navigation
+    navigate('/', { replace: true });
+  };
 
   if (isLoading) {
     return (
@@ -48,6 +76,15 @@ const Index = () => {
           <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
             <OrderList orders={mockOrders} />
           </div>
+          
+          {/* Render OrderCard with modal open when an order is selected */}
+          {selectedOrder && (
+            <OrderCard 
+              order={selectedOrder} 
+              isDialogOpen={isOrderDialogOpen}
+              onDialogClose={handleOrderDialogClose}
+            />
+          )}
         </div>
       )}
     </Layout>

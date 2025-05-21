@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Order, PaymentDetails, Product, Contract } from '@/data/mockData';
 import { 
@@ -55,6 +55,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 interface OrderCardProps {
   order: Order;
+  isDialogOpen?: boolean;
+  onDialogClose?: () => void;
 }
 
 // New component to display individual product items
@@ -192,10 +194,17 @@ const ContractDetails = ({ contract }: { contract: Contract }) => {
   );
 };
 
-const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
+const OrderCard: React.FC<OrderCardProps> = ({ order, isDialogOpen, onDialogClose }) => {
   const [isPaymentsOpen, setIsPaymentsOpen] = useState(false);
   const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
   const navigate = useNavigate();
+  
+  // Use controlled state from props if provided
+  useEffect(() => {
+    if (isDialogOpen !== undefined) {
+      setIsOrderDialogOpen(isDialogOpen);
+    }
+  }, [isDialogOpen]);
   
   // Use products array if available, otherwise parse from productName string
   const products = order.products || (order.productName.includes(',') 
@@ -471,14 +480,20 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const handleOrderClick = () => {
     setIsOrderDialogOpen(true);
     // Update URL without page navigation
-    window.history.pushState({}, '', `/order/${order.id}`);
+    window.history.pushState({}, '', `/orders/${order.id}`);
   };
   
   // Handle dialog close
   const handleDialogClose = () => {
     setIsOrderDialogOpen(false);
-    // Reset URL without page navigation
-    window.history.pushState({}, '', '/');
+    
+    // Use the prop callback if provided, otherwise reset URL
+    if (onDialogClose) {
+      onDialogClose();
+    } else {
+      // Reset URL without page navigation
+      window.history.pushState({}, '', '/');
+    }
   };
 
   // Calculate order total from products
