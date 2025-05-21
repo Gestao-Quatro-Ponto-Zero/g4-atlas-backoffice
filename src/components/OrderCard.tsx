@@ -54,31 +54,6 @@ interface OrderCardProps {
   order: Order;
 }
 
-const mockBoletoTransactions = [
-  {
-    id: "boleto_1",
-    dueDate: new Date(2025, 2, 15),
-    status: "pago",
-    amount: 199.9,
-    paidDate: new Date(2025, 2, 14),
-    barcode: "34191790010104351004791020150008190990000019990"
-  },
-  {
-    id: "boleto_2",
-    dueDate: new Date(2025, 3, 15),
-    status: "pendente",
-    amount: 199.9,
-    barcode: "34191790010104351004791020150008190990000019990"
-  },
-  {
-    id: "boleto_3",
-    dueDate: new Date(2025, 1, 15),
-    status: "vencido",
-    amount: 199.9,
-    barcode: "34191790010104351004791020150008190990000019990"
-  }
-];
-
 // New component to display individual product items
 const ProductItem = ({ name, price, quantity }: { name: string, price: number, quantity: number }) => {
   return (
@@ -140,7 +115,6 @@ const ProductsTable = ({ products }: { products: Product[] }) => {
 
 const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const [isPaymentsOpen, setIsPaymentsOpen] = useState(false);
-  const [isCobrancasOpen, setIsCobrancasOpen] = useState(false);
   const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
   const navigate = useNavigate();
   
@@ -325,7 +299,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   
   // Navigate to billings page with order filter
   const handleViewPaymentHistory = () => {
-    navigate(`/billings?orderId=${order.id}`);
+    navigate(`/contas?order=${order.id}`);
   };
 
   // Updated renderPaymentActions to only show retry button for denied payments
@@ -608,47 +582,6 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                 ))}
               </div>
             </div>
-            
-            {hasBoletoPayment && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <h3 className="text-sm font-semibold mb-3">Cobranças</h3>
-                <div className="space-y-3">
-                  {mockBoletoTransactions.map((transaction, index) => (
-                    <div key={transaction.id} className="flex items-center justify-between bg-white p-2 rounded-md shadow-sm border border-gray-200">
-                      <div className="flex flex-col">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm font-medium">Parcela {index + 1}</span>
-                          {getBoletoStatusBadge(transaction.status)}
-                        </div>
-                        <span className="text-xs text-gray-600">
-                          Vencimento: {formatDate(transaction.dueDate)}
-                        </span>
-                        {transaction.status === 'pago' && transaction.paidDate && (
-                          <span className="text-xs text-green-600">
-                            Pago em: {formatDate(transaction.paidDate.toISOString())}
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-right">
-                        <span className="font-medium">{formatCurrency(transaction.amount)}</span>
-                        <div className="flex space-x-1 mt-1">
-                          <Button size="sm" variant="outline" className="h-7 px-2 py-1 text-xs">
-                            <Receipt className="h-3 w-3 mr-1" />
-                            Comprovante
-                          </Button>
-                          {transaction.status === 'pendente' && (
-                            <Button size="sm" variant="outline" className="h-7 px-2 py-1 text-xs">
-                              <Download className="h-3 w-3 mr-1" />
-                              Boleto
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
             
             <div className="pt-2">
               <Button 

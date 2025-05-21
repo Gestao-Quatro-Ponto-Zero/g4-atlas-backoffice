@@ -11,6 +11,7 @@ export interface PaymentDetails {
   installments?: number;
   receiptUrl?: string;
   isRecurring?: boolean;
+  orderId?: string; // Added to link payments to orders
 }
 
 export interface Product {
@@ -143,7 +144,8 @@ export const mockOrders: Order[] = [
           type: "credit"
         },
         installments: 3,
-        receiptUrl: "https://example.com/receipt/1234"
+        receiptUrl: "https://example.com/receipt/1234",
+        orderId: "ORD7829"
       }
     ],
     products: [
@@ -171,6 +173,7 @@ export const mockOrders: Order[] = [
         method: "boleto",
         amount: 59.90,
         installments: 1,
+        orderId: "ORD7830"
       }
     ],
     products: [
@@ -197,12 +200,14 @@ export const mockOrders: Order[] = [
           lastFourDigits: "5678",
           type: "credit"
         },
-        installments: 2
+        installments: 2,
+        orderId: "ORD7831"
       },
       {
         id: "PAY1237",
         method: "pix",
         amount: 449.95,
+        orderId: "ORD7831"
       }
     ],
     products: [
@@ -240,7 +245,8 @@ export const mockOrders: Order[] = [
           type: "credit"
         },
         installments: 12,
-        receiptUrl: "https://example.com/receipt/1238"
+        receiptUrl: "https://example.com/receipt/1238",
+        orderId: "ORD7832"
       }
     ],
     products: [
@@ -272,7 +278,8 @@ export const mockOrders: Order[] = [
         id: "PAY1239",
         method: "boleto",
         amount: 599.70,
-        installments: 3
+        installments: 3,
+        orderId: "ORD7833"
       }
     ],
     products: [
