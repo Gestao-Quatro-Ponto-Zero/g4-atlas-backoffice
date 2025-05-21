@@ -34,178 +34,25 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { mockOrders } from '@/data/mockData';
+import { mockOrders, mockCharges } from '@/data/mockData';
 
 // Enhanced mock data structure with orderId field to establish relationship
-const mockCharges = [
-  {
-    id: 'ch_1',
-    date: new Date(2025, 2, 15),
-    description: 'Curso de Desenvolvimento Web',
-    amount: 1299.00,
-    status: 'pago',
-    method: 'credit_card',
-    paymentDate: new Date(2025, 2, 15),
-    receiptUrl: '#',
-    orderId: 'ORD7832', // Linked to the corresponding order
+const mockChargesWithProducts = mockCharges.map(charge => {
+  // Find corresponding order
+  const relatedOrder = mockOrders.find(order => order.id === charge.orderId);
+  
+  return {
+    ...charge,
+    products: relatedOrder?.products || [],
     orderDetails: {
-      orderNumber: 'ORD7832',
-      status: 'aprovado',
-      items: [
-        { name: 'Workshop de Desenvolvimento Web', price: 599.90 },
-        { name: 'Curso de UX/UI Design', price: 499.90 },
-        { name: 'Kit de Ferramentas para Desenvolvedor', price: 200.10 }
-      ]
+      orderNumber: charge.orderId,
+      status: relatedOrder?.status === 'approved' ? 'aprovado' : 
+              relatedOrder?.status === 'pending' ? 'pendente' : 
+              relatedOrder?.status === 'denied' ? 'recusado' : 'cancelado',
+      items: relatedOrder?.products || []
     }
-  },
-  {
-    id: 'ch_2',
-    date: new Date(2025, 2, 10),
-    description: 'Curso de Inglês Básico',
-    amount: 899.00,
-    status: 'pago',
-    method: 'pix',
-    paymentDate: new Date(2025, 2, 10),
-    receiptUrl: '#',
-    orderId: 'ORD7829', // Linked to the corresponding order
-    orderDetails: {
-      orderNumber: 'ORD7829',
-      status: 'aprovado',
-      items: [
-        { name: 'Curso de Programação Java', price: 199.95 },
-        { name: 'Curso de Python Avançado', price: 199.95 }
-      ]
-    }
-  },
-  {
-    id: 'ch_3',
-    date: new Date(2025, 3, 5),
-    description: 'Curso de Marketing Digital',
-    amount: 499.95,
-    status: 'pendente',
-    method: 'boleto',
-    dueDate: new Date(2025, 3, 15),
-    boletoUrl: '#',
-    orderId: 'ORD7831', // First payment for this order
-    orderDetails: {
-      orderNumber: 'ORD7831',
-      status: 'pendente',
-      items: [
-        { name: 'Curso de Marketing Digital', price: 399.90 },
-        { name: 'E-book Marketing nas Redes Sociais', price: 49.90 },
-        { name: 'Mentoria Individual (2x)', price: 450.10 }
-      ]
-    }
-  },
-  {
-    id: 'ch_4',
-    date: new Date(2025, 3, 6),
-    description: 'Curso de Marketing Digital (2ª parcela)',
-    amount: 449.95,
-    status: 'pendente',
-    method: 'pix',
-    orderId: 'ORD7831', // Second payment for this order
-    orderDetails: {
-      orderNumber: 'ORD7831',
-      status: 'pendente',
-      items: [
-        { name: 'Curso de Marketing Digital', price: 399.90 },
-        { name: 'E-book Marketing nas Redes Sociais', price: 49.90 },
-        { name: 'Mentoria Individual (2x)', price: 450.10 }
-      ]
-    }
-  },
-  {
-    id: 'ch_5',
-    date: new Date(2025, 1, 25),
-    description: 'Curso de Excel Avançado',
-    amount: 799.00,
-    status: 'pendente',
-    method: 'credit_card',
-    failureReason: 'Cartão expirado',
-    orderId: 'ORD7833', // Linked to the corresponding order (partial payment)
-    orderDetails: {
-      orderNumber: 'ORD7833',
-      status: 'recusado',
-      items: [
-        { name: 'Curso de Excel Avançado', price: 199.90 },
-        { name: 'Curso de PowerBI', price: 199.90 },
-        { name: 'Curso de SQL para Análise de Dados', price: 199.90 }
-      ]
-    }
-  },
-  {
-    id: 'ch_6',
-    date: new Date(2025, 1, 20),
-    description: 'Curso de Fotografia',
-    amount: 599.00,
-    status: 'vencido',
-    method: 'boleto',
-    dueDate: new Date(2025, 2, 5),
-    boletoUrl: '#',
-    orderId: 'ORD7830', // Linked to the corresponding order
-    orderDetails: {
-      orderNumber: 'ORD7830',
-      status: 'cancelado',
-      items: [
-        { name: 'Assinatura Premium', price: 59.90 }
-      ]
-    }
-  }
-];
-
-const mockBoletoInstallments = [
-  {
-    id: 'bol_1',
-    parentChargeId: 'ch_3',
-    installmentNumber: 1,
-    amount: 499.67,
-    dueDate: new Date(2025, 3, 15),
-    status: 'pending',
-    boletoUrl: '#'
-  },
-  {
-    id: 'bol_2',
-    parentChargeId: 'ch_3',
-    installmentNumber: 2,
-    amount: 499.67,
-    dueDate: new Date(2025, 4, 15),
-    status: 'pending',
-    boletoUrl: '#'
-  },
-  {
-    id: 'bol_3',
-    parentChargeId: 'ch_3',
-    installmentNumber: 3,
-    amount: 499.66,
-    dueDate: new Date(2025, 5, 15),
-    status: 'pending',
-    boletoUrl: '#'
-  }
-];
-
-const mockCreditCardPayments = [
-  {
-    id: 'cc_1',
-    parentChargeId: 'ch_1',
-    cardLastFourDigits: '4242',
-    cardBrand: 'Visa',
-    amount: 1299.00,
-    paymentDate: new Date(2025, 2, 15),
-    status: 'paid'
-  }
-];
-
-const mockPixPayments = [
-  {
-    id: 'pix_1',
-    parentChargeId: 'ch_2',
-    amount: 899.00,
-    paymentDate: new Date(2025, 2, 10),
-    pixId: 'pix_12345678',
-    status: 'paid'
-  }
-];
+  };
+});
 
 const Contas = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -226,7 +73,7 @@ const Contas = () => {
 
   const getFilteredCharges = (statusFilter) => {
     // First apply the order filter, if present
-    let charges = [...mockCharges];
+    let charges = [...mockChargesWithProducts];
     
     if (orderFilter) {
       charges = charges.filter(charge => charge.orderId === orderFilter);
@@ -234,7 +81,7 @@ const Contas = () => {
     
     // Then apply status filter
     if (statusFilter === 'all') {
-      return charges.sort((a, b) => b.date.getTime() - a.date.getTime());
+      return charges.sort((a, b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
     }
     if (statusFilter === 'pago') return charges.filter(charge => charge.status === 'pago');
     if (statusFilter === 'pendente') return charges.filter(charge => charge.status === 'pendente');
@@ -303,6 +150,24 @@ const Contas = () => {
     }
   };
 
+  // Helper to display products summary
+  const getProductsDisplay = (products) => {
+    if (!products || products.length === 0) {
+      return <span className="text-gray-500 italic">Sem produtos</span>;
+    }
+    
+    return (
+      <div>
+        <span className="font-medium">{products[0].name}</span>
+        {products.length > 1 && (
+          <div className="text-xs text-gray-500 mt-1">
+            + {products.length - 1} {products.length - 1 === 1 ? 'produto' : 'produtos'}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const handleOpenModal = (charge) => {
     setSelectedCharge(charge);
     setIsModalOpen(true);
@@ -336,11 +201,11 @@ const Contas = () => {
             <TableHeader>
               <TableRow>
                 <TableHead className="whitespace-nowrap">Data</TableHead>
-                <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Descrição</TableHead>
+                <TableHead className="whitespace-nowrap">Pedido</TableHead>
+                <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Produtos</TableHead>
                 <TableHead className="whitespace-nowrap">Valor</TableHead>
                 <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Forma de Pagamento</TableHead>
                 <TableHead className="whitespace-nowrap">Status</TableHead>
-                <TableHead className={isMobile ? "hidden md:table-cell whitespace-nowrap" : "whitespace-nowrap"}>Pedido</TableHead>
                 <TableHead className="whitespace-nowrap text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -351,16 +216,16 @@ const Contas = () => {
                   className="cursor-pointer hover:bg-gray-50"
                   onClick={() => handleOpenModal(charge)}
                 >
-                  <TableCell className="font-medium whitespace-nowrap">{formatDate(charge.date.toISOString())}</TableCell>
-                  <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{charge.description}</TableCell>
-                  <TableCell className="whitespace-nowrap">{formatCurrency(charge.amount)}</TableCell>
-                  <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{getPaymentMethodDisplay(charge.method)}</TableCell>
-                  <TableCell className="whitespace-nowrap">{getStatusBadge(charge.status)}</TableCell>
-                  <TableCell className={isMobile ? "hidden md:table-cell" : ""}>
-                    {charge.orderDetails?.orderNumber && (
-                      <span className="text-sm font-medium">#{charge.orderDetails.orderNumber}</span>
-                    )}
+                  <TableCell className="font-medium whitespace-nowrap">{formatDate(charge.dueDate)}</TableCell>
+                  <TableCell className="font-medium text-blue-700">
+                    #{charge.orderId}
                   </TableCell>
+                  <TableCell className={isMobile ? "hidden md:table-cell" : ""}>
+                    {getProductsDisplay(charge.products)}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">{formatCurrency(charge.amount)}</TableCell>
+                  <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{getPaymentMethodDisplay(charge.paymentMethod)}</TableCell>
+                  <TableCell className="whitespace-nowrap">{getStatusBadge(charge.status)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button 
@@ -386,7 +251,7 @@ const Contas = () => {
                           </a>
                         </Button>
                       )}
-                      {charge.method === 'boleto' && charge.boletoUrl && (
+                      {charge.paymentMethod === 'boleto' && charge.documentUrl && (
                         <Button 
                           variant="ghost" 
                           size="sm" 
@@ -394,7 +259,7 @@ const Contas = () => {
                           title="Baixar boleto"
                         >
                           <a 
-                            href={charge.boletoUrl} 
+                            href={charge.documentUrl} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
@@ -441,7 +306,7 @@ const Contas = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Data da Fatura</p>
-                <p className="font-medium">{formatDate(selectedCharge.date.toISOString())}</p>
+                <p className="font-medium">{formatDate(selectedCharge.dueDate)}</p>
               </div>
             </div>
             
@@ -454,13 +319,13 @@ const Contas = () => {
                 {selectedCharge.paymentDate && (
                   <>
                     <p className="text-sm text-gray-500">Data do Pagamento</p>
-                    <p className="font-medium">{formatDate(selectedCharge.paymentDate.toISOString())}</p>
+                    <p className="font-medium">{formatDate(selectedCharge.paymentDate)}</p>
                   </>
                 )}
-                {selectedCharge.method === 'boleto' && selectedCharge.dueDate && (
+                {selectedCharge.paymentMethod === 'boleto' && selectedCharge.dueDate && (
                   <>
                     <p className="text-sm text-gray-500">Data de Vencimento</p>
-                    <p className="font-medium">{formatDate(selectedCharge.dueDate.toISOString())}</p>
+                    <p className="font-medium">{formatDate(selectedCharge.dueDate)}</p>
                   </>
                 )}
               </div>
@@ -470,10 +335,10 @@ const Contas = () => {
           <div className="border-t p-4">
             <h4 className="font-medium mb-2">Forma de pagamento</h4>
             <div className="flex items-center">
-              {getPaymentMethodDisplay(selectedCharge.method)}
+              {getPaymentMethodDisplay(selectedCharge.paymentMethod)}
             </div>
             
-            {selectedCharge.method === 'credit_card' && selectedCharge.status === 'pendente' && selectedCharge.failureReason && (
+            {selectedCharge.paymentMethod === 'credit_card' && selectedCharge.status === 'pendente' && selectedCharge.failureReason && (
               <div className="mt-3 p-2 bg-red-50 text-red-700 text-sm rounded">
                 <AlertCircle className="inline h-4 w-4 mr-1" />
                 <span>Falha no pagamento: {selectedCharge.failureReason}</span>
@@ -489,9 +354,9 @@ const Contas = () => {
                 </Button>
               )}
               
-              {selectedCharge.method === 'boleto' && selectedCharge.boletoUrl && (
+              {selectedCharge.paymentMethod === 'boleto' && selectedCharge.documentUrl && (
                 <Button size="sm" variant="outline" asChild>
-                  <a href={selectedCharge.boletoUrl} target="_blank" rel="noopener noreferrer">
+                  <a href={selectedCharge.documentUrl} target="_blank" rel="noopener noreferrer">
                     <Download className="h-4 w-4 mr-1" /> Baixar boleto
                   </a>
                 </Button>
@@ -506,16 +371,9 @@ const Contas = () => {
             
             <div className="grid grid-cols-2 gap-4 mb-3">
               <div>
-                <p className="text-sm text-gray-500">Produto</p>
-                <p className="font-medium">{selectedCharge.description}</p>
-              </div>
-              <div>
                 <p className="text-sm text-gray-500">Número do pedido</p>
-                <p className="font-medium">{selectedCharge.orderDetails.orderNumber}</p>
+                <p className="font-medium">#{selectedCharge.orderId}</p>
               </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Status do Pedido</p>
                 <div className="mt-1">{getOrderStatusBadge(selectedCharge.orderDetails.status)}</div>
@@ -524,21 +382,28 @@ const Contas = () => {
           </div>
           
           <div className="border-t">
-            <h4 className="p-3 font-medium border-b bg-gray-50">Itens do Pedido</h4>
+            <h4 className="p-3 font-medium border-b bg-gray-50">Produtos do Pedido</h4>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Item</TableHead>
+                  <TableHead>Produto</TableHead>
                   <TableHead className="text-right">Valor</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {selectedCharge.orderDetails.items.map((item, idx) => (
+                {selectedCharge.products && selectedCharge.products.map((product, idx) => (
                   <TableRow key={idx}>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(item.price)}</TableCell>
+                    <TableCell>{product.name}</TableCell>
+                    <TableCell className="text-right">{formatCurrency(product.price)}</TableCell>
                   </TableRow>
                 ))}
+                {(!selectedCharge.products || selectedCharge.products.length === 0) && (
+                  <TableRow>
+                    <TableCell colSpan={2} className="text-center text-gray-500 py-4">
+                      Nenhum produto encontrado
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </div>
