@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { 
   Table,
   TableHeader,
@@ -180,7 +180,7 @@ const Contas = () => {
   const [activeTab, setActiveTab] = useState('all');
 
   const getFilteredCharges = (statusFilter) => {
-    if (statusFilter === 'all') return [...mockCharges].sort((a, b) => b.date - a.date);
+    if (statusFilter === 'all') return [...mockCharges].sort((a, b) => b.date.getTime() - a.date.getTime());
     if (statusFilter === 'pago') return mockCharges.filter(charge => charge.status === 'pago');
     if (statusFilter === 'pendente') return mockCharges.filter(charge => charge.status === 'pendente');
     if (statusFilter === 'vencido') return mockCharges.filter(charge => charge.status === 'vencido');
