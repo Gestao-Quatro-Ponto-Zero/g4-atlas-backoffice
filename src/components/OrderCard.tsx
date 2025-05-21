@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Order, PaymentDetails, Product } from '@/data/mockData';
@@ -18,7 +19,8 @@ import {
   Download,
   MessageCircle,
   Package,
-  AlertCircle
+  AlertCircle,
+  ExternalLink
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Card, CardContent } from '@/components/ui/card';
@@ -79,57 +81,83 @@ const mockBoletoTransactions = [
 ];
 
 // New component to display individual product items
-const ProductItem = ({ name, price, quantity }: { name: string, price: number, quantity: number }) => (
-  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md mb-2 last:mb-0">
-    <div className="flex items-center">
-      <Package className="h-4 w-4 text-gray-500 mr-2" />
-      <span className="text-sm font-medium">{name}</span>
-      {quantity > 1 && (
-        <span className="ml-2 px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs">
-          {quantity}x
-        </span>
-      )}
+const ProductItem = ({ name, price, quantity }: { name: string, price: number, quantity: number }) => {
+  const handleProductClick = () => {
+    window.open('https://plataforma.g4educacao.com/', '_blank');
+  };
+
+  return (
+    <div 
+      className="flex items-center justify-between p-3 bg-gray-50 rounded-md mb-2 last:mb-0 cursor-pointer hover:bg-gray-100 transition-colors"
+      onClick={handleProductClick}
+    >
+      <div className="flex items-center">
+        <Package className="h-4 w-4 text-gray-500 mr-2" />
+        <span className="text-sm font-medium">{name}</span>
+        {quantity > 1 && (
+          <span className="ml-2 px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs">
+            {quantity}x
+          </span>
+        )}
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="text-sm">{formatCurrency(price * quantity)}</span>
+        <ExternalLink className="h-3.5 w-3.5 text-blue-600" />
+      </div>
     </div>
-    <span className="text-sm">{formatCurrency(price * quantity)}</span>
-  </div>
-);
+  );
+};
 
 // New component that shows detailed product information in a table format
-const ProductsTable = ({ products }: { products: Product[] }) => (
-  <div className="w-full overflow-auto">
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Produto</TableHead>
-          <TableHead className="text-right">Valor Unitário</TableHead>
-          <TableHead className="text-right">Quantidade</TableHead>
-          <TableHead className="text-right">Total</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {products.map((product, index) => (
-          <TableRow key={`product-row-${index}`}>
-            <TableCell className="font-medium">
-              <div className="flex items-center">
-                <Package className="h-4 w-4 text-gray-500 mr-2" />
-                {product.name}
-              </div>
-            </TableCell>
-            <TableCell className="text-right">{formatCurrency(product.price)}</TableCell>
-            <TableCell className="text-right">
-              <Badge variant="outline" className="ml-auto">
-                {product.quantity}
-              </Badge>
-            </TableCell>
-            <TableCell className="text-right font-medium">
-              {formatCurrency(product.price * product.quantity)}
-            </TableCell>
+const ProductsTable = ({ products }: { products: Product[] }) => {
+  const handleProductClick = (productName: string) => {
+    window.open('https://plataforma.g4educacao.com/', '_blank');
+  };
+
+  return (
+    <div className="w-full overflow-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Produto</TableHead>
+            <TableHead className="text-right">Valor Unitário</TableHead>
+            <TableHead className="text-right">Quantidade</TableHead>
+            <TableHead className="text-right">Total</TableHead>
+            <TableHead></TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  </div>
-);
+        </TableHeader>
+        <TableBody>
+          {products.map((product, index) => (
+            <TableRow 
+              key={`product-row-${index}`}
+              className="cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => handleProductClick(product.name)}
+            >
+              <TableCell className="font-medium">
+                <div className="flex items-center">
+                  <Package className="h-4 w-4 text-gray-500 mr-2" />
+                  {product.name}
+                </div>
+              </TableCell>
+              <TableCell className="text-right">{formatCurrency(product.price)}</TableCell>
+              <TableCell className="text-right">
+                <Badge variant="outline" className="ml-auto">
+                  {product.quantity}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-right font-medium">
+                {formatCurrency(product.price * product.quantity)}
+              </TableCell>
+              <TableCell className="text-right">
+                <ExternalLink className="h-4 w-4 text-blue-600" />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
 
 const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const [isPaymentsOpen, setIsPaymentsOpen] = useState(false);
@@ -470,10 +498,17 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                 {/* Mobile view - Cards format */}
                 <div className="md:hidden space-y-3">
                   {products.map((product, idx) => (
-                    <div key={`mobile-product-${idx}`} className="bg-white p-3 rounded-md border border-gray-100">
-                      <div className="flex items-center mb-2">
-                        <Package className="h-4 w-4 text-gray-500 mr-2" />
-                        <span className="text-sm font-medium flex-grow">{product.name}</span>
+                    <div 
+                      key={`mobile-product-${idx}`} 
+                      className="bg-white p-3 rounded-md border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+                      onClick={() => window.open('https://plataforma.g4educacao.com/', '_blank')}
+                    >
+                      <div className="flex items-center mb-2 justify-between">
+                        <div className="flex items-center">
+                          <Package className="h-4 w-4 text-gray-500 mr-2" />
+                          <span className="text-sm font-medium flex-grow">{product.name}</span>
+                        </div>
+                        <ExternalLink className="h-3.5 w-3.5 text-blue-600" />
                       </div>
                       <div className="grid grid-cols-3 gap-2 text-xs">
                         <div>
@@ -602,3 +637,4 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 };
 
 export default OrderCard;
+
