@@ -7,11 +7,8 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { AuthProvider } from "./contexts/AuthContext";
 import Index from "./pages/Index";
-import Carteira from "./pages/Carteira";
-import Contas from "./pages/Contas";
-import Contratos from "./pages/Contratos";
-import Enderecos from "./pages/Enderecos";
-import Settings from "./pages/Settings";
+import Usuarios from "./pages/Usuarios";
+import Produtos from "./pages/Produtos";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -39,13 +36,8 @@ const PageTransition = () => {
       >
         <Routes location={location}>
           <Route path="/" element={<Index />} />
-          <Route path="/orders/:id" element={<Index />} />
-          <Route path="/carteira" element={<Carteira />} />
-          <Route path="/billings" element={<Contas />} />
-          <Route path="/contas" element={<Contas />} />
-          <Route path="/contratos" element={<Contratos />} />
-          <Route path="/enderecos" element={<Enderecos />} />
-          <Route path="/configuracoes" element={<Settings />} />
+          <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/produtos" element={<Produtos />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
