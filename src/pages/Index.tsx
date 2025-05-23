@@ -2,60 +2,7 @@
 import React from 'react';
 import Layout from '../components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { BarChart3, Users, Package, TrendingUp, Activity } from 'lucide-react';
-
-// Dados mock para os gráficos
-const salesData = [
-  { month: 'Jan', vendas: 4000 },
-  { month: 'Fev', vendas: 3000 },
-  { month: 'Mar', vendas: 5000 },
-  { month: 'Abr', vendas: 4500 },
-  { month: 'Mai', vendas: 6000 },
-  { month: 'Jun', vendas: 5500 },
-];
-
-const usersData = [
-  { month: 'Jan', usuarios: 100 },
-  { month: 'Fev', usuarios: 150 },
-  { month: 'Mar', usuarios: 200 },
-  { month: 'Abr', usuarios: 180 },
-  { month: 'Mai', usuarios: 250 },
-  { month: 'Jun', usuarios: 300 },
-];
-
-const productsData = [
-  { month: 'Jan', produtos: 50 },
-  { month: 'Fev', produtos: 45 },
-  { month: 'Mar', produtos: 60 },
-  { month: 'Abr', produtos: 55 },
-  { month: 'Mai', produtos: 70 },
-  { month: 'Jun', produtos: 65 },
-];
-
-const conversionData = [
-  { month: 'Jan', conversao: 2.1 },
-  { month: 'Fev', conversao: 2.3 },
-  { month: 'Mar', conversao: 2.8 },
-  { month: 'Abr', conversao: 2.5 },
-  { month: 'Mai', conversao: 3.0 },
-  { month: 'Jun', conversao: 3.2 },
-];
-
-const activityData = [
-  { name: 'Usuários', value: 35, color: '#3b82f6' },
-  { name: 'Produtos', value: 25, color: '#10b981' },
-  { name: 'Vendas', value: 30, color: '#f59e0b' },
-  { name: 'Outros', value: 10, color: '#8b5cf6' },
-];
-
-const chartConfig = {
-  vendas: { label: 'Vendas', color: '#3b82f6' },
-  usuarios: { label: 'Usuários', color: '#10b981' },
-  produtos: { label: 'Produtos', color: '#f59e0b' },
-  conversao: { label: 'Conversão', color: '#8b5cf6' },
-};
+import { BarChart3, Users, Package, TrendingUp, Activity, Clock } from 'lucide-react';
 
 const Index = () => {
   return (
@@ -68,151 +15,127 @@ const Index = () => {
           </p>
         </div>
         
-        {/* Cards de estatísticas com mini gráficos */}
+        {/* Cards de estatísticas simplificados */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <Card>
+          <Card className="relative overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Usuários</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-gray-400">Total Usuários</CardTitle>
+              <Users className="h-4 w-4 text-gray-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">1,234</div>
-              <p className="text-xs text-muted-foreground mb-2">
-                +12% em relação ao mês anterior
-              </p>
-              <ChartContainer config={chartConfig} className="h-16">
-                <LineChart data={usersData}>
-                  <Line 
-                    type="monotone" 
-                    dataKey="usuarios" 
-                    stroke="var(--color-usuarios)" 
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                </LineChart>
-              </ChartContainer>
+              <div className="text-2xl font-bold text-gray-300">---</div>
+              <div className="flex items-center mt-2">
+                <Clock className="h-3 w-3 text-yellow-500 mr-1" />
+                <p className="text-xs text-yellow-600">Em desenvolvimento</p>
+              </div>
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="relative overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Produtos</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-gray-400">Produtos</CardTitle>
+              <Package className="h-4 w-4 text-gray-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">567</div>
-              <p className="text-xs text-muted-foreground mb-2">
-                +5% em relação ao mês anterior
-              </p>
-              <ChartContainer config={chartConfig} className="h-16">
-                <BarChart data={productsData}>
-                  <Bar dataKey="produtos" fill="var(--color-produtos)" />
-                </BarChart>
-              </ChartContainer>
+              <div className="text-2xl font-bold text-gray-300">---</div>
+              <div className="flex items-center mt-2">
+                <Clock className="h-3 w-3 text-yellow-500 mr-1" />
+                <p className="text-xs text-yellow-600">Em desenvolvimento</p>
+              </div>
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="relative overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Vendas</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-gray-400">Vendas</CardTitle>
+              <TrendingUp className="h-4 w-4 text-gray-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">R$ 12.234</div>
-              <p className="text-xs text-muted-foreground mb-2">
-                +20% em relação ao mês anterior
-              </p>
-              <ChartContainer config={chartConfig} className="h-16">
-                <AreaChart data={salesData}>
-                  <Area 
-                    type="monotone" 
-                    dataKey="vendas" 
-                    stroke="var(--color-vendas)" 
-                    fill="var(--color-vendas)" 
-                    fillOpacity={0.3}
-                  />
-                </AreaChart>
-              </ChartContainer>
+              <div className="text-2xl font-bold text-gray-300">R$ ---</div>
+              <div className="flex items-center mt-2">
+                <Clock className="h-3 w-3 text-yellow-500 mr-1" />
+                <p className="text-xs text-yellow-600">Em desenvolvimento</p>
+              </div>
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="relative overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Conversão</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-gray-400">Conversão</CardTitle>
+              <BarChart3 className="h-4 w-4 text-gray-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">3.2%</div>
-              <p className="text-xs text-muted-foreground mb-2">
-                +0.5% em relação ao mês anterior
-              </p>
-              <ChartContainer config={chartConfig} className="h-16">
-                <LineChart data={conversionData}>
-                  <Line 
-                    type="monotone" 
-                    dataKey="conversao" 
-                    stroke="var(--color-conversao)" 
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                </LineChart>
-              </ChartContainer>
+              <div className="text-2xl font-bold text-gray-300">---%</div>
+              <div className="flex items-center mt-2">
+                <Clock className="h-3 w-3 text-yellow-500 mr-1" />
+                <p className="text-xs text-yellow-600">Em desenvolvimento</p>
+              </div>
             </CardContent>
           </Card>
         </div>
         
-        {/* Gráficos principais */}
+        {/* Seções de gráficos em placeholder */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Vendas por Mês</CardTitle>
+              <CardTitle className="text-gray-400">Vendas por Mês</CardTitle>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={chartConfig} className="h-64">
-                <BarChart data={salesData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="vendas" fill="var(--color-vendas)" />
-                </BarChart>
-              </ChartContainer>
+              <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-200">
+                <div className="text-center">
+                  <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-2" />
+                  <p className="text-gray-400 text-sm">Gráfico será implementado</p>
+                  <div className="flex items-center justify-center mt-1">
+                    <Clock className="h-3 w-3 text-yellow-500 mr-1" />
+                    <span className="text-xs text-yellow-600">Em breve</span>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
           
           <Card>
             <CardHeader>
-              <CardTitle>Atividade por Categoria</CardTitle>
+              <CardTitle className="text-gray-400">Atividade por Categoria</CardTitle>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={chartConfig} className="h-64">
-                <PieChart>
-                  <Pie
-                    data={activityData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {activityData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                </PieChart>
-              </ChartContainer>
-              <div className="flex justify-center mt-4 space-x-4">
-                {activityData.map((item, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: item.color }}
-                    ></div>
-                    <span className="text-sm text-gray-600">{item.name}</span>
+              <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-200">
+                <div className="text-center">
+                  <Activity className="h-12 w-12 text-gray-300 mx-auto mb-2" />
+                  <p className="text-gray-400 text-sm">Gráfico será implementado</p>
+                  <div className="flex items-center justify-center mt-1">
+                    <Clock className="h-3 w-3 text-yellow-500 mr-1" />
+                    <span className="text-xs text-yellow-600">Em breve</span>
                   </div>
-                ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Seção adicional para futuras features */}
+        <div className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-gray-400">Funcionalidades Futuras</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-center p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                  <Users className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                  <h3 className="font-medium text-gray-400 mb-1">Gestão de Usuários</h3>
+                  <p className="text-xs text-gray-400">Cadastro e controle de usuários</p>
+                </div>
+                <div className="text-center p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                  <Package className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                  <h3 className="font-medium text-gray-400 mb-1">Catálogo de Produtos</h3>
+                  <p className="text-xs text-gray-400">Gerenciamento de produtos</p>
+                </div>
+                <div className="text-center p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                  <BarChart3 className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                  <h3 className="font-medium text-gray-400 mb-1">Relatórios Avançados</h3>
+                  <p className="text-xs text-gray-400">Analytics e insights detalhados</p>
+                </div>
               </div>
             </CardContent>
           </Card>
