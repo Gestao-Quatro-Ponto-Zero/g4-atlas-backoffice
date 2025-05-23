@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { mockUser } from '../data/mockData';
 
@@ -13,60 +12,29 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<any | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [user, setUser] = useState<any | null>(mockUser);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    // Check for existing session
-    const checkSession = async () => {
-      try {
-        // In production, this would be a call to your SSO API
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
-        }
-      } catch (error) {
-        console.error('Failed to restore session:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkSession();
+    // Auto-login with mock user
+    setUser(mockUser);
   }, []);
 
   const login = async (email: string, password: string) => {
-    setIsLoading(true);
-    try {
-      // In production, this would be a call to your SSO API
-      // Simulating API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (email && password) {
-        // Using mock user for development
-        setUser(mockUser);
-        localStorage.setItem('user', JSON.stringify(mockUser));
-      } else {
-        throw new Error('Invalid credentials');
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
+    // Not needed anymore, but keeping for compatibility
+    setUser(mockUser);
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+    // Not needed anymore, but keeping for compatibility
+    setUser(mockUser);
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated: !!user,
+        isAuthenticated: true, // Always authenticated
         isLoading,
         login,
         logout
