@@ -8,7 +8,8 @@ import {
   ChevronRight, 
   Menu, 
   X,
-  LogOut
+  LogOut,
+  LayoutDashboard
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -60,6 +61,7 @@ const MobileMenu = () => {
   const pathname = location.pathname;
 
   const menuItems: MenuItem[] = [
+    { icon: LayoutDashboard, label: 'Dashboard', href: '/', active: pathname === '/' },
     { icon: Users, label: 'Usuários', href: '/usuarios', active: pathname === '/usuarios' },
     { icon: Package, label: 'Produtos', href: '/produtos', active: pathname === '/produtos' },
   ];
@@ -150,6 +152,7 @@ const DesktopMenu = () => {
   const pathname = location.pathname;
   
   const menuItems: MenuItem[] = [
+    { icon: LayoutDashboard, label: 'Dashboard', href: '/', active: pathname === '/' },
     { icon: Users, label: 'Usuários', href: '/usuarios', active: pathname === '/usuarios' },
     { icon: Package, label: 'Produtos', href: '/produtos', active: pathname === '/produtos' },
   ];
