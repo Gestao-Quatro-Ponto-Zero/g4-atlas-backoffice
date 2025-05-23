@@ -2,7 +2,60 @@
 import React from 'react';
 import Layout from '../components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart3, Users, Package, TrendingUp } from 'lucide-react';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart3, Users, Package, TrendingUp, Activity } from 'lucide-react';
+
+// Dados mock para os gráficos
+const salesData = [
+  { month: 'Jan', vendas: 4000 },
+  { month: 'Fev', vendas: 3000 },
+  { month: 'Mar', vendas: 5000 },
+  { month: 'Abr', vendas: 4500 },
+  { month: 'Mai', vendas: 6000 },
+  { month: 'Jun', vendas: 5500 },
+];
+
+const usersData = [
+  { month: 'Jan', usuarios: 100 },
+  { month: 'Fev', usuarios: 150 },
+  { month: 'Mar', usuarios: 200 },
+  { month: 'Abr', usuarios: 180 },
+  { month: 'Mai', usuarios: 250 },
+  { month: 'Jun', usuarios: 300 },
+];
+
+const productsData = [
+  { month: 'Jan', produtos: 50 },
+  { month: 'Fev', produtos: 45 },
+  { month: 'Mar', produtos: 60 },
+  { month: 'Abr', produtos: 55 },
+  { month: 'Mai', produtos: 70 },
+  { month: 'Jun', produtos: 65 },
+];
+
+const conversionData = [
+  { month: 'Jan', conversao: 2.1 },
+  { month: 'Fev', conversao: 2.3 },
+  { month: 'Mar', conversao: 2.8 },
+  { month: 'Abr', conversao: 2.5 },
+  { month: 'Mai', conversao: 3.0 },
+  { month: 'Jun', conversao: 3.2 },
+];
+
+const activityData = [
+  { name: 'Usuários', value: 35, color: '#3b82f6' },
+  { name: 'Produtos', value: 25, color: '#10b981' },
+  { name: 'Vendas', value: 30, color: '#f59e0b' },
+  { name: 'Outros', value: 10, color: '#8b5cf6' },
+];
+
+const chartConfig = {
+  vendas: { label: 'Vendas', color: '#3b82f6' },
+  usuarios: { label: 'Usuários', color: '#10b981' },
+  produtos: { label: 'Produtos', color: '#f59e0b' },
+  conversao: { label: 'Conversão', color: '#8b5cf6' },
+};
 
 const Index = () => {
   return (
@@ -15,7 +68,7 @@ const Index = () => {
           </p>
         </div>
         
-        {/* Cards de estatísticas */}
+        {/* Cards de estatísticas com mini gráficos */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -24,9 +77,20 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">1,234</div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground mb-2">
                 +12% em relação ao mês anterior
               </p>
+              <ChartContainer config={chartConfig} className="h-16">
+                <LineChart data={usersData}>
+                  <Line 
+                    type="monotone" 
+                    dataKey="usuarios" 
+                    stroke="var(--color-usuarios)" 
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                </LineChart>
+              </ChartContainer>
             </CardContent>
           </Card>
           
@@ -37,9 +101,14 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">567</div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground mb-2">
                 +5% em relação ao mês anterior
               </p>
+              <ChartContainer config={chartConfig} className="h-16">
+                <BarChart data={productsData}>
+                  <Bar dataKey="produtos" fill="var(--color-produtos)" />
+                </BarChart>
+              </ChartContainer>
             </CardContent>
           </Card>
           
@@ -50,9 +119,20 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">R$ 12.234</div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground mb-2">
                 +20% em relação ao mês anterior
               </p>
+              <ChartContainer config={chartConfig} className="h-16">
+                <AreaChart data={salesData}>
+                  <Area 
+                    type="monotone" 
+                    dataKey="vendas" 
+                    stroke="var(--color-vendas)" 
+                    fill="var(--color-vendas)" 
+                    fillOpacity={0.3}
+                  />
+                </AreaChart>
+              </ChartContainer>
             </CardContent>
           </Card>
           
@@ -63,63 +143,76 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">3.2%</div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground mb-2">
                 +0.5% em relação ao mês anterior
               </p>
+              <ChartContainer config={chartConfig} className="h-16">
+                <LineChart data={conversionData}>
+                  <Line 
+                    type="monotone" 
+                    dataKey="conversao" 
+                    stroke="var(--color-conversao)" 
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                </LineChart>
+              </ChartContainer>
             </CardContent>
           </Card>
         </div>
         
-        {/* Área do gráfico simulado */}
+        {/* Gráficos principais */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
               <CardTitle>Vendas por Mês</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <BarChart3 className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">Gráfico de vendas será implementado aqui</p>
-                </div>
-              </div>
+              <ChartContainer config={chartConfig} className="h-64">
+                <BarChart data={salesData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="vendas" fill="var(--color-vendas)" />
+                </BarChart>
+              </ChartContainer>
             </CardContent>
           </Card>
           
           <Card>
             <CardHeader>
-              <CardTitle>Atividade Recente</CardTitle>
+              <CardTitle>Atividade por Categoria</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Novo usuário cadastrado</p>
-                    <p className="text-xs text-gray-500">2 minutos atrás</p>
+              <ChartContainer config={chartConfig} className="h-64">
+                <PieChart>
+                  <Pie
+                    data={activityData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {activityData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                </PieChart>
+              </ChartContainer>
+              <div className="flex justify-center mt-4 space-x-4">
+                {activityData.map((item, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <div 
+                      className="w-3 h-3 rounded-full" 
+                      style={{ backgroundColor: item.color }}
+                    ></div>
+                    <span className="text-sm text-gray-600">{item.name}</span>
                   </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Produto atualizado</p>
-                    <p className="text-xs text-gray-500">5 minutos atrás</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Nova venda registrada</p>
-                    <p className="text-xs text-gray-500">10 minutos atrás</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Relatório gerado</p>
-                    <p className="text-xs text-gray-500">15 minutos atrás</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </CardContent>
           </Card>
