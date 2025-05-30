@@ -1,9 +1,15 @@
-import { useIsMobile } from "@/hooks/use-mobile";
-import { DesktopMenu } from "./DesktopMenu";
-import { MobileMenu } from "./MobileMenu";
+import { DesktopMenu } from './DesktopMenu'
+import { MobileMenu } from './MobileMenu'
 
 export const SideMenu = () => {
-	const isMobile = useIsMobile();
-
-	return <>{isMobile ? <MobileMenu /> : <DesktopMenu />}</>;
-};
+	return (
+		<>
+			<div className='contents md:hidden'>
+				<MobileMenu />
+			</div>
+			<div className='hidden md:contents'>
+				<DesktopMenu />
+			</div>
+		</>
+	)
+}
