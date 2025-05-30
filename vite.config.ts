@@ -14,7 +14,9 @@ export default defineConfig(({ mode }) => ({
 	plugins: [
 		tailwindcss(),
 		mode === "development"
-			? reactSWC()
+			? reactSWC({
+					devTarget: "esnext",
+				})
 			: reactESBuild({
 					babel: {
 						plugins: [["babel-plugin-react-compiler", {}]],
@@ -25,6 +27,30 @@ export default defineConfig(({ mode }) => ({
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "./src"),
+		},
+	},
+	target: "esnext",
+	css: {
+		transformer: "lightningcss",
+	},
+	build: {
+		modulePreload: {
+			polyfill: false,
+		},
+		cssMinify: "lightningcss",
+		rollupOptions: {
+			treeshake: "smallest",
+			output: {
+				compact: true,
+				generatedCode: {
+					arrowFunctions: true,
+					constBindings: true,
+					objectShorthand: true,
+					preset: "es2015",
+					reservedNamesAsProps: false,
+					symbols: true,
+				},
+			},
 		},
 	},
 }));
