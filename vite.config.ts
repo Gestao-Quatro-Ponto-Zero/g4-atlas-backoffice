@@ -1,7 +1,7 @@
 import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
-import reactSWC from "@vitejs/plugin-react-swc";
 import reactESBuild from "@vitejs/plugin-react";
+import reactSWC from "@vitejs/plugin-react-swc";
 import { componentTagger } from "lovable-tagger";
 import { defineConfig } from "vite";
 
@@ -13,13 +13,13 @@ export default defineConfig(({ mode }) => ({
 	},
 	plugins: [
 		tailwindcss(),
-		mode === "development" ? reactSWC() : reactESBuild({
-        babel: {
-          plugins: [
-            ["babel-plugin-react-compiler", {}],
-          ],
-        },
-      }),
+		mode === "development"
+			? reactSWC()
+			: reactESBuild({
+					babel: {
+						plugins: [["babel-plugin-react-compiler", {}]],
+					},
+				}),
 		mode === "development" && componentTagger(),
 	].filter(Boolean),
 	resolve: {

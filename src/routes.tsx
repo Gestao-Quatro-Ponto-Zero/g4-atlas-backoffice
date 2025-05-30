@@ -1,71 +1,80 @@
-import { createBrowserRouter } from 'react-router-dom'
-import { Layout } from './pages/layout'
+import { createBrowserRouter } from "react-router-dom";
+import { Layout } from "./pages/layout";
 
 export const router = createBrowserRouter([
 	{
-		path: '/',
+		path: "/",
 		Component: Layout,
 		children: [
 			{
 				index: true,
 				lazy: {
-					Component: () => import('./pages/index').then((module) => module.Index),
+					Component: () => import("./pages/index").then(module => module.Index),
 				},
 			},
 			{
-				path: '/usuarios',
+				path: "/usuarios",
 				lazy: {
-					Component: () => import('./pages/usuarios').then((module) => module.Usuarios),
+					Component: () =>
+						import("./pages/usuarios").then(module => module.Usuarios),
 				},
 			},
 			{
-				path: '/produtos',
+				path: "/produtos",
 				lazy: {
-					Component: () => import('./pages/produtos').then((module) => module.Produtos),
+					Component: () =>
+						import("./pages/produtos").then(module => module.Produtos),
 				},
 			},
 			{
-				path: '/settings',
+				path: "/settings",
 				lazy: {
-					Component: () => import('./pages/settings').then((module) => module.Settings),
+					Component: () =>
+						import("./pages/settings").then(module => module.Settings),
 				},
 			},
 			{
-				path: '/carteira',
+				path: "/carteira",
 				lazy: {
-					Component: () => import('./pages/carteira').then((module) => module.Carteira),
+					Component: () =>
+						import("./pages/carteira").then(module => module.Carteira),
 				},
 			},
 			{
-				path: '/contas',
+				path: "/contas",
 				lazy: {
-					Component: () => import('./pages/contas').then((module) => module.Contas),
+					Component: () =>
+						import("./pages/contas").then(module => module.Contas),
 				},
 			},
 			{
-				path: '/cobrancas',
+				path: "/cobrancas",
 				lazy: {
-					Component: () => import('./pages/cobrancas').then((module) => module.Cobrancas),
+					Component: () =>
+						import("./pages/cobrancas").then(module => module.Cobrancas),
 				},
 			},
 			{
-				path: '/contratos',
+				path: "/contratos",
 				lazy: {
-					Component: () => import('./pages/contratos').then((module) => module.Contratos),
+					Component: () =>
+						import("./pages/contratos").then(module => module.Contratos),
 				},
 			},
 			{
-				path: '/enderecos',
+				path: "/enderecos",
 				lazy: {
-					Component: () => import('./pages/enderecos').then((module) => module.Enderecos),
+					Component: () =>
+						import("./pages/enderecos").then(module => module.Enderecos),
 				},
 			},
 		],
 	},
 	{
-		path: '*',
+		path: "*",
 		lazy: {
-			Component: () => import('./pages/not-found').then((module) => module.NotFound),
+			Component: () =>
+				import("./pages/not-found").then(module => module.NotFound),
 		},
 	},
-])
+]);

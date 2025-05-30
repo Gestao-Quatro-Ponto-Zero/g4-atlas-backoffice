@@ -3,11 +3,11 @@ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
 	currency: "BRL",
 });
 
-export function formatCurrency(value: number): string {
+export const formatCurrency = (value: number) => {
 	return currencyFormatter.format(value);
-}
+};
 
-export function formatDate(dateInput: string | Date): string {
+export const formatDate = (dateInput: string | Date) => {
 	const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
 	return new Intl.DateTimeFormat("pt-BR").format(date);
-}
+};

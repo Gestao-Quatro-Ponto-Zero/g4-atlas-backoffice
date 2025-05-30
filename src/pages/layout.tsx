@@ -1,11 +1,11 @@
-import { SideMenu } from '@/components/SideMenu'
-import { Spinner } from '@/components/Spinner'
-import { AnimatePresence, motion } from 'motion/react'
-import { type ReactNode, Suspense } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { SideMenu } from "@/components/SideMenu";
+import { Spinner } from "@/components/Spinner";
+import { AnimatePresence, motion } from "motion/react";
+import { type ReactNode, Suspense } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 
 export const AnimatedRoute = ({ children }: { children: ReactNode }) => {
-	const location = useLocation()
+	const location = useLocation();
 	return (
 		<motion.div
 			key={location.pathname}
@@ -16,8 +16,8 @@ export const AnimatedRoute = ({ children }: { children: ReactNode }) => {
 		>
 			{children}
 		</motion.div>
-	)
-}
+	);
+};
 
 export const Layout = () => {
 	return (
@@ -26,16 +26,16 @@ export const Layout = () => {
 			animate={{ opacity: 1, y: 0 }}
 			exit={{ opacity: 0, y: -10 }}
 			transition={{ duration: 0.2 }}
-			className='min-h-screen bg-gray-50/40'
+			className="min-h-screen bg-gray-50/40"
 		>
-			<div className='flex w-full'>
-				<div className='shrink-0'>
+			<div className="flex w-full">
+				<div className="shrink-0">
 					<SideMenu />
 				</div>
-				<div className='flex w-full grow flex-col'>
-					<main className='grow px-4 py-6 md:px-6 lg:px-8'>
+				<div className="flex w-full grow flex-col">
+					<main className="grow px-4 py-6 md:px-6 lg:px-8">
 						<SideMenu />
-						<AnimatePresence mode='wait'>
+						<AnimatePresence mode="wait">
 							<Suspense fallback={<Spinner />}>
 								<AnimatedRoute>
 									<Outlet />
@@ -46,5 +46,5 @@ export const Layout = () => {
 				</div>
 			</div>
 		</motion.div>
-	)
-}
+	);
+};

@@ -1,4 +1,4 @@
-export function Header() {
+export const Header = () => {
 	return (
 		<div className="mb-5 text-left">
 			<h1 className="font-bold text-2xl md:text-3xl">Minhas Cobranças</h1>
@@ -7,4 +7,4 @@ export function Header() {
 			</p>
 		</div>
 	);
-}
+};
