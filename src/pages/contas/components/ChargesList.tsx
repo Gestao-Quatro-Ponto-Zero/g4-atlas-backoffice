@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import type { Charge, Product } from '@/data/mockData'
-import { useIsMobile } from '@/hooks/use-mobile'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { ArrowLeftIcon } from 'lucide-react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
@@ -35,7 +34,6 @@ export const ChargesList = ({
 	filteredCharges: Charge[]
 	handleOpenModal: (charge: Charge) => void
 }) => {
-	const isMobile = useIsMobile()
 	const [searchParams] = useSearchParams()
 	const orderFilter = searchParams.get('order')
 	const navigate = useNavigate()
@@ -76,11 +74,9 @@ export const ChargesList = ({
 							<TableRow>
 								<TableHead className='whitespace-nowrap'>Pedido</TableHead>
 								<TableHead className='whitespace-nowrap'>Data</TableHead>
-								<TableHead className={isMobile ? 'hidden whitespace-nowrap md:table-cell' : 'whitespace-nowrap'}>
-									Produtos
-								</TableHead>
+								<TableHead className='hidden whitespace-nowrap md:table-cell md:whitespace-nowrap'>Produtos</TableHead>
 								<TableHead className='whitespace-nowrap'>Valor</TableHead>
-								<TableHead className={isMobile ? 'hidden whitespace-nowrap md:table-cell' : 'whitespace-nowrap'}>
+								<TableHead className='hidden whitespace-nowrap md:table-cell md:whitespace-nowrap'>
 									Forma de Pagamento
 								</TableHead>
 								<TableHead className='whitespace-nowrap'>Status</TableHead>
@@ -106,11 +102,9 @@ export const ChargesList = ({
 										</button>
 									</TableCell>
 									<TableCell className='whitespace-nowrap font-medium'>{formatDate(charge.dueDate)}</TableCell>
-									<TableCell className={isMobile ? 'hidden md:table-cell' : ''}>
-										{getProductsDisplay(charge.products)}
-									</TableCell>
+									<TableCell className='hidden md:table-cell'>{getProductsDisplay(charge.products)}</TableCell>
 									<TableCell className='whitespace-nowrap'>{formatCurrency(charge.amount)}</TableCell>
-									<TableCell className={isMobile ? 'hidden md:table-cell' : ''}>
+									<TableCell className='hidden md:table-cell'>
 										<PaymentMethodDisplay method={charge.paymentMethod} />
 									</TableCell>
 									<TableCell className='whitespace-nowrap'>

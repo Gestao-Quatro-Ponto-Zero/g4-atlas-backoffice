@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useAuth } from '@/contexts/AuthContext'
 import type { Charge } from '@/data/mockData'
-import { useIsMobile } from '@/hooks/use-mobile'
 import { ModalContent } from '@/pages/cobrancas/components/ModalContent'
 import { PaymentMethodDisplay } from '@/pages/cobrancas/components/PaymentMethodDisplay'
 import { StatusBadge } from '@/pages/cobrancas/components/StatusBadge'
@@ -92,7 +91,6 @@ const mockCharges = [
 export const Cobrancas = () => {
 	const { promise } = useAuth()
 	const user = use(promise)
-	const isMobile = useIsMobile()
 	const [selectedCharge, setSelectedCharge] = useState<Charge | null>(null)
 	const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -118,15 +116,15 @@ export const Cobrancas = () => {
 								<TableHeader>
 									<TableRow>
 										<TableHead className='whitespace-nowrap'>Data</TableHead>
-										<TableHead className={isMobile ? 'hidden whitespace-nowrap md:table-cell' : 'whitespace-nowrap'}>
+										<TableHead className='hidden whitespace-nowrap md:table-cell md:whitespace-nowrap'>
 											Descrição
 										</TableHead>
 										<TableHead className='whitespace-nowrap'>Valor</TableHead>
-										<TableHead className={isMobile ? 'hidden whitespace-nowrap md:table-cell' : 'whitespace-nowrap'}>
+										<TableHead className='hidden whitespace-nowrap md:table-cell md:whitespace-nowrap'>
 											Forma de Pagamento
 										</TableHead>
 										<TableHead className='whitespace-nowrap'>Status</TableHead>
-										{isMobile && <TableHead className='whitespace-nowrap text-right'>Ações</TableHead>}
+										<TableHead className='hidden whitespace-nowrap text-right md:table-cell'>Ações</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
@@ -139,55 +137,54 @@ export const Cobrancas = () => {
 											<TableCell className='whitespace-nowrap font-medium'>
 												{formatDate(charge.date.toISOString())}
 											</TableCell>
-											<TableCell className={isMobile ? 'hidden md:table-cell' : ''}>{charge.description}</TableCell>
+											<TableCell className='hidden md:table-cell'>{charge.description}</TableCell>
 											<TableCell className='whitespace-nowrap'>{formatCurrency(charge.amount)}</TableCell>
-											<TableCell className={isMobile ? 'hidden md:table-cell' : ''}>
+											<TableCell className='hidden md:table-cell'>
 												<PaymentMethodDisplay method={charge.method} />
 											</TableCell>
 											<TableCell className='whitespace-nowrap'>
 												<StatusBadge status={charge.status} />
 											</TableCell>
-											{isMobile && (
-												<TableCell className='text-right'>
-													<div className='flex justify-end gap-2'>
-														<Button
-															variant='ghost'
-															size='sm'
-															title='Ver detalhes'
-															onClick={(e) => {
-																e.stopPropagation()
-																handleOpenModal(charge)
-															}}
-														>
-															<EyeIcon className='h-4 w-4' />
+
+											<TableCell className='hidden text-right md:table-cell'>
+												<div className='flex justify-end gap-2'>
+													<Button
+														variant='ghost'
+														size='sm'
+														title='Ver detalhes'
+														onClick={(e) => {
+															e.stopPropagation()
+															handleOpenModal(charge)
+														}}
+													>
+														<EyeIcon className='h-4 w-4' />
+													</Button>
+													{charge.status === 'pago' && charge.receiptUrl && (
+														<Button variant='ghost' size='sm' asChild title='Ver comprovante'>
+															<a
+																href={charge.receiptUrl}
+																target='_blank'
+																rel='noopener noreferrer'
+																onClick={(e) => e.stopPropagation()}
+															>
+																<FileTextIcon className='h-4 w-4' />
+															</a>
 														</Button>
-														{charge.status === 'pago' && charge.receiptUrl && (
-															<Button variant='ghost' size='sm' asChild title='Ver comprovante'>
-																<a
-																	href={charge.receiptUrl}
-																	target='_blank'
-																	rel='noopener noreferrer'
-																	onClick={(e) => e.stopPropagation()}
-																>
-																	<FileTextIcon className='h-4 w-4' />
-																</a>
-															</Button>
-														)}
-														{charge.method === 'boleto' && charge.boletoUrl && (
-															<Button variant='ghost' size='sm' asChild title='Baixar boleto'>
-																<a
-																	href={charge.boletoUrl}
-																	target='_blank'
-																	rel='noopener noreferrer'
-																	onClick={(e) => e.stopPropagation()}
-																>
-																	<DownloadIcon className='h-4 w-4' />
-																</a>
-															</Button>
-														)}
-													</div>
-												</TableCell>
-											)}
+													)}
+													{charge.method === 'boleto' && charge.boletoUrl && (
+														<Button variant='ghost' size='sm' asChild title='Baixar boleto'>
+															<a
+																href={charge.boletoUrl}
+																target='_blank'
+																rel='noopener noreferrer'
+																onClick={(e) => e.stopPropagation()}
+															>
+																<DownloadIcon className='h-4 w-4' />
+															</a>
+														</Button>
+													)}
+												</div>
+											</TableCell>
 										</TableRow>
 									))}
 								</TableBody>
