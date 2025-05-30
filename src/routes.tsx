@@ -13,6 +13,24 @@ export const router = createBrowserRouter([
 				},
 			},
 			{
+				path: '/usuarios',
+				lazy: {
+					Component: () => import('./pages/usuarios').then((module) => module.Usuarios),
+				},
+			},
+			{
+				path: '/produtos',
+				lazy: {
+					Component: () => import('./pages/produtos').then((module) => module.Produtos),
+				},
+			},
+			{
+				path: '/settings',
+				lazy: {
+					Component: () => import('./pages/settings').then((module) => module.Settings),
+				},
+			},
+			{
 				path: '/carteira',
 				lazy: {
 					Component: () => import('./pages/carteira').then((module) => module.Carteira),
