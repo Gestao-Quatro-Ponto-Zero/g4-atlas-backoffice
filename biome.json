@@ -1,0 +1,83 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"files": {
+		"ignore": ["src/components/ui/**/*"]
+	},
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"formatter": {
+		"formatWithErrors": true,
+		"attributePosition": "multiline"
+	},
+	"linter": {
+		"rules": {
+			"complexity": {
+				"noExcessiveCognitiveComplexity": "warn",
+				"noForEach": "off",
+				"noUselessStringConcat": "off",
+				"useDateNow": "warn",
+				"useSimplifiedLogicExpression": "warn"
+			},
+			"correctness": {
+				"noUndeclaredDependencies": "error",
+				"noUndeclaredVariables": "error",
+				"noUnusedImports": "warn",
+				"noUnusedVariables": "warn",
+				"useHookAtTopLevel": "warn"
+			},
+			"nursery": {
+				"noDuplicateElseIf": "warn",
+				"noDuplicateCustomProperties": "warn",
+				"noDynamicNamespaceImportAccess": "error",
+				"noEnum": "error",
+				"noIrregularWhitespace": "warn",
+				"noMissingVarFunction": "error",
+				"noStaticElementInteractions": "error",
+				"noUselessEscapeInRegex": "warn",
+				"useConsistentCurlyBraces": "warn",
+				"useConsistentMemberAccessibility": {
+					"level": "error",
+					"options": {
+						"accessibility": "none"
+					}
+				},
+				"useSortedClasses": "warn"
+			},
+			"performance": {
+				"useTopLevelRegex": "warn"
+			},
+			"style": {
+				"noNegationElse": "warn",
+				"noParameterProperties": "error",
+				"useCollapsedElseIf": "warn"
+			},
+			"suspicious": {
+				"noEvolvingTypes": "error",
+				"useAwait": "error"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double",
+			"arrowParentheses": "asNeeded",
+			"attributePosition": "multiline"
+		}
+	},
+	"json": {
+		"parser": {
+			"allowComments": true
+		}
+	},
+	"css": {
+		"formatter": {
+			"enabled": true
+		},
+		"linter": {
+			"enabled": true
+		}
+	}
+}
