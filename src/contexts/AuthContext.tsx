@@ -1,54 +1,59 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { mockUser } from '../data/mockData';
+import { mockUser } from "@/data/mockData";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+import type React from "react";
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useMemo,
+	useState,
+} from "react";
 
 interface AuthContextType {
-  user: any | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+	userId: number | null;
+	login: (email: string, password: string) => void;
+	logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<any | null>(mockUser);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+	children,
+}) => {
+	const [userId, setUserId] = useState<number | null>(1);
 
-  useEffect(() => {
-    // Auto-login with mock user
-    setUser(mockUser);
-  }, []);
+	const login = useCallback((_email: string, _password: string) => {
+		setUserId(1);
+	}, []);
 
-  const login = async (email: string, password: string) => {
-    // Not needed anymore, but keeping for compatibility
-    setUser(mockUser);
-  };
+	const logout = useCallback(() => {
+		setUserId(null);
+	}, []);
 
-  const logout = () => {
-    // Not needed anymore, but keeping for compatibility
-    setUser(mockUser);
-  };
+	const contextValue = useMemo(
+		() => ({
+			userId,
+			login,
+			logout,
+		}),
+		[userId, login, logout],
+	);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: true, // Always authenticated
-        isLoading,
-        login,
-        logout
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+	return (
+		<AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+	);
 };
 
+const authOptions = (userId: number) =>
+	queryOptions({
+		queryKey: ["auth", userId],
+		queryFn: () => mockUser,
+		enabled: !!userId,
+	});
+
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+	const contextValue = useContext(AuthContext);
+	const query = useQuery(authOptions(contextValue.userId));
+
+	return Object.assign(contextValue, { promise: query.promise });
 };
