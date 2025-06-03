@@ -4,13 +4,13 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronRightIcon } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
 import { getMenuItems } from "../menuItems";
 
 export const MenuItems = () => {
-	const location = useLocation();
-	const menuItems = getMenuItems(location.pathname);
+	const pathname = useRouterState({ select: state => state.location.pathname });
+	const menuItems = getMenuItems(pathname);
 
 	return (
 		<SidebarMenu>
@@ -21,7 +21,7 @@ export const MenuItems = () => {
 						isActive={item.active}
 					>
 						<Link
-							prefetch="intent"
+							preload="intent"
 							to={item.href}
 							className="group/menu-button flex items-center justify-between"
 						>

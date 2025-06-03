@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import type { Order } from "@/data/mockData";
+import { useNavigate } from "@tanstack/react-router";
 import { ExternalLinkIcon, MessageCircleIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 export const OrderActions = ({ orderId }: { orderId: Order["id"] }) => {
 	const navigate = useNavigate();
@@ -14,7 +14,7 @@ export const OrderActions = ({ orderId }: { orderId: Order["id"] }) => {
 	};
 
 	const handleViewPaymentHistory = () => {
-		navigate(`/contas?order=${orderId}`);
+		navigate({ to: "/contas", search: { order: orderId } });
 	};
 
 	const handleContactSupport = () => {

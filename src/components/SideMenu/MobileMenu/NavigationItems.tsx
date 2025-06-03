@@ -1,16 +1,14 @@
 import { cn } from "@/lib/utils";
+import { Link, useRouterState } from "@tanstack/react-router";
 import {
 	ChevronRightIcon,
 	LayoutDashboardIcon,
 	PackageIcon,
 	UsersIcon,
 } from "lucide-react";
-import { useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 export const NavigationItems = () => {
-	const location = useLocation();
-	const pathname = location.pathname;
+	const pathname = useRouterState({ select: state => state.location.pathname });
 
 	const menuItems = [
 		{
@@ -41,7 +39,7 @@ export const NavigationItems = () => {
 					className="relative"
 				>
 					<Link
-						prefetch="intent"
+						preload="intent"
 						to={item.href}
 						className={cn(
 							"flex items-center justify-between px-6 py-4 hover:bg-gray-50",

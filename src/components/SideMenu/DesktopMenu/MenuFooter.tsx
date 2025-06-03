@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { SidebarFooter } from "@/components/ui/sidebar";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 
 export const MenuFooter = () => {
 	return (
@@ -15,21 +15,21 @@ export const MenuFooter = () => {
 			</div>
 			<div className="mt-4 flex justify-center space-x-3 text-gray-500 text-xs">
 				<Link
-					prefetch="intent"
+					preload="intent"
 					to="/termos"
 					className="hover:underline"
 				>
 					Termos
 				</Link>
 				<Link
-					prefetch="intent"
+					preload="intent"
 					to="/privacidade"
 					className="hover:underline"
 				>
 					Privacidade
 				</Link>
 				<Link
-					prefetch="intent"
+					preload="intent"
 					to="/cookies"
 					className="hover:underline"
 				>

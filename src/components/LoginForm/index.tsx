@@ -86,7 +86,7 @@ export const LoginForm = () => {
 						</div>
 
 						<a
-							href="#"
+							href="#_blank"
 							className="font-medium text-blue-600 text-sm hover:text-blue-500"
 						>
 							Esqueceu a senha?

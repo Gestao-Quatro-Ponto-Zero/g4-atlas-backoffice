@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 
 export const MobileMenuFooter = () => {
 	return (
@@ -14,21 +14,21 @@ export const MobileMenuFooter = () => {
 			</div>
 			<div className="mt-6 flex justify-center space-x-4 text-gray-500 text-xs">
 				<Link
-					prefetch="intent"
+					preload="intent"
 					to="/termos"
 					className="hover:underline"
 				>
 					Termos
 				</Link>
 				<Link
-					prefetch="intent"
+					preload="intent"
 					to="/privacidade"
 					className="hover:underline"
 				>
 					Privacidade
 				</Link>
 				<Link
-					prefetch="intent"
+					preload="intent"
 					to="/cookies"
 					className="hover:underline"
 				>

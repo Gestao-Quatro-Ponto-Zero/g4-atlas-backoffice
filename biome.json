@@ -1,7 +1,11 @@
 {
 	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
 	"files": {
-		"ignore": ["src/components/ui/**/*"]
+		"ignore": [
+			"src/components/ui/**/*",
+			"src/routeTree.gen.ts",
+			"src/schema.d.ts"
+		]
 	},
 	"vcs": {
 		"enabled": true,
