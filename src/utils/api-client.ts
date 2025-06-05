@@ -1,6 +1,4 @@
 
-import { useApiKey } from "@/contexts/ApiKeyContext";
-
 const BASE_URL = "https://api.g4educacao.com";
 
 class ApiClient {

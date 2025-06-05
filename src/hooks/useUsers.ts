@@ -7,36 +7,39 @@ interface User {
 	name: string;
 	email: string;
 	phone?: string;
-	status: string;
-	createdAt: string;
+	enabled: boolean;
+	created_at: string;
 }
 
 interface UsersResponse {
-	users: User[];
-	total: number;
-	page: number;
-	limit: number;
+	content: User[];
+	totalElements: number;
+	totalPages: number;
+	number: number;
+	size: number;
 }
 
 interface UseUsersParams {
 	page?: number;
 	limit?: number;
-	search?: string;
-	status?: string;
+	email?: string;
+	name?: string;
+	sort?: string;
 }
 
 export const useUsers = (params: UseUsersParams = {}) => {
-	const { page = 1, limit = 10, search = "", status = "" } = params;
+	const { page = 1, limit = 10, email = "", name = "", sort = "id,ASC" } = params;
 
 	const queryParams = new URLSearchParams({
-		page: page.toString(),
-		limit: limit.toString(),
-		...(search && { search }),
-		...(status && { status }),
+		page: (page - 1).toString(), // API uses 0-based pagination
+		size: limit.toString(),
+		sort,
+		...(email && { email }),
+		...(name && { name }),
 	});
 
 	return useQuery({
-		queryKey: ["users", page, limit, search, status],
+		queryKey: ["users", page, limit, email, name, sort],
 		queryFn: () => apiClient.get<UsersResponse>(`/accounts/api/v1/users?${queryParams}`),
 	});
 };
@@ -45,7 +48,7 @@ export const useCreateUser = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (userData: Omit<User, "id" | "createdAt">) =>
+		mutationFn: (userData: Omit<User, "id" | "created_at">) =>
 			apiClient.post<User>("/accounts/api/v1/users", userData),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["users"] });

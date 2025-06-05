@@ -22,7 +22,7 @@ export const UserEditModal = ({ user, isOpen, onClose }: UserEditModalProps) => 
 		if (!user) return;
 		
 		updateUserMutation.mutate(
-			{ id: user.id, user: data },
+			{ id: user.id, ...data },
 			{
 				onSuccess: () => {
 					onClose();

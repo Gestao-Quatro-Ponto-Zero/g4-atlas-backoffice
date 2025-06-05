@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_layout/usuarios")({
 
 		const { data: usersData, isLoading, error } = useUsers({
 			page: currentPage,
-			size: 10,
+			limit: 10,
 			email: searchFilters.email || undefined,
 			name: searchFilters.name || undefined,
 			sort: "id,ASC",
