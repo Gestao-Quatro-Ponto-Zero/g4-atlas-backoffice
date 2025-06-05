@@ -1,4 +1,5 @@
-import { LayoutDashboardIcon, PackageIcon, UsersIcon } from "lucide-react";
+
+import { LayoutDashboardIcon, PackageIcon, UsersIcon, SettingsIcon } from "lucide-react";
 
 export const getMenuItems = (pathname: string) => [
 	{
@@ -18,5 +19,11 @@ export const getMenuItems = (pathname: string) => [
 		label: "Produtos",
 		href: "/produtos",
 		active: pathname === "/produtos",
+	},
+	{
+		icon: SettingsIcon,
+		label: "Configurações",
+		href: "/configuracoes",
+		active: pathname === "/configuracoes",
 	},
 ];
