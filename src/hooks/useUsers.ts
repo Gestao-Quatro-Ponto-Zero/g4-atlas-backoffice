@@ -31,7 +31,7 @@ export const useUsers = (params: UseUsersParams = {}) => {
 	const { page = 1, limit = 10, email = "", name = "", sort = "id,ASC" } = params;
 
 	const queryParams = new URLSearchParams({
-		page: (page - 1).toString(), // API uses 0-based pagination
+		page: page.toString(), // API now uses 1-based pagination
 		size: limit.toString(),
 		sort,
 		...(email && { email }),
