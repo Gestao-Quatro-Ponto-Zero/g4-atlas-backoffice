@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -31,9 +32,18 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AddressSelection } from "./AddressSelection";
 
+interface PaymentMethodFormData {
+	cardNumber: string;
+	expiry: string;
+	cvc: string;
+	cardName: string;
+	cardType: string;
+	isDefault: string;
+}
+
 export const AddNewPaymentMethodDialog = () => {
 	const [selectedAddress, setSelectedAddress] = useState(mockAddresses[0].id);
-	const form = useForm({
+	const form = useForm<PaymentMethodFormData>({
 		defaultValues: {
 			cardNumber: "",
 			expiry: "",
@@ -44,7 +54,7 @@ export const AddNewPaymentMethodDialog = () => {
 		},
 	});
 
-	const onSubmit = data => {
+	const onSubmit = (data: PaymentMethodFormData) => {
 		console.log("Payment method data:", data);
 		console.log("Selected address:", selectedAddress);
 		// Here you would handle the submission logic

@@ -1,3 +1,4 @@
+
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -40,6 +41,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { mockAddresses } from "@/data/mockData";
+import type { Address } from "@/data/mockData";
 import { Link } from "@tanstack/react-router";
 import { CheckIcon, EditIcon, MapPinIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -70,7 +72,7 @@ export const PaymentMethodCard = ({
 }) => {
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const [showEditDialog, setShowEditDialog] = useState(false);
-	const [associatedAddress, setAssociatedAddress] = useState(null);
+	const [associatedAddress, setAssociatedAddress] = useState<Address | null>(null);
 	const [_selectedAddress, _setSelectedAddress] = useState(addressId || "");
 	const [useNewAddress, setUseNewAddress] = useState(false);
 	const [newAddressForm, setNewAddressForm] = useState({
@@ -92,7 +94,7 @@ export const PaymentMethodCard = ({
 	useEffect(() => {
 		if (addressId) {
 			const address = mockAddresses.find(addr => addr.id === addressId);
-			setAssociatedAddress(address);
+			setAssociatedAddress(address || null);
 		}
 	}, [addressId]);
 

@@ -1,3 +1,4 @@
+
 import { useAuth } from "@/contexts/AuthContext";
 import { mockCards } from "@/data/mockData";
 import { createFileRoute } from "@tanstack/react-router";
@@ -47,7 +48,7 @@ export const Route = createFileRoute("/_layout/carteira")({
 									key={card.id}
 									brand={card.brand}
 									lastFourDigits={card.lastFourDigits}
-									holderName={card.holderName}
+									holderName={card.holderName || ""}
 									type={card.type}
 									isDefault={card.lastFourDigits === "5367"}
 									addressId={card.addressId}

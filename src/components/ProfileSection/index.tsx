@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { use, useState } from "react";
@@ -55,17 +56,17 @@ export const ProfileSection = () => {
 				<div className="space-y-0 divide-y">
 					<ProfileItem
 						label="Nome"
-						value={userData?.name}
+						value={userData?.name || ""}
 						onClick={() => setIsNameDialogOpen(true)}
 					/>
 					<ProfileItem
 						label="E-mail"
-						value={userData?.email}
+						value={userData?.email || ""}
 						onClick={() => setIsEmailDialogOpen(true)}
 					/>
 					<ProfileItem
 						label="Telefone"
-						value={userData?.phone}
+						value={userData?.phone || ""}
 						onClick={() => setIsPhoneDialogOpen(true)}
 					/>
 				</div>

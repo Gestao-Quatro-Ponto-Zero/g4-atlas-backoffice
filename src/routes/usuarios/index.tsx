@@ -3,7 +3,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { SearchIcon, PlusIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 import { useUsers } from "@/hooks/useUsers";
 import { UsersTable } from "./components/UsersTable";
 import { UsersPagination } from "./components/UsersPagination";
