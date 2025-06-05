@@ -1,3 +1,4 @@
+
 import { mockUser } from "@/data/mockData";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import type React from "react";
@@ -44,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 	);
 };
 
-const authOptions = (userId: number) =>
+const authOptions = (userId: number | null) =>
 	queryOptions({
 		queryKey: ["auth", userId],
 		queryFn: () => mockUser,
@@ -53,7 +54,15 @@ const authOptions = (userId: number) =>
 
 export const useAuth = () => {
 	const contextValue = useContext(AuthContext);
+	
+	if (!contextValue) {
+		throw new Error("useAuth must be used within an AuthProvider");
+	}
+
 	const query = useQuery(authOptions(contextValue.userId));
 
-	return Object.assign(contextValue, { promise: query.promise });
+	return {
+		...contextValue,
+		promise: query.promise,
+	};
 };
