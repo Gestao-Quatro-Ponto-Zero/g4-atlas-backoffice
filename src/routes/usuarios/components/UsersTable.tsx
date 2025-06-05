@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit } from "lucide-react";
+import { EditIcon } from "lucide-react";
 import { UserEditModal } from "./UserEditModal";
 import type { User } from "@/types/user";
 
@@ -65,7 +65,7 @@ export const UsersTable = ({ users }: UsersTableProps) => {
 									size="sm"
 									onClick={() => handleEditUser(user)}
 								>
-									<Edit className="h-4 w-4" />
+									<EditIcon className="h-4 w-4" />
 								</Button>
 							</TableCell>
 						</TableRow>

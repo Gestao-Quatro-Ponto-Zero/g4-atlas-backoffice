@@ -6,33 +6,26 @@ export const useUsers = (filters: UserFilters = {}) => {
 	return useQuery({
 		queryKey: ["users", filters],
 		queryFn: async (): Promise<UsersResponse> => {
-			// Mock data for now - replace with actual API call
-			const mockUsers: User[] = [
-				{
-					id: "1",
-					email: "user1@example.com",
-					name: "Usuário 1",
-					enabled: true,
-					created_at: "2024-01-01T00:00:00Z",
-				},
-				{
-					id: "2",
-					email: "user2@example.com",
-					name: "Usuário 2",
-					enabled: false,
-					created_at: "2024-01-02T00:00:00Z",
-				},
-			];
+			const params = new URLSearchParams();
+			
+			if (filters.page) params.append('page', filters.page.toString());
+			if (filters.size) params.append('size', filters.size.toString());
+			if (filters.email) params.append('email[eq]', filters.email);
+			if (filters.name) params.append('name[like]', filters.name);
+			if (filters.sort) params.append('sort', filters.sort);
 
-			return {
-				content: mockUsers,
-				totalElements: mockUsers.length,
-				totalPages: 1,
-				size: 10,
-				number: 0,
-				first: true,
-				last: true,
-			};
+			const response = await fetch(`https://api.g4educacao.com/accounts/api/v1/users?${params.toString()}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to fetch users');
+			}
+
+			return response.json();
 		},
 	});
 };
@@ -42,12 +35,19 @@ export const useCreateUser = () => {
 
 	return useMutation({
 		mutationFn: async (user: CreateUserRequest): Promise<User> => {
-			// Mock implementation - replace with actual API call
-			return {
-				id: Date.now().toString(),
-				...user,
-				created_at: new Date().toISOString(),
-			};
+			const response = await fetch('https://api.g4educacao.com/accounts/api/v1/users', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(user),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to create user');
+			}
+
+			return response.json();
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -60,15 +60,19 @@ export const useUpdateUser = () => {
 
 	return useMutation({
 		mutationFn: async ({ id, user }: { id: string; user: UpdateUserRequest }): Promise<User> => {
-			// Mock implementation - replace with actual API call
-			return {
-				id,
-				email: user.email || "",
-				name: user.name || "",
-				enabled: user.enabled ?? true,
-				...user,
-				updated_at: new Date().toISOString(),
-			};
+			const response = await fetch(`https://api.g4educacao.com/accounts/api/v1/users/${id}`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(user),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to update user');
+			}
+
+			return response.json();
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["users"] });

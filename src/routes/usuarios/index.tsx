@@ -3,7 +3,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Plus } from "lucide-react";
+import { SearchIcon, PlusIcon } from "lucide-react";
 import { useUsers } from "@/hooks/useUsers";
 import { UsersTable } from "./components/UsersTable";
 import { UsersPagination } from "./components/UsersPagination";
@@ -102,7 +102,7 @@ export const Route = createFileRoute("/_layout/usuarios")({
 								/>
 							</div>
 							<Button onClick={handleSearch} className="flex items-center gap-2">
-								<Search className="h-4 w-4" />
+								<SearchIcon className="h-4 w-4" />
 								Buscar
 							</Button>
 						</div>
