@@ -1,6 +1,25 @@
+import createClient, {
+	type Client,
+	type MaybeOptionalInit,
+} from "openapi-fetch";
+import type { paths } from "../schema";
+import type { RequiredKeysOf } from "openapi-typescript-helpers";
+
+type InitParam<Init> = RequiredKeysOf<Init> extends never
+	? [(Init & { [key: string]: unknown })?]
+	: [Init & { [key: string]: unknown }];
+
 const BASE_URL = "https://api.g4educacao.com";
 
-class ApiClient {
+class ApiClient<Paths extends {}> {
+	#client: ReturnType<typeof createClient<Paths>>;
+
+	constructor() {
+		this.#client = createClient({
+			baseUrl: BASE_URL,
+		});
+	}
+
 	#getHeaders(): HeadersInit {
 		const headers: HeadersInit = {
 			"Content-Type": "application/json",
@@ -15,9 +34,10 @@ class ApiClient {
 		return headers;
 	}
 
-	async get<T>(endpoint: string): Promise<T> {
-		const response = await fetch(`${BASE_URL}${endpoint}`, {
-			method: "GET",
+	async get<Endpoint extends Parameters<Client<Paths>["GET"]>[0]>(
+		endpoint: Endpoint,
+	) {
+		const { response, data } = await this.#client.GET(endpoint, {
 			headers: this.#getHeaders(),
 		});
 
@@ -25,39 +45,43 @@ class ApiClient {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		return response.json();
+		return data;
 	}
 
-	async post<T>(endpoint: string, data?: unknown): Promise<T> {
-		const response = await fetch(`${BASE_URL}${endpoint}`, {
-			method: "POST",
+	async post<Endpoint extends Parameters<Client<Paths>["POST"]>[0]>(
+		endpoint: Endpoint,
+		body: InitParam<MaybeOptionalInit<Paths[Endpoint], "post">>[0]["body"],
+	) {
+		const { response, data } = await this.#client.POST(endpoint, {
 			headers: this.#getHeaders(),
-			body: data ? JSON.stringify(data) : undefined,
+			body,
 		});
 
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		return response.json();
+		return data;
 	}
 
-	async put<T>(endpoint: string, data?: unknown): Promise<T> {
-		const response = await fetch(`${BASE_URL}${endpoint}`, {
-			method: "PUT",
+	async put<Endpoint extends Parameters<Client<Paths>["PUT"]>[0]>(
+		endpoint: Endpoint,
+		body: InitParam<MaybeOptionalInit<Paths[Endpoint], "put">>[0]["body"],
+	) {
+		const { response, data } = await this.#client.PUT(endpoint, {
 			headers: this.#getHeaders(),
-			body: data ? JSON.stringify(data) : undefined,
+			body: body,
 		});
 
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		return response.json();
+		return data;
 	}
 
-	async delete<T>(endpoint: string): Promise<T> {
-		const response = await fetch(`${BASE_URL}${endpoint}`, {
+	async delete(endpoint: Parameters<Client<Paths>["DELETE"]>[0]) {
+		const { response, data } = await this.#client.DELETE(endpoint, {
 			method: "DELETE",
 			headers: this.#getHeaders(),
 		});
@@ -66,8 +90,8 @@ class ApiClient {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		return response.json();
+		return data;
 	}
 }
 
-export const apiClient = new ApiClient();
+export const apiClient = new ApiClient<paths>();
