@@ -2,8 +2,8 @@ import createClient, {
 	type Client,
 	type MaybeOptionalInit,
 } from "openapi-fetch";
-import type { paths } from "../schema";
 import type { RequiredKeysOf } from "openapi-typescript-helpers";
+import type { paths } from "../schema";
 
 type InitParam<Init> = RequiredKeysOf<Init> extends never
 	? [(Init & { [key: string]: unknown })?]
@@ -45,7 +45,8 @@ class ApiClient<Paths extends {}> {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		return data;
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		return data!;
 	}
 
 	async post<Endpoint extends Parameters<Client<Paths>["POST"]>[0]>(
@@ -61,7 +62,8 @@ class ApiClient<Paths extends {}> {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		return data;
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		return data!;
 	}
 
 	async put<Endpoint extends Parameters<Client<Paths>["PUT"]>[0]>(
@@ -77,7 +79,8 @@ class ApiClient<Paths extends {}> {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		return data;
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		return data!;
 	}
 
 	async delete(endpoint: Parameters<Client<Paths>["DELETE"]>[0]) {
@@ -90,7 +93,8 @@ class ApiClient<Paths extends {}> {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		return data;
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		return data!;
 	}
 }
 

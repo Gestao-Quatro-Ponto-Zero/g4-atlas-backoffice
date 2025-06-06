@@ -6,7 +6,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronRightIcon } from "lucide-react";
-import { getMenuItems } from "../menuItems";
+import { getMenuItems } from "./menuItems";
 
 export const MenuItems = () => {
 	const pathname = useRouterState({ select: state => state.location.pathname });

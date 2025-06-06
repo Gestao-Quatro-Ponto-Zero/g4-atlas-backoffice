@@ -1,7 +1,7 @@
 import { CardsFuncionalidadesFuturas } from "@/components/CardsFuncionalidadesFuturas";
+import { GraphicCards } from "@/components/GraphicCards";
 import { NumberCards } from "@/components/NumberCards";
 import { createFileRoute } from "@tanstack/react-router";
-import { GraphicCards } from "../components/GraphicCards";
 
 export const Route = createFileRoute("/_layout/")({
 	component: () => {
