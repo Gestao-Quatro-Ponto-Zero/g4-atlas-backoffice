@@ -8,7 +8,7 @@ export const InstallmentInfo = ({
 	installments: PaymentDetails["installments"];
 	amount: PaymentDetails["amount"];
 }) => {
-	if (installments <= 1) return null;
+	if (!installments || installments <= 1) return null;
 
 	return (
 		<span className="text-gray-600 text-xs">

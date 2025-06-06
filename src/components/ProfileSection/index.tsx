@@ -55,17 +55,17 @@ export const ProfileSection = () => {
 				<div className="space-y-0 divide-y">
 					<ProfileItem
 						label="Nome"
-						value={userData?.name}
+						value={userData?.name || ""}
 						onClick={() => setIsNameDialogOpen(true)}
 					/>
 					<ProfileItem
 						label="E-mail"
-						value={userData?.email}
+						value={userData?.email || ""}
 						onClick={() => setIsEmailDialogOpen(true)}
 					/>
 					<ProfileItem
 						label="Telefone"
-						value={userData?.phone}
+						value={userData?.phone || ""}
 						onClick={() => setIsPhoneDialogOpen(true)}
 					/>
 				</div>
