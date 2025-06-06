@@ -26,280 +26,179 @@ import { Route as indexImport } from './routes/index'
 // Create/Update Routes
 
 const layoutRoute = layoutImport.update({
-  id: '/_layout',
-  getParentRoute: () => rootRoute,
-} as any)
+          id: '/_layout',getParentRoute: () => rootRoute
+        }as any)
 
 const notFoundRoute = notFoundImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => rootRoute,
-} as any)
+          id: '/$',path: '/$',getParentRoute: () => rootRoute
+        }as any)
 
 const usuariosIndexRoute = usuariosIndexImport.update({
-  id: '/usuarios',
-  path: '/usuarios',
-  getParentRoute: () => layoutRoute,
-} as any)
+          id: '/usuarios',path: '/usuarios',getParentRoute: () => layoutRoute
+        }as any)
 
 const settingsIndexRoute = settingsIndexImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => layoutRoute,
-} as any)
+          id: '/settings',path: '/settings',getParentRoute: () => layoutRoute
+        }as any)
 
 const produtosIndexRoute = produtosIndexImport.update({
-  id: '/produtos',
-  path: '/produtos',
-  getParentRoute: () => layoutRoute,
-} as any)
+          id: '/produtos',path: '/produtos',getParentRoute: () => layoutRoute
+        }as any)
 
 const enderecosIndexRoute = enderecosIndexImport.update({
-  id: '/enderecos',
-  path: '/enderecos',
-  getParentRoute: () => layoutRoute,
-} as any)
+          id: '/enderecos',path: '/enderecos',getParentRoute: () => layoutRoute
+        }as any)
 
 const contratosIndexRoute = contratosIndexImport.update({
-  id: '/contratos',
-  path: '/contratos',
-  getParentRoute: () => layoutRoute,
-} as any)
+          id: '/contratos',path: '/contratos',getParentRoute: () => layoutRoute
+        }as any)
 
 const contasIndexRoute = contasIndexImport.update({
-  id: '/contas',
-  path: '/contas',
-  getParentRoute: () => layoutRoute,
-} as any)
+          id: '/contas',path: '/contas',getParentRoute: () => layoutRoute
+        }as any)
 
 const cobrancasIndexRoute = cobrancasIndexImport.update({
-  id: '/cobrancas',
-  path: '/cobrancas',
-  getParentRoute: () => layoutRoute,
-} as any)
+          id: '/cobrancas',path: '/cobrancas',getParentRoute: () => layoutRoute
+        }as any)
 
 const carteiraIndexRoute = carteiraIndexImport.update({
-  id: '/carteira',
-  path: '/carteira',
-  getParentRoute: () => layoutRoute,
-} as any)
+          id: '/carteira',path: '/carteira',getParentRoute: () => layoutRoute
+        }as any)
 
 const indexRoute = indexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => layoutRoute,
-} as any)
+          id: '/',path: '/',getParentRoute: () => layoutRoute
+        }as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/$': {
-      id: '/$'
-      path: '/$'
-      fullPath: '/$'
-      preLoaderRoute: typeof notFoundImport
-      parentRoute: typeof rootRoute
-    }
-    '/_layout': {
-      id: '/_layout'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof layoutImport
-      parentRoute: typeof rootRoute
-    }
-    '/_layout/': {
-      id: '/_layout/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof indexImport
-      parentRoute: typeof layoutImport
-    }
-    '/_layout/carteira': {
-      id: '/_layout/carteira'
-      path: '/carteira'
-      fullPath: '/carteira'
-      preLoaderRoute: typeof carteiraIndexImport
-      parentRoute: typeof layoutImport
-    }
-    '/_layout/cobrancas': {
-      id: '/_layout/cobrancas'
-      path: '/cobrancas'
-      fullPath: '/cobrancas'
-      preLoaderRoute: typeof cobrancasIndexImport
-      parentRoute: typeof layoutImport
-    }
-    '/_layout/contas': {
-      id: '/_layout/contas'
-      path: '/contas'
-      fullPath: '/contas'
-      preLoaderRoute: typeof contasIndexImport
-      parentRoute: typeof layoutImport
-    }
-    '/_layout/contratos': {
-      id: '/_layout/contratos'
-      path: '/contratos'
-      fullPath: '/contratos'
-      preLoaderRoute: typeof contratosIndexImport
-      parentRoute: typeof layoutImport
-    }
-    '/_layout/enderecos': {
-      id: '/_layout/enderecos'
-      path: '/enderecos'
-      fullPath: '/enderecos'
-      preLoaderRoute: typeof enderecosIndexImport
-      parentRoute: typeof layoutImport
-    }
-    '/_layout/produtos': {
-      id: '/_layout/produtos'
-      path: '/produtos'
-      fullPath: '/produtos'
-      preLoaderRoute: typeof produtosIndexImport
-      parentRoute: typeof layoutImport
-    }
-    '/_layout/settings': {
-      id: '/_layout/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof settingsIndexImport
-      parentRoute: typeof layoutImport
-    }
-    '/_layout/usuarios': {
-      id: '/_layout/usuarios'
-      path: '/usuarios'
-      fullPath: '/usuarios'
-      preLoaderRoute: typeof usuariosIndexImport
-      parentRoute: typeof layoutImport
-    }
+          id: '/$'
+          path: '/$'
+          fullPath: '/$'
+          preLoaderRoute: typeof notFoundImport
+          parentRoute: typeof rootRoute
+        }
+'/_layout': {
+          id: '/_layout'
+          path: ''
+          fullPath: ''
+          preLoaderRoute: typeof layoutImport
+          parentRoute: typeof rootRoute
+        }
+'/_layout/': {
+          id: '/_layout/'
+          path: '/'
+          fullPath: '/'
+          preLoaderRoute: typeof indexImport
+          parentRoute: typeof layoutImport
+        }
+'/_layout/carteira': {
+          id: '/_layout/carteira'
+          path: '/carteira'
+          fullPath: '/carteira'
+          preLoaderRoute: typeof carteiraIndexImport
+          parentRoute: typeof layoutImport
+        }
+'/_layout/cobrancas': {
+          id: '/_layout/cobrancas'
+          path: '/cobrancas'
+          fullPath: '/cobrancas'
+          preLoaderRoute: typeof cobrancasIndexImport
+          parentRoute: typeof layoutImport
+        }
+'/_layout/contas': {
+          id: '/_layout/contas'
+          path: '/contas'
+          fullPath: '/contas'
+          preLoaderRoute: typeof contasIndexImport
+          parentRoute: typeof layoutImport
+        }
+'/_layout/contratos': {
+          id: '/_layout/contratos'
+          path: '/contratos'
+          fullPath: '/contratos'
+          preLoaderRoute: typeof contratosIndexImport
+          parentRoute: typeof layoutImport
+        }
+'/_layout/enderecos': {
+          id: '/_layout/enderecos'
+          path: '/enderecos'
+          fullPath: '/enderecos'
+          preLoaderRoute: typeof enderecosIndexImport
+          parentRoute: typeof layoutImport
+        }
+'/_layout/produtos': {
+          id: '/_layout/produtos'
+          path: '/produtos'
+          fullPath: '/produtos'
+          preLoaderRoute: typeof produtosIndexImport
+          parentRoute: typeof layoutImport
+        }
+'/_layout/settings': {
+          id: '/_layout/settings'
+          path: '/settings'
+          fullPath: '/settings'
+          preLoaderRoute: typeof settingsIndexImport
+          parentRoute: typeof layoutImport
+        }
+'/_layout/usuarios': {
+          id: '/_layout/usuarios'
+          path: '/usuarios'
+          fullPath: '/usuarios'
+          preLoaderRoute: typeof usuariosIndexImport
+          parentRoute: typeof layoutImport
+        }
   }
 }
 
 // Create and export the route tree
 
+
+
 interface layoutRouteChildren {
-  indexRoute: typeof indexRoute
-  carteiraIndexRoute: typeof carteiraIndexRoute
-  cobrancasIndexRoute: typeof cobrancasIndexRoute
-  contasIndexRoute: typeof contasIndexRoute
-  contratosIndexRoute: typeof contratosIndexRoute
-  enderecosIndexRoute: typeof enderecosIndexRoute
-  produtosIndexRoute: typeof produtosIndexRoute
-  settingsIndexRoute: typeof settingsIndexRoute
-  usuariosIndexRoute: typeof usuariosIndexRoute
+  indexRoute: typeof indexRoute,carteiraIndexRoute: typeof carteiraIndexRoute,cobrancasIndexRoute: typeof cobrancasIndexRoute,contasIndexRoute: typeof contasIndexRoute,contratosIndexRoute: typeof contratosIndexRoute,enderecosIndexRoute: typeof enderecosIndexRoute,produtosIndexRoute: typeof produtosIndexRoute,settingsIndexRoute: typeof settingsIndexRoute,usuariosIndexRoute: typeof usuariosIndexRoute
 }
 
 const layoutRouteChildren: layoutRouteChildren = {
-  indexRoute: indexRoute,
-  carteiraIndexRoute: carteiraIndexRoute,
-  cobrancasIndexRoute: cobrancasIndexRoute,
-  contasIndexRoute: contasIndexRoute,
-  contratosIndexRoute: contratosIndexRoute,
-  enderecosIndexRoute: enderecosIndexRoute,
-  produtosIndexRoute: produtosIndexRoute,
-  settingsIndexRoute: settingsIndexRoute,
-  usuariosIndexRoute: usuariosIndexRoute,
+  indexRoute: indexRoute,carteiraIndexRoute: carteiraIndexRoute,cobrancasIndexRoute: cobrancasIndexRoute,contasIndexRoute: contasIndexRoute,contratosIndexRoute: contratosIndexRoute,enderecosIndexRoute: enderecosIndexRoute,produtosIndexRoute: produtosIndexRoute,settingsIndexRoute: settingsIndexRoute,usuariosIndexRoute: usuariosIndexRoute
 }
 
-const layoutRouteWithChildren =
-  layoutRoute._addFileChildren(layoutRouteChildren)
+const layoutRouteWithChildren = layoutRoute._addFileChildren(layoutRouteChildren)
 
 export interface FileRoutesByFullPath {
-  '/$': typeof notFoundRoute
-  '': typeof layoutRouteWithChildren
-  '/': typeof indexRoute
-  '/carteira': typeof carteiraIndexRoute
-  '/cobrancas': typeof cobrancasIndexRoute
-  '/contas': typeof contasIndexRoute
-  '/contratos': typeof contratosIndexRoute
-  '/enderecos': typeof enderecosIndexRoute
-  '/produtos': typeof produtosIndexRoute
-  '/settings': typeof settingsIndexRoute
-  '/usuarios': typeof usuariosIndexRoute
+  '/$': typeof notFoundRoute,'': typeof layoutRouteWithChildren,'/': typeof indexRoute,'/carteira': typeof carteiraIndexRoute,'/cobrancas': typeof cobrancasIndexRoute,'/contas': typeof contasIndexRoute,'/contratos': typeof contratosIndexRoute,'/enderecos': typeof enderecosIndexRoute,'/produtos': typeof produtosIndexRoute,'/settings': typeof settingsIndexRoute,'/usuarios': typeof usuariosIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/$': typeof notFoundRoute
-  '/': typeof indexRoute
-  '/carteira': typeof carteiraIndexRoute
-  '/cobrancas': typeof cobrancasIndexRoute
-  '/contas': typeof contasIndexRoute
-  '/contratos': typeof contratosIndexRoute
-  '/enderecos': typeof enderecosIndexRoute
-  '/produtos': typeof produtosIndexRoute
-  '/settings': typeof settingsIndexRoute
-  '/usuarios': typeof usuariosIndexRoute
+  '/$': typeof notFoundRoute,'/': typeof indexRoute,'/carteira': typeof carteiraIndexRoute,'/cobrancas': typeof cobrancasIndexRoute,'/contas': typeof contasIndexRoute,'/contratos': typeof contratosIndexRoute,'/enderecos': typeof enderecosIndexRoute,'/produtos': typeof produtosIndexRoute,'/settings': typeof settingsIndexRoute,'/usuarios': typeof usuariosIndexRoute
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/$': typeof notFoundRoute
-  '/_layout': typeof layoutRouteWithChildren
-  '/_layout/': typeof indexRoute
-  '/_layout/carteira': typeof carteiraIndexRoute
-  '/_layout/cobrancas': typeof cobrancasIndexRoute
-  '/_layout/contas': typeof contasIndexRoute
-  '/_layout/contratos': typeof contratosIndexRoute
-  '/_layout/enderecos': typeof enderecosIndexRoute
-  '/_layout/produtos': typeof produtosIndexRoute
-  '/_layout/settings': typeof settingsIndexRoute
-  '/_layout/usuarios': typeof usuariosIndexRoute
+  '__root__': typeof rootRoute,
+  '/$': typeof notFoundRoute,'/_layout': typeof layoutRouteWithChildren,'/_layout/': typeof indexRoute,'/_layout/carteira': typeof carteiraIndexRoute,'/_layout/cobrancas': typeof cobrancasIndexRoute,'/_layout/contas': typeof contasIndexRoute,'/_layout/contratos': typeof contratosIndexRoute,'/_layout/enderecos': typeof enderecosIndexRoute,'/_layout/produtos': typeof produtosIndexRoute,'/_layout/settings': typeof settingsIndexRoute,'/_layout/usuarios': typeof usuariosIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/$'
-    | ''
-    | '/'
-    | '/carteira'
-    | '/cobrancas'
-    | '/contas'
-    | '/contratos'
-    | '/enderecos'
-    | '/produtos'
-    | '/settings'
-    | '/usuarios'
+  fullPaths: '/$'|''|'/'|'/carteira'|'/cobrancas'|'/contas'|'/contratos'|'/enderecos'|'/produtos'|'/settings'|'/usuarios'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/$'
-    | '/'
-    | '/carteira'
-    | '/cobrancas'
-    | '/contas'
-    | '/contratos'
-    | '/enderecos'
-    | '/produtos'
-    | '/settings'
-    | '/usuarios'
-  id:
-    | '__root__'
-    | '/$'
-    | '/_layout'
-    | '/_layout/'
-    | '/_layout/carteira'
-    | '/_layout/cobrancas'
-    | '/_layout/contas'
-    | '/_layout/contratos'
-    | '/_layout/enderecos'
-    | '/_layout/produtos'
-    | '/_layout/settings'
-    | '/_layout/usuarios'
+  to: '/$'|'/'|'/carteira'|'/cobrancas'|'/contas'|'/contratos'|'/enderecos'|'/produtos'|'/settings'|'/usuarios'
+  id: '__root__'|'/$'|'/_layout'|'/_layout/'|'/_layout/carteira'|'/_layout/cobrancas'|'/_layout/contas'|'/_layout/contratos'|'/_layout/enderecos'|'/_layout/produtos'|'/_layout/settings'|'/_layout/usuarios'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  notFoundRoute: typeof notFoundRoute
-  layoutRoute: typeof layoutRouteWithChildren
+  notFoundRoute: typeof notFoundRoute,layoutRoute: typeof layoutRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  notFoundRoute: notFoundRoute,
-  layoutRoute: layoutRouteWithChildren,
+  notFoundRoute: notFoundRoute,layoutRoute: layoutRouteWithChildren
 }
 
-export const routeTree = rootRoute
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>()
+
 
 /* ROUTE_MANIFEST_START
 {

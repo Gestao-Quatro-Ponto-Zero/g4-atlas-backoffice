@@ -28,30 +28,18 @@ export const Route = createFileRoute("/_layout")({
 				animate={{ opacity: 1, y: 0 }}
 				exit={{ opacity: 0, y: -10 }}
 				transition={{ duration: 0.2 }}
-				className="min-h-screen bg-gray-50/40"
+				className="grid min-h-screen grid-cols-[auto_1fr] bg-gray-50/40"
 			>
-				<div className="flex w-full">
-					<div className="hidden shrink-0 md:block">
-						<SideMenu />
-					</div>
-					<div className="flex w-full grow flex-col">
-						<main className="grow px-4 py-6 md:px-6 lg:px-8">
-							<div className="contents md:hidden">
-								<SideMenu />
-							</div>
-							<div className="md:hidden">
-								<SideMenu />
-							</div>
-							<AnimatePresence mode="wait">
-								<Suspense fallback={<Spinner />}>
-									<AnimatedRoute>
-										<Outlet />
-									</AnimatedRoute>
-								</Suspense>
-							</AnimatePresence>
-						</main>
-					</div>
-				</div>
+				<SideMenu />
+				<main className="grow px-8 py-6">
+					<AnimatePresence mode="wait">
+						<Suspense fallback={<Spinner />}>
+							<AnimatedRoute>
+								<Outlet />
+							</AnimatedRoute>
+						</Suspense>
+					</AnimatePresence>
+				</main>
 			</motion.div>
 		);
 	},

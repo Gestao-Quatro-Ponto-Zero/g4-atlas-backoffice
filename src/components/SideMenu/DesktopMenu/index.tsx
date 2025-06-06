@@ -14,7 +14,7 @@ export const DesktopMenu = () => {
 		<SidebarProvider defaultOpen>
 			<Sidebar
 				variant="floating"
-				className="hidden w-[220px] md:flex"
+				className="w-[220px] grid-cols-[auto_1fr_auto]"
 			>
 				<Suspense fallback={<Spinner />}>
 					<MenuHeader />

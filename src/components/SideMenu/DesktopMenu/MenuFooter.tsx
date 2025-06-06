@@ -4,16 +4,14 @@ import { Link } from "@tanstack/react-router";
 
 export const MenuFooter = () => {
 	return (
-		<SidebarFooter className="mt-auto px-3 py-4">
-			<div className="flex justify-center">
-				<Button
-					variant="outline"
-					className="w-full rounded-full text-sm"
-				>
-					Ajuda
-				</Button>
-			</div>
-			<div className="mt-4 flex justify-center space-x-3 text-gray-500 text-xs">
+		<SidebarFooter>
+			<Button
+				variant="outline"
+				className="w-full rounded-full text-sm"
+			>
+				Ajuda
+			</Button>
+			<div className="grid grid-flow-col text-gray-500 text-xs">
 				<Link
 					preload="intent"
 					to="/termos"
