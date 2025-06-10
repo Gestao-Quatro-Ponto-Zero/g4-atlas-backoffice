@@ -1,0 +1,14 @@
+# redocly.yaml
+
+apis:
+  api-docs:
+    root: https://api.g4educacao.com/accounts/api/v3/api-docs
+    x-openapi-ts:
+      output: ./src/schema.d.ts
+
+resolve:
+  http:
+    headers:
+      - matches: https://api.g4educacao.com/accounts/api/v3/**
+        name: User-Agent
+        value: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
