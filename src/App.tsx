@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { AuthProvider } from "./contexts/AuthContext";
+import { AnalyticsProvider } from "@/components/Analytics";
 import Index from "./pages/Index";
 import Usuarios from "./pages/Usuarios";
 import Produtos from "./pages/Produtos";
@@ -50,15 +51,17 @@ const PageTransition = () => {
 // App component with proper provider nesting order
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <BrowserRouter>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <PageTransition />
-        </TooltipProvider>
-      </BrowserRouter>
-    </AuthProvider>
+    <AnalyticsProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <PageTransition />
+          </TooltipProvider>
+        </BrowserRouter>
+      </AuthProvider>
+    </AnalyticsProvider>
   </QueryClientProvider>
 );
 
