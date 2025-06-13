@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +8,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import Index from "./pages/Index";
 import Usuarios from "./pages/Usuarios";
 import Produtos from "./pages/Produtos";
+import Ajuda from "./pages/Ajuda";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -38,6 +38,7 @@ const PageTransition = () => {
           <Route path="/" element={<Index />} />
           <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/produtos" element={<Produtos />} />
+          <Route path="/ajuda" element={<Ajuda />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

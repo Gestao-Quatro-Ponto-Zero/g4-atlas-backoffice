@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,7 +8,8 @@ import {
   Menu, 
   X,
   LogOut,
-  LayoutDashboard
+  LayoutDashboard,
+  HelpCircle
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -64,6 +64,7 @@ const MobileMenu = () => {
     { icon: LayoutDashboard, label: 'Dashboard', href: '/', active: pathname === '/' },
     { icon: Users, label: 'Usuários', href: '/usuarios', active: pathname === '/usuarios' },
     { icon: Package, label: 'Produtos', href: '/produtos', active: pathname === '/produtos' },
+    { icon: HelpCircle, label: 'Ajuda', href: '/ajuda', active: pathname === '/ajuda' },
   ];
 
   return (
@@ -155,6 +156,7 @@ const DesktopMenu = () => {
     { icon: LayoutDashboard, label: 'Dashboard', href: '/', active: pathname === '/' },
     { icon: Users, label: 'Usuários', href: '/usuarios', active: pathname === '/usuarios' },
     { icon: Package, label: 'Produtos', href: '/produtos', active: pathname === '/produtos' },
+    { icon: HelpCircle, label: 'Ajuda', href: '/ajuda', active: pathname === '/ajuda' },
   ];
 
   return (
