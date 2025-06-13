@@ -1,12 +1,12 @@
-
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/G4Components';
 import { Input } from '@/components/ui/input';
 import { Loader2 } from 'lucide-react';
+import { LoginFormProps } from './LoginForm.types';
 
-const LoginForm: React.FC = () => {
+const LoginForm: React.FC<LoginFormProps> = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);

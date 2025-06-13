@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from '../components/Layout';
+import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, Users, Package, TrendingUp, Activity, Clock } from 'lucide-react';
 

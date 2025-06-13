@@ -1,12 +1,8 @@
-
 import React from 'react';
-import OrderCard from './OrderCard';
+import OrderCard from '../OrderCard';
 import { Order } from '@/data/mockData';
 import { ShoppingCart } from 'lucide-react';
-
-interface OrderListProps {
-  orders: Order[];
-}
+import { OrderListProps } from './OrderList.types';
 
 const OrderList: React.FC<OrderListProps> = ({ orders }) => {
   if (!orders.length) {

@@ -1,12 +1,8 @@
-
 import React from 'react';
-import SideMenu from './SideMenu';
-import { useAuth } from '../contexts/AuthContext';
+import SideMenu from '../SideMenu';
+import { useAuth } from '../../contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
-
-interface LayoutProps {
-  children: React.ReactNode;
-}
+import { LayoutProps } from './Layout.types';
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();

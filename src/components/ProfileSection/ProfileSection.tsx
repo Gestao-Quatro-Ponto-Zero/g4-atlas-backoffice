@@ -1,16 +1,16 @@
-
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { User } from '@/data/mockData';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/G4Components';
 import { Input } from '@/components/ui/input';
 import { ChevronRight, X } from 'lucide-react';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from 'sonner';
+import { ProfileSectionProps } from './ProfileSection.types';
 
-const ProfileSection: React.FC = () => {
+const ProfileSection: React.FC<ProfileSectionProps> = () => {
   const { user } = useAuth();
   const userData = user as User;
   

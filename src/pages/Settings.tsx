@@ -1,14 +1,13 @@
-
 import React from 'react';
-import Layout from '@/components/Layout';
-import ProfileSection from '@/components/ProfileSection';
+import { Layout } from '@/components/Layout';
+import { ProfileSection } from '@/components/ProfileSection';
 import { 
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/G4Components';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { HelpCircle, LogOut, MessageCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
