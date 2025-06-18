@@ -1,6 +1,4 @@
 {
-  "typescript.preferences.autoImportSpecifierExcludeRegexes": [
-    "@radix-ui"
-  ],
-  "task.allowAutomaticTasks": "on"
+	"typescript.preferences.autoImportSpecifierExcludeRegexes": ["@radix-ui"],
+	"task.allowAutomaticTasks": "on"
 }

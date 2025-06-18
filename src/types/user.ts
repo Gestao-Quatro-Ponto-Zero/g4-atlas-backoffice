@@ -1,42 +1,11 @@
-export interface User {
-	id: string;
-	email: string;
-	name: string;
-	about?: string;
-	job_title_id?: string;
-	person_id?: string;
-	status_id?: string;
-	enabled: boolean;
-	created_at?: string;
-	updated_at?: string;
-}
+import type { apiClient } from '@/utils/api-client'
 
-export interface CreateUserRequest {
-	email: string;
-	name: string;
-	about?: string;
-	job_title_id?: string;
-	person_id?: string;
-	status_id?: string;
-	enabled: boolean;
-}
+export type User = NonNullable<Awaited<ReturnType<(typeof apiClient)['get']['/v1/users']>>['content']>[number]
 
-export interface UpdateUserRequest extends Partial<CreateUserRequest> {}
+export type CreateUserRequest = Parameters<(typeof apiClient)['post']['/v1/users']>[0]
 
-export interface UsersResponse {
-	content: User[];
-	totalElements: number;
-	totalPages: number;
-	size: number;
-	number: number;
-	first: boolean;
-	last: boolean;
-}
+export type UpdateUserRequest = Parameters<(typeof apiClient)['patch']['/v1/users/{id}']>[0]
 
-export interface UserFilters {
-	page?: number;
-	size?: number;
-	email?: string;
-	name?: string;
-	sort?: string;
-}
+export type UsersResponse = Awaited<ReturnType<(typeof apiClient)['get']['/v1/users']>>
+
+export type UserFilters = Parameters<(typeof apiClient)['get']['/v1/users']>[0]

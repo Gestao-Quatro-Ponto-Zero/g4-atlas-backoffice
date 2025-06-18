@@ -1,101 +1,50 @@
-import createClient, {
-	type Client,
-	type MaybeOptionalInit,
-} from "openapi-fetch";
-import type { RequiredKeysOf } from "openapi-typescript-helpers";
-import type { paths } from "../schema";
+import type { paths } from '@/schema'
+import createClient, { type MaybeOptionalInit, type PathBasedClient } from 'openapi-fetch'
+import type { HttpMethod, RequiredKeysOf } from 'openapi-typescript-helpers'
 
-type InitParam<Init> = RequiredKeysOf<Init> extends never
-	? [(Init & { [key: string]: unknown })?]
-	: [Init & { [key: string]: unknown }];
+type InitParam<Init> =
+	RequiredKeysOf<Init> extends never ? [(Init & { [key: string]: unknown })?] : [Init & { [key: string]: unknown }]
 
-const BASE_URL = "https://api.g4educacao.com";
-
-class ApiClient<Paths extends {}> {
-	#client: ReturnType<typeof createClient<Paths>>;
+type PathsForMethod<Method extends HttpMethod> = {
+	[K in keyof paths]: Method extends keyof paths[K] ? (paths[K][Method] extends undefined ? never : K) : never
+}[keyof paths]
+class ApiClient {
+	#baseClient = createClient<paths>({
+		baseUrl: import.meta.env.VITE_ACCOUNTS_API_URL,
+	})
 
 	constructor() {
-		this.#client = createClient({
-			baseUrl: BASE_URL,
-		});
+		this.#baseClient.use({
+			onRequest: ({ request }) => {
+				const apiKey = localStorage.getItem('accounts-api-key')
+				if (apiKey) {
+					request.headers.set('ACCOUNTS-API-KEY', apiKey)
+				}
+				return request
+			},
+		})
 	}
 
-	#getHeaders(): HeadersInit {
-		const headers: HeadersInit = {
-			"Content-Type": "application/json",
-		};
-
-		// Get API key from localStorage directly since this is a singleton
-		const apiKey = localStorage.getItem("accounts-api-key");
-		if (apiKey) {
-			headers["ACCOUNTS-API-KEY"] = apiKey;
-		}
-
-		return headers;
+	#genMethod<Method extends HttpMethod>(method: Method) {
+		return new Proxy<{
+			[Path in PathsForMethod<Method>]: (
+				...params: InitParam<MaybeOptionalInit<paths[Path], Method>>
+			) => Promise<NonNullable<Awaited<ReturnType<PathBasedClient<paths>[Path][Uppercase<Method>]>>['data']>>
+		}>(this.#baseClient, {
+			get(target, p) {
+				return async (...params: InitParam<MaybeOptionalInit<paths[PathsForMethod<Method>], Method>>) => {
+					const { data } = await target[method.toUpperCase()](p, ...params)
+					return data as NonNullable<typeof data>
+				}
+			},
+		})
 	}
 
-	async get<Endpoint extends Parameters<Client<Paths>["GET"]>[0]>(
-		endpoint: Endpoint,
-	) {
-		const { response, data } = await this.#client.GET(endpoint, {
-			headers: this.#getHeaders(),
-		});
-
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		return data!;
-	}
-
-	async post<Endpoint extends Parameters<Client<Paths>["POST"]>[0]>(
-		endpoint: Endpoint,
-		body: InitParam<MaybeOptionalInit<Paths[Endpoint], "post">>[0]["body"],
-	) {
-		const { response, data } = await this.#client.POST(endpoint, {
-			headers: this.#getHeaders(),
-			body,
-		});
-
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		return data!;
-	}
-
-	async put<Endpoint extends Parameters<Client<Paths>["PUT"]>[0]>(
-		endpoint: Endpoint,
-		body: InitParam<MaybeOptionalInit<Paths[Endpoint], "put">>[0]["body"],
-	) {
-		const { response, data } = await this.#client.PUT(endpoint, {
-			headers: this.#getHeaders(),
-			body: body,
-		});
-
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		return data!;
-	}
-
-	async delete(endpoint: Parameters<Client<Paths>["DELETE"]>[0]) {
-		const { response, data } = await this.#client.DELETE(endpoint, {
-			method: "DELETE",
-			headers: this.#getHeaders(),
-		});
-
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		return data!;
-	}
+	post = this.#genMethod('post')
+	get = this.#genMethod('get')
+	put = this.#genMethod('put')
+	delete = this.#genMethod('delete')
+	patch = this.#genMethod('patch')
 }
 
-export const apiClient = new ApiClient<paths>();
+export const apiClient = new ApiClient()

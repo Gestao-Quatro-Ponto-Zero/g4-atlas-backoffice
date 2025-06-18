@@ -1,10 +1,11 @@
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { ApiKeyProvider } from "@/contexts/ApiKeyContext";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Outlet, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { Toaster as Sonner } from '@/components/ui/sonner'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import { ApiKeyProvider } from '@/contexts/ApiKeyContext'
+import { AuthProvider } from '@/contexts/AuthContext'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -14,7 +15,7 @@ const queryClient = new QueryClient({
 			experimental_prefetchInRender: true,
 		},
 	},
-});
+})
 
 // App component with proper provider nesting order
 export const Route = createRootRoute({
@@ -28,7 +29,8 @@ export const Route = createRootRoute({
 				</AuthProvider>
 				<Sonner />
 			</TooltipProvider>
+			<ReactQueryDevtools />
 			<TanStackRouterDevtools />
 		</QueryClientProvider>
 	),
-});
+})

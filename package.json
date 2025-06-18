@@ -9,7 +9,7 @@
 		"build:dev": "vite build --mode development",
 		"lint": "biome check .",
 		"preview": "vite preview",
-		"generate:types": "openapi-typescript"
+		"generate:types": "openapi-typescript --default-non-nullable"
 	},
 	"dependencies": {
 		"@radix-ui/react-accordion": "^1.2.11",
@@ -40,6 +40,7 @@
 		"@radix-ui/react-toggle-group": "^1.1.10",
 		"@radix-ui/react-tooltip": "^1.2.7",
 		"@tanstack/react-query": "^5.80.6",
+		"@tanstack/react-query-devtools": "^5.80.7",
 		"@tanstack/react-router": "^1.120.15",
 		"@tanstack/virtual-file-routes": "^1.115.0",
 		"@vitejs/plugin-react": "^4.5.0",
@@ -63,7 +64,8 @@
 		"recharts": "^2.15.3",
 		"sonner": "^2.0.3",
 		"tailwind-merge": "^3.3.0",
-		"vaul": "^1.1.2"
+		"vaul": "^1.1.2",
+		"zod": "^3.25.67"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",

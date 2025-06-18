@@ -8,32 +8,31 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import type { User } from "@/types/user";
 import { EditIcon } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { UserEditModal } from "./UserEditModal";
+import type { User } from "@/types/user";
+import { cn } from "@/lib/utils";
 
-interface UsersTableProps {
-	users: User[];
-}
-
-export const UsersTable = ({ users }: UsersTableProps) => {
+export const UsersTable = ({
+	users,
+	pending,
+}: { users: User[]; pending: boolean }) => {
 	const [selectedUser, setSelectedUser] = useState<User | null>(null);
-	const [isModalOpen, setIsModalOpen] = useState(false);
+	const modalRef = useRef<{ toggle: () => void } | null>(null);
 
 	const handleEditUser = (user: User) => {
 		setSelectedUser(user);
-		setIsModalOpen(true);
+		modalRef.current?.toggle();
 	};
 
 	const handleCloseModal = () => {
 		setSelectedUser(null);
-		setIsModalOpen(false);
 	};
 
 	return (
 		<>
-			<Table>
+			<Table className={cn(pending && "opacity-50")}>
 				<TableHeader>
 					<TableRow>
 						<TableHead>Nome</TableHead>
@@ -74,8 +73,8 @@ export const UsersTable = ({ users }: UsersTableProps) => {
 
 			<UserEditModal
 				user={selectedUser}
-				isOpen={isModalOpen}
 				onClose={handleCloseModal}
+				ref={modalRef}
 			/>
 		</>
 	);

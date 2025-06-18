@@ -23,14 +23,14 @@
 				"noForEach": "off",
 				"noUselessStringConcat": "off",
 				"useDateNow": "warn",
-				"useSimplifiedLogicExpression": "warn"
+				"useSimplifiedLogicExpression": "error"
 			},
 			"correctness": {
 				"noUndeclaredDependencies": "error",
 				"noUndeclaredVariables": "error",
 				"noUnusedImports": "warn",
 				"noUnusedVariables": "warn",
-				"useHookAtTopLevel": "warn"
+				"useHookAtTopLevel": "error"
 			},
 			"nursery": {
 				"noDuplicateElseIf": "warn",
@@ -48,7 +48,12 @@
 						"accessibility": "none"
 					}
 				},
-				"useSortedClasses": "warn"
+				"useSortedClasses": {
+					"level": "info",
+					"options": {
+						"functions": ["cn"]
+					}
+				}
 			},
 			"performance": {
 				"useTopLevelRegex": "warn"

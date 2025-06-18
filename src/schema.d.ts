@@ -1492,6 +1492,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/geography/states": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAllStates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/geography/states/{stateId}/cities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getCitiesByStateId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/events/club": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getClubEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/entities": {
         parameters: {
             query?: never;
@@ -2844,6 +2892,82 @@ export interface components {
             total_pages?: number;
             /** Format: int64 */
             total_elements?: number;
+        };
+        PaginatePageState: {
+            /** Format: int32 */
+            number?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int32 */
+            total_pages?: number;
+            /** Format: int64 */
+            total_elements?: number;
+        };
+        PaginateStateStateResponse: {
+            page?: components["schemas"]["PaginatePageState"];
+            links?: components["schemas"]["PaginateLinks"];
+            content?: components["schemas"]["StateResponse"][];
+        };
+        StateResponse: {
+            /** Format: int64 */
+            id?: number;
+            name?: string;
+        };
+        CityResponse: {
+            /** Format: int64 */
+            id?: number;
+            name?: string;
+            state?: components["schemas"]["StateResponse"];
+        };
+        PaginateCityCityResponse: {
+            page?: components["schemas"]["PaginatePageCity"];
+            links?: components["schemas"]["PaginateLinks"];
+            content?: components["schemas"]["CityResponse"][];
+        };
+        PaginatePageCity: {
+            /** Format: int32 */
+            number?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int32 */
+            total_pages?: number;
+            /** Format: int64 */
+            total_elements?: number;
+        };
+        Event: {
+            /** Format: date-time */
+            "Modified Date"?: string;
+            status?: string;
+            /** Format: date-time */
+            data_de_inicio?: string;
+            area?: string;
+            /** Format: int32 */
+            alunos_alocados?: number;
+            produto_codigo_accounts?: string;
+            /** Format: date-time */
+            "Created Date"?: string;
+            value?: string;
+            _id?: string;
+            redisparo_de_nps?: boolean;
+            grupo_evento_modelo?: string;
+            /** Format: date-time */
+            data_de_fim?: string;
+            codigo_legivel?: string;
+            ativo?: boolean;
+            "Created By"?: string;
+            codigo_accounts?: string;
+            /** Format: int32 */
+            edicao_do_evento?: number;
+            status_accounts?: string;
+            nome_do_evento?: string;
+            /** Format: int32 */
+            dias?: number;
+            duracao?: string[];
+        };
+        EventListResponse: {
+            list?: components["schemas"]["Event"][];
+            /** Format: int32 */
+            total?: number;
         };
         EntityFilter: {
             description?: string;
@@ -6842,6 +6966,78 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["Job"][];
+                };
+            };
+        };
+    };
+    getAllStates: {
+        parameters: {
+            query?: {
+                name?: string;
+                page?: number;
+                size?: number;
+                sort?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PaginateStateStateResponse"];
+                };
+            };
+        };
+    };
+    getCitiesByStateId: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                name?: string;
+                sort?: string;
+            };
+            header?: never;
+            path: {
+                stateId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PaginateCityCityResponse"];
+                };
+            };
+        };
+    };
+    getClubEvents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["EventListResponse"];
                 };
             };
         };

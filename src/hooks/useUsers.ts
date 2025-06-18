@@ -1,75 +1,105 @@
-import { apiClient } from "@/utils/api-client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from '@/utils/api-client'
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import type { CreateUserRequest, UpdateUserRequest } from '../types/user'
 
 interface User {
-	id: string;
-	name: string;
-	email: string;
-	phone?: string;
-	enabled: boolean;
-	created_at: string;
+	id: string
+	email: string
+	name: string
+	[key: string]: unknown
 }
 
 interface UsersResponse {
-	content: User[];
-	totalElements: number;
-	totalPages: number;
-	number: number;
-	size: number;
+	data: User[]
+	[key: string]: unknown
 }
 
-interface UseUsersParams {
-	page?: number;
-	limit?: number;
-	email?: string;
-	name?: string;
-	sort?: string;
-}
-
-export const useUsers = (params: UseUsersParams = {}) => {
-	const {
-		page = 1,
-		limit = 10,
-		email = "",
-		name = "",
-		sort = "id,ASC",
-	} = params;
-
-	const queryParams = new URLSearchParams({
-		page: page.toString(), // API now uses 1-based pagination
-		size: limit.toString(),
-		sort,
-		...(email && { email }),
-		...(name && { name }),
-	});
-
-	return useQuery({
-		queryKey: ["users", page, limit, email, name, sort],
+export const useUsers = (
+	{ page = 1, limit = 10, email, name, sort = 'id,ASC' } = {} as {
+		page?: number
+		limit?: number
+		email?: string
+		name?: string
+		sort?: string
+	}
+) =>
+	useSuspenseQuery({
+		queryKey: ['users', page, limit, email, name, sort],
 		queryFn: () =>
-			apiClient.get<UsersResponse>(`/accounts/api/v1/users?${queryParams}`),
-	});
-};
+			apiClient.get['/v1/users']({
+				params: {
+					query: {
+						page,
+						size: limit,
+						sort,
+						...(email && { 'email[like]': email }),
+						...(name && { 'name[like]': name }),
+					},
+				},
+			}),
+	})
 
 export const useCreateUser = () => {
-	const queryClient = useQueryClient();
+	const queryClient = useQueryClient()
 
 	return useMutation({
-		mutationFn: (userData: Omit<User, "id" | "created_at">) =>
-			apiClient.post<User>("/accounts/api/v1/users", userData),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["users"] });
+		mutationFn: (userData: CreateUserRequest['body']) =>
+			apiClient.post['/v1/users']({
+				body: userData,
+			}),
+		onMutate: async (newUser) => {
+			await queryClient.cancelQueries({ queryKey: ['users'] })
+			const previousUsers = queryClient.getQueryData<UsersResponse>(['users'])
+
+			queryClient.setQueryData<UsersResponse>(['users'], (old) => {
+				const newData = {
+					...old,
+					data: [...(old?.data || []), { ...newUser, id: 'temp-id' } as User],
+				}
+				return newData
+			})
+
+			return { previousUsers }
 		},
-	});
-};
+		onError: (_err, _newUser, context) => {
+			queryClient.setQueryData(['users'], context?.previousUsers)
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: ['users'] })
+		},
+	})
+}
 
 export const useUpdateUser = () => {
-	const queryClient = useQueryClient();
+	const queryClient = useQueryClient()
 
 	return useMutation({
-		mutationFn: ({ id, ...userData }: Partial<User> & { id: string }) =>
-			apiClient.put<User>(`/accounts/api/v1/users/${id}`, userData),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["users"] });
+		mutationFn: ({ id, ...userData }: { id: UpdateUserRequest['params']['path']['id'] } & UpdateUserRequest['body']) =>
+			apiClient.patch['/v1/users/{id}']({
+				params: {
+					path: { id },
+				},
+				body: userData,
+			}),
+		onMutate: async ({ id, ...userData }) => {
+			await queryClient.cancelQueries({ queryKey: ['users'] })
+			const previousUsers = queryClient.getQueryData<UsersResponse>(['users'])
+
+			queryClient.setQueryData<UsersResponse>(['users'], (old) => {
+				if (!old) return { data: [] }
+				return {
+					...old,
+					data: old.data.map((user: User) => (user.id === id ? { ...user, ...userData } : user)),
+				}
+			})
+
+			return { previousUsers }
 		},
-	});
-};
+		onError: (_err, _variables, context) => {
+			queryClient.setQueryData(['users'], context?.previousUsers)
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: ['users'] })
+		},
+	})
+}

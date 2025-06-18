@@ -7,19 +7,34 @@ import {
 import { useUpdateUser } from "@/hooks/useUsers";
 import type { UpdateUserRequest, User } from "@/types/user";
 import { UserForm } from "./UserForm";
-
-interface UserEditModalProps {
-	user: User | null;
-	isOpen: boolean;
-	onClose: () => void;
-}
+import {
+	useCallback,
+	useImperativeHandle,
+	useState,
+	type RefObject,
+} from "react";
 
 export const UserEditModal = ({
 	user,
-	isOpen,
 	onClose,
-}: UserEditModalProps) => {
+	ref,
+}: {
+	user: User;
+	onClose: () => void;
+	ref: RefObject<{ toggle: () => void }>;
+}) => {
+	const [isOpen, setIsOpen] = useState(false);
 	const updateUserMutation = useUpdateUser();
+
+	useImperativeHandle(
+		ref,
+		useCallback(
+			() => ({
+				toggle: () => setIsOpen(prev => !prev),
+			}),
+			[],
+		),
+	);
 
 	const handleSubmit = (data: UpdateUserRequest) => {
 		if (!user) return;
@@ -32,6 +47,11 @@ export const UserEditModal = ({
 				},
 			},
 		);
+	};
+
+	const handleClose = () => {
+		setIsOpen(false);
+		onClose();
 	};
 
 	return (
@@ -47,7 +67,7 @@ export const UserEditModal = ({
 					<UserForm
 						user={user}
 						onSubmit={handleSubmit}
-						onCancel={onClose}
+						onCancel={handleClose}
 						isLoading={updateUserMutation.isPending}
 					/>
 				)}
